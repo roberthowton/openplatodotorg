@@ -2,12 +2,13 @@
 
 @font-face {
   font-family: "eb-garamond";
-  src: url("./fonts/EBGaramond-Regular.eot");
-  src: url("./fonts/EBGaramond-Regular.eot?#iefix") format("embedded-opentype"),
-    url("./fonts/EBGaramond-Regular.woff2") format("woff2"),
-    url("./fonts/EBGaramond-Regular.woff") format("woff"),
-    url("./fonts/EBGaramond-Regular.ttf") format("truetype"),
-    url("./fonts/EBGaramond-Regular.svg#EBGaramond-Regular") format("svg");
+  src: url(".../fonts/EBGaramond-Regular.eot");
+  src: url(".../fonts/EBGaramond-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url(".../fonts/EBGaramond-Regular.woff2") format("woff2"),
+    url(".../fonts/EBGaramond-Regular.woff") format("woff"),
+    url(".../fonts/EBGaramond-Regular.ttf") format("truetype"),
+    url(".../fonts/EBGaramond-Regular.svg#EBGaramond-Regular") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -15,12 +16,12 @@
 
 @font-face {
   font-family: "eb-garamond";
-  src: url("./fonts/EBGaramond-Italic.eot");
-  src: url("./fonts/EBGaramond-Italic.eot?#iefix") format("embedded-opentype"),
-    url("./fonts/EBGaramond-Italic.woff2") format("woff2"),
-    url("./fonts/EBGaramond-Italic.woff") format("woff"),
-    url("./fonts/EBGaramond-Italic.ttf") format("truetype"),
-    url("./fonts/EBGaramond-Italic.svg#EBGaramond-Italic") format("svg");
+  src: url("../fonts/EBGaramond-Italic.eot");
+  src: url("../fonts/EBGaramond-Italic.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/EBGaramond-Italic.woff2") format("woff2"),
+    url("../fonts/EBGaramond-Italic.woff") format("woff"),
+    url("../fonts/EBGaramond-Italic.ttf") format("truetype"),
+    url("../fonts/EBGaramond-Italic.svg#EBGaramond-Italic") format("svg");
   font-weight: normal;
   font-style: italic;
   font-display: swap;
