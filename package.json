@@ -1,0 +1,26 @@
+{
+  "name": "openplatodotorg",
+  "version": "1.0.0",
+  "description": "OpenPlato.org",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openplato/openplatodotorg.git"
+  },
+  "keywords": [
+    "plato",
+    "alcibiades",
+    "philosophy",
+    "digital",
+    "humanities"
+  ],
+  "author": "Open Plato Project",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openplato/openplatodotorg/issues"
+  },
+  "homepage": "https://github.com/openplato/openplatodotorg#readme"
+}
