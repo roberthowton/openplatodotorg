@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.tei-c.org/ns/1.0">
+  <xs:element name="TEI">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="teiHeader">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="fileDesc">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="titleStmt">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="title" type="xs:string" />
+                          <xs:element name="author" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="editionStmt">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="edition">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="date" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="publicationStmt">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="p" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="sourceDesc">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="p" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="revisionDesc">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="listChange">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="change">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" />
+                                <xs:element name="date" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="text">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="body">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="p" maxOccurs="unbounded">
+                      <xs:complexType mixed="true">
+                        <xs:sequence minOccurs="0">
+                          <xs:element name="hi" minOccurs="0">
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                  <xs:attribute name="rend" use="required" />
+                                </xs:extension>
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="ref" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="hi">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute name="rend" use="required"
+                                          fixed="color(#0000ff)underline" />
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="target" use="required"
+                                fixed="https://open-plato-prototype.herokuapp.com/" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="note" minOccurs="0" type="xs:string" />
+                        </xs:sequence>
+                        <xs:attribute name="rend" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="list">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="item" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="hi">
+                                  <xs:complexType>
+                                    <xs:simpleContent>
+                                      <xs:extension base="xs:string">
+                                        <xs:attribute name="rend" use="required" />
+                                      </xs:extension>
+                                    </xs:simpleContent>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="type" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

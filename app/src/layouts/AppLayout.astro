@@ -1,0 +1,33 @@
+---
+import Nav from '../components/Nav.astro';
+import "../styles/gloabls.css"
+
+interface Props {
+	title: string;
+	selection: string;
+}
+
+const { title, selection } = Astro.props
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Open Plato Project</title>
+	</head>
+	<body>
+		<Nav />
+		<section id="title">
+			<h2>{selection}</h2>
+		</section>
+		<slot />
+	</body>
+</html>
+
+<script>
+	import "../js/jquery-1.8.3.min.js"
+	import "../js/global.js"
+</script>
