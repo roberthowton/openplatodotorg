@@ -1,7 +1,3 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "types": ["node"]
-  }
+  "extends": "astro/tsconfigs/strict"
 }

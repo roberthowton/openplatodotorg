@@ -1,18 +1,55 @@
 ---
-import AppLayout from "../layouts/AppLayout.astro"
-import Greek from "../example-html/Greek.html"
-import English from "../example-html/English.html"
-import FirstReadEnglish from "../example-html/FirstReadEnglish.html"
-import Comments from "../example-html/Comments.html"
-import FirstReadComments from "../example-html/FirstReadComments.html"
+import { getCollection, getEntry } from "astro:content";
+const alcibiades = await getEntry("dialogs", "Alcibiades_a");
+const blondell = await getEntry("dialogs", "Alcibiades_a-Blondell");
+const items = ["Dog", "Cat", "Platypus"];
+
+const english = await getEntry("dialogs", "Alcibiades_a/el/Alcibiades_a");
+const greek = await getEntry("dialogs", "Alcibiades_a/en/Alcibiades_a");
 ---
 
-<AppLayout title="Home" selection="Alcibiades 109c9-112d10 (sample content)">
-  <article>
-    <Greek />
-    <English />
-    <FirstReadEnglish />
-    <Comments />
-    <FirstReadComments />
-  </article>
-</AppLayout>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="stylesheet" href="/css/Stephanus.css" />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Dialog Test</h1>
+		<ul>
+			{items.map((item) => <li>{item}</li>)}
+		</ul>
+		<main>
+			<div id="greek">
+				{
+					Object.entries(greek.data).map(([key, value]) => (
+						<article id={key}>
+							{Object.entries(value).map(([key, value]) => (
+								<section class={key}>
+									{value.replace(/\`/g, "")}
+								</section>
+							))}
+						</article>
+					))
+				}
+			</div>
+			<div id="english">
+				{
+					Object.entries(english.data).map(([key, value]) => (
+						<article id={key}>
+							{Object.entries(value).map(([key, value]) => (
+								<section class={key}>
+									{value.replace(/\`/g, "")}
+								</section>
+							))}
+						</article>
+					))
+				}
+			</div>
+		</main>
+	</body>
+</html>
