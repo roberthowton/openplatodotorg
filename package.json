@@ -4,7 +4,8 @@
   "description": "OpenPlato.org",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "echo Remember to \"CD APP\" next time! && cd app && npm run dev"
   },
   "repository": {
     "type": "git",
