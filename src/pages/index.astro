@@ -1,8 +1,7 @@
 ---
-import { getCollection, getEntry } from "astro:content";
-const alcibiades = await getEntry("dialogs", "Alcibiades_a");
-const blondell = await getEntry("dialogs", "Alcibiades_a-Blondell");
-const items = ["Dog", "Cat", "Platypus"];
+import { getEntry } from "astro:content";
+import "../styles/Stephanus.css"
+import * as favicon from "../assets/favicon.svg"
 
 const english = await getEntry("dialogs", "Alcibiades_a/el/Alcibiades_a");
 const greek = await getEntry("dialogs", "Alcibiades_a/en/Alcibiades_a");
@@ -15,14 +14,11 @@ const greek = await getEntry("dialogs", "Alcibiades_a/en/Alcibiades_a");
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="stylesheet" href="/css/Stephanus.css" />
+		<!-- <link rel="stylesheet" href="/css/Stephanus.css" /> -->
 		<title>Astro</title>
 	</head>
 	<body>
 		<h1>Dialog Test</h1>
-		<ul>
-			{items.map((item) => <li>{item}</li>)}
-		</ul>
 		<main>
 			<div id="greek">
 				{
