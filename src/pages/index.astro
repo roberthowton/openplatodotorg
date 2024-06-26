@@ -1,51 +1,16 @@
 ---
 import { getEntry } from "astro:content";
-import "../styles/Stephanus.css"
-import * as favicon from "../assets/favicon.svg"
+import PageLayout from "../layouts/page-layout.astro";
+import DialogContainer from "../components/dialog-container"
+import ShowDropdown from "../components/show-dropdown";
 
-const english = await getEntry("dialogs", "Alcibiades_a/el/Alcibiades_a");
-const greek = await getEntry("dialogs", "Alcibiades_a/en/Alcibiades_a");
+const english = await getEntry("dialogs", "alcibiades-one/english");
+const greek = await getEntry("dialogs", "alcibiades-one/greek");
 ---
-
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<!-- <link rel="stylesheet" href="/css/Stephanus.css" /> -->
-		<title>Astro</title>
-	</head>
-	<body>
+<PageLayout>
 		<h1>Dialog Test</h1>
+		<ShowDropdown client:load/>
 		<main>
-			<div id="greek">
-				{
-					Object.entries(greek.data).map(([key, value]) => (
-						<article id={key}>
-							{Object.entries(value).map(([key, value]) => (
-								<section class={key}>
-									{value.replace(/\`/g, "")}
-								</section>
-							))}
-						</article>
-					))
-				}
-			</div>
-			<div id="english">
-				{
-					Object.entries(english.data).map(([key, value]) => (
-						<article id={key}>
-							{Object.entries(value).map(([key, value]) => (
-								<section class={key}>
-									{value.replace(/\`/g, "")}
-								</section>
-							))}
-						</article>
-					))
-				}
-			</div>
+			<DialogContainer englishText={english} greekText={greek} client:load/>
 		</main>
-	</body>
-</html>
+	</PageLayout>
