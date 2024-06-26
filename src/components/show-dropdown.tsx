@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { setShow } from "../stores/show";
+import { setShow } from "../stores/show-state";
 import { ShowState } from "../types";
 
 const ShowDropdown: FC = () => (

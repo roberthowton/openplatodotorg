@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content'
 import type { FC } from "react"
-import { $showState } from '../stores/show'
+import { $showState } from '../stores/show-state'
 import { ShowState } from '../types'
 import { useStore } from "@nanostores/react"
 
@@ -12,10 +12,10 @@ type DialogContainerProps = {
 
 const DialogContainer: FC<DialogContainerProps> = ({ greekText, englishText }) => {
 
-  const show = useStore($showState)
+  const showState = useStore($showState)
 
-  const greekStyle = show === ShowState.ENGLISH ? { display: "none"} : {}
-  const englishStyle = show === "greek" ? { display: "none"} : {}
+  const greekStyle = showState === ShowState.ENGLISH ? { display: "none"} : {}
+  const englishStyle = showState === "greek" ? { display: "none"} : {}
 
 
   return (
