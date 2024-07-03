@@ -1,55 +1,99 @@
 ---
-import { getCollection, getEntry } from "astro:content";
-const alcibiades = await getEntry("dialogs", "Alcibiades_a");
-const blondell = await getEntry("dialogs", "Alcibiades_a-Blondell");
-const items = ["Dog", "Cat", "Platypus"];
+import DefaultLayout from "../layouts/DefaultLayout.astro";
+import StephanusPage from "../components/StephanusPage.astro";
 
-const english = await getEntry("dialogs", "Alcibiades_a/el/Alcibiades_a");
-const greek = await getEntry("dialogs", "Alcibiades_a/en/Alcibiades_a");
+import { getEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+const alcibiades = await getEntry("dialogs", "Alcibiades_a/Original");
+const blondell = await getEntry("dialogs", "Alcibiades_a/Blondell");
+const dialogs = await getCollection("dialogs");
+const Alcibiades_a = await getCollection("dialogs", ({ id }) => {
+	return id.startsWith("Alcibiades_a");
+});
+
+console.log(alcibiades.data);
+
+export function getDialogs() {}
+
+var options = new Map<String, Array<String>>();
+dialogs.forEach(({ id }) => {
+	var parts = id.split("/");
+
+	if (!options.has(parts[0])) {
+		options.set(parts[0], []);
+	}
+	if (!options.get(parts[0])?.includes(parts[1])) {
+		options.get(parts[0])?.push(parts[1]);
+	}
+});
+
+console.log(options, Object.fromEntries(options.entries()));
+
+let data = new Array(options.size);
+
+// options.forEach((data, entry) => {
+// 	console.log(entry);
+// 	data.forEach((x) => {
+// 		console.log(x);
+// 	});
+// });
+
+// options.entries().next()
+
+// type Props = {
+// 	el_text: CollectionEntry<"dialogs">;
+// 	en_text: CollectionEntry<"dialogs">;
+// };
+
+// console.log(
+// 	alcibiades.data[115]["a"]
+// 		?.replace(/[\t\`]/g, "")
+// 		.split(/ /)
+// 		.join(" "),
+// );
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="stylesheet" href="/css/Stephanus.css" />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Dialog Test</h1>
-		<ul>
-			{items.map((item) => <li>{item}</li>)}
-		</ul>
-		<main>
-			<div id="greek">
-				{
-					Object.entries(greek.data).map(([key, value]) => (
-						<article id={key}>
-							{Object.entries(value).map(([key, value]) => (
-								<section class={key}>
-									{value.replace(/\`/g, "")}
-								</section>
-							))}
-						</article>
-					))
-				}
-			</div>
-			<div id="english">
-				{
-					Object.entries(english.data).map(([key, value]) => (
-						<article id={key}>
-							{Object.entries(value).map(([key, value]) => (
-								<section class={key}>
-									{value.replace(/\`/g, "")}
-								</section>
-							))}
-						</article>
-					))
-				}
-			</div>
-		</main>
-	</body>
-</html>
+<div id="search" slot="search">
+	<label for="search">Search: </label>
+	<input type="text" name="search" />
+	<label for="dialogs">Dialogs</label>
+	<select name="dialogs">
+		<option selected>--</option>
+
+		{
+			Object.entries(Object.fromEntries(options)).map(
+				([key, val]: [string, unknown]) => (
+					<optgroup label={key}>
+						{data.push(key)}
+						{Object.entries(JSON.parse(JSON.stringify(val))).map(
+							([, val]: [string, unknown]) => (
+								<option>
+									{data.at(-1)}/{val}
+								</option>
+							),
+						)}
+					</optgroup>
+				),
+			)
+		}
+
+		<!-- <optgroup label={"Static"}>
+			{
+				dialogs.map(({ collection, id }) => (
+					<option>
+						{collection}/{id}
+					</option>
+				))
+			}
+		</optgroup> -->
+	</select>
+</div>
+<DefaultLayout>
+	<div id="page_1">
+		<StephanusPage collection={alcibiades.data} />
+	</div>
+	<div id="page_2">
+		<StephanusPage collection={blondell.data} />
+	</div>
+</DefaultLayout>

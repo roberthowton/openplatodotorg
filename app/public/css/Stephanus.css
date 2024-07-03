@@ -2,11 +2,17 @@
 	--page-max: 120ch;
 }
 
+header {
+	height: fit-content;
+}
+
 main {
 	display: flex;
 	flex-flow: row nowrap;
 }
 
+#page_1,
+#page_2,
 #greek,
 #english {
 	counter-reset: page 102;
