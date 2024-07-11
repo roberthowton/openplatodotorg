@@ -1,29 +1,20 @@
 {
-  "name": "openplatodotorg",
-  "version": "1.0.0",
-  "description": "OpenPlato.org",
-  "main": "index.js",
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "echo Remember to \"CD APP\" next time! && cd app && npm run dev"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/openplato/openplatodotorg.git"
+  "dependencies": {
+    "@astrojs/check": "^0.7.0",
+    "astro": "^4.9.2",
+    "typescript": "^5.4.5"
   },
-  "keywords": [
-    "plato",
-    "alcibiades",
-    "philosophy",
-    "digital humanities"
-  ],
-  "author": "Open Plato Project",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/openplato/openplatodotorg/issues"
-  },
-  "homepage": "https://github.com/openplato/openplatodotorg#readme",
   "devDependencies": {
-    "@types/node": "^20.11.19"
+    "react": "^18.3.1"
   }
 }
