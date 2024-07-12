@@ -5,6 +5,8 @@ import StephanusPage from "../components/StephanusPage.astro";
 import { getEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { symbolName } from "typescript";
+import { any, array } from "astro/zod";
 const alcibiades = await getEntry("dialogs", "Alcibiades_a/Original");
 const blondell = await getEntry("dialogs", "Alcibiades_a/Blondell");
 const dialogs = await getCollection("dialogs");
@@ -12,46 +14,31 @@ const Alcibiades_a = await getCollection("dialogs", ({ id }) => {
 	return id.startsWith("Alcibiades_a");
 });
 
-console.log(alcibiades.data);
+// console.log(alcibiades.data);
 
-export function getDialogs() {}
+const getDialogs = (query: string, suffix?: string) =>
+	dialogs.filter(({ id }) => {
+		return suffix ? id.match(query + "/" + suffix) : id.startsWith(query);
+	});
 
-var options = new Map<String, Array<String>>();
+const getDialog = (query: string, suffix: string) =>
+	dialogs.find(({ id }) => id.match(query + "/" + suffix));
+
+var options = {};
 dialogs.forEach(({ id }) => {
-	var parts = id.split("/");
-
-	if (!options.has(parts[0])) {
-		options.set(parts[0], []);
+	var parts = ((a) => ({ dialog: a[0], author: a[1] }))(id.split("/"));
+	if (!Object.hasOwn(options, parts.dialog)) {
+		Object.defineProperty(options, parts.dialog, {
+			value: [],
+			enumerable: true,
+		});
 	}
-	if (!options.get(parts[0])?.includes(parts[1])) {
-		options.get(parts[0])?.push(parts[1]);
-	}
+	var tmp: Object[] = Object.getOwnPropertyDescriptor(
+		options,
+		parts.dialog,
+	)?.value;
+	tmp.push(parts.author);
 });
-
-console.log(options, Object.fromEntries(options.entries()));
-
-let data = new Array(options.size);
-
-// options.forEach((data, entry) => {
-// 	console.log(entry);
-// 	data.forEach((x) => {
-// 		console.log(x);
-// 	});
-// });
-
-// options.entries().next()
-
-// type Props = {
-// 	el_text: CollectionEntry<"dialogs">;
-// 	en_text: CollectionEntry<"dialogs">;
-// };
-
-// console.log(
-// 	alcibiades.data[115]["a"]
-// 		?.replace(/[\t\`]/g, "")
-// 		.split(/ /)
-// 		.join(" "),
-// );
 ---
 
 <div id="search" slot="search">
@@ -60,40 +47,28 @@ let data = new Array(options.size);
 	<label for="dialogs">Dialogs</label>
 	<select name="dialogs">
 		<option selected>--</option>
-
 		{
-			Object.entries(Object.fromEntries(options)).map(
-				([key, val]: [string, unknown]) => (
-					<optgroup label={key}>
-						{data.push(key)}
-						{Object.entries(JSON.parse(JSON.stringify(val))).map(
-							([, val]: [string, unknown]) => (
-								<option>
-									{data.at(-1)}/{val}
-								</option>
-							),
-						)}
-					</optgroup>
-				),
-			)
+			Object.entries(options).map(([key, val]: [string, any]) => (
+				<optgroup label={key}>
+					{Object.entries(val).map(([, val]: [string, any]) => (
+						<option>
+							{key}/{val}
+						</option>
+					))}
+				</optgroup>
+			))
 		}
-
-		<!-- <optgroup label={"Static"}>
-			{
-				dialogs.map(({ collection, id }) => (
-					<option>
-						{collection}/{id}
-					</option>
-				))
-			}
-		</optgroup> -->
 	</select>
 </div>
 <DefaultLayout>
 	<div id="page_1">
-		<StephanusPage collection={alcibiades.data} />
+		<StephanusPage
+			collection={getDialogs("Alcibiades_a", "Original")[0].data}
+		/>
 	</div>
 	<div id="page_2">
-		<StephanusPage collection={blondell.data} />
+		<StephanusPage
+			collection={getDialogs("Alcibiades_a", "Blondell")[0].data}
+		/>
 	</div>
 </DefaultLayout>
