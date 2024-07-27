@@ -1,22 +1,27 @@
 ---
+import type { InferEntrySchema } from "astro:content";
+import { collections } from "../content/config";
+
 interface Props {
-    collection: Record<string, Record<string, string>>;
+    collection: InferEntrySchema<"dialogs">;
 }
 const { collection } = Astro.props;
 ---
 
 {
-    Object.entries(collection).map(([key, val]) => (
+    Object.entries(collection).map(([key, val]: [string, unknown]) => (
         <article id={key}>
-            {Object.entries(val).map(([key, val]) => (
-                <section class={key}>
-                    {val
-                        .replace(/[\t\`]/g, "")
-                        .split(/ /)
-                        .join(" ")
-                        .trim()}
-                </section>
-            ))}
+            {Object.entries(val as string).map(
+                ([key, val]: [string, unknown]) => (
+                    <section class={key}>
+                        {(val as string)
+                            .replace(/[\t\`]/g, "")
+                            .split(/ /)
+                            .join(" ")
+                            .trim()}
+                    </section>
+                ),
+            )}
         </article>
     ))
 }

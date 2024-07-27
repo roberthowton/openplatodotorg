@@ -4,25 +4,42 @@ import StephanusPage from "../components/StephanusPage.astro";
 
 import { getEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import { symbolName } from "typescript";
-import { any, array } from "astro/zod";
-const alcibiades = await getEntry("dialogs", "Alcibiades_a/Original");
-const blondell = await getEntry("dialogs", "Alcibiades_a/Blondell");
+import type { InferEntrySchema } from "astro:content";
 const dialogs = await getCollection("dialogs");
-const Alcibiades_a = await getCollection("dialogs", ({ id }) => {
-	return id.startsWith("Alcibiades_a");
-});
 
-// console.log(alcibiades.data);
+type DialogEntry = {
+	id: string;
+	collection: string;
+	data: InferEntrySchema<"dialogs">;
+};
 
-const getDialogs = (query: string, suffix?: string) =>
+type DialogEntry2 = {
+	id: string;
+	collection: string;
+	data: Record<string, Partial<Record<string, string>>>;
+};
+
+const getDialogs = (query: string, suffix?: string): Array<DialogEntry> =>
 	dialogs.filter(({ id }) => {
 		return suffix ? id.match(query + "/" + suffix) : id.startsWith(query);
 	});
 
-const getDialog = (query: string, suffix: string) =>
-	dialogs.find(({ id }) => id.match(query + "/" + suffix));
+const getDialog = (query: string, suffix: string): DialogEntry =>
+	dialogs.filter(({ id }) => {
+		return id.match(`${query}/${suffix}`);
+	})[0];
+
+const getDialog2 = async (query: string, suffix: string) => {
+	var tmp = {};
+	await getEntry({ collection: "dialogs", id: `${query}/${suffix}` }).then(
+		(value) => {
+			return value;
+		},
+	);
+};
+
+// var tmp = getDialog2("Alcibiades_a", "Blondell");
+// console.log("\n", tmp, typeof tmp);
 
 var options = {};
 dialogs.forEach(({ id }) => {
@@ -60,15 +77,16 @@ dialogs.forEach(({ id }) => {
 		}
 	</select>
 </div>
+{JSON.stringify(dialogs[1].data[0])}
 <DefaultLayout>
 	<div id="page_1">
 		<StephanusPage
-			collection={getDialogs("Alcibiades_a", "Original")[0].data}
+			collection={getDialog("Alcibiades_a", "Original").data}
 		/>
 	</div>
 	<div id="page_2">
 		<StephanusPage
-			collection={getDialogs("Alcibiades_a", "Blondell")[0].data}
+			collection={getDialog("Alcibiades_a", "Blondell").data}
 		/>
 	</div>
 </DefaultLayout>

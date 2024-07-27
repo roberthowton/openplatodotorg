@@ -10,12 +10,23 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.8.1",
-    "@astrojs/node": "^8.3.2",
-    "astro": "^4.11.5",
-    "typescript": "^5.5.3"
+    "@astrojs/check": "^0.8.2",
+    "@astrojs/react": "^3.6.0",
+    "astro": "^4.12.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.5.3",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
-    "react": "^18.3.1"
+    "@nanostores/react": "^0.7.2",
+    "@types/node": "^20.14.11",
+    "@types/react": "^18.3.3",
+    "@typescript-eslint/parser": "^7.16.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^1.2.3",
+    "nanostores": "^0.10.3",
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }
