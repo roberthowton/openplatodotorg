@@ -1,16 +1,17 @@
 ---
 import { getEntry } from "astro:content";
 import PageLayout from "../layouts/page-layout.astro";
-import DialogContainer from "../components/dialog-container"
+import DialogContainer from "../components/dialog-container";
 import ShowDropdown from "../components/show-dropdown";
 
 const english = await getEntry("dialogs", "alcibiades-one/english");
 const greek = await getEntry("dialogs", "alcibiades-one/greek");
 ---
+
 <PageLayout>
-		<h1>Dialog Test</h1>
-		<ShowDropdown client:load/>
-		<main>
-			<DialogContainer englishText={english} greekText={greek} client:load/>
-		</main>
-	</PageLayout>
+  <h1>Dialog Test</h1>
+  <ShowDropdown client:load />
+  <main>
+    <DialogContainer englishText={english} greekText={greek} client:load />
+  </main>
+</PageLayout>
