@@ -1,0 +1,23 @@
+---
+import { getEntry } from "astro:content";
+import DialogV2Container from "../components/dialogV2-container";
+import ShowDropdown from "../components/show-dropdown";
+import PageLayout from "../layouts/page-layout.astro";
+
+const english = await getEntry("dialogV2", "alcibiades-one/english");
+const greek = await getEntry("dialogV2", "alcibiades-one/greek");
+---
+
+<PageLayout>
+  <h1>Dialog with Commentary Test</h1>
+  <ShowDropdown client:load />
+  <main>
+    <DialogV2Container greekText={greek} englishText={english} client:load />
+  </main>
+</PageLayout>
+
+<style>
+  main {
+    padding: 1rem 0rem;
+  }
+</style>
