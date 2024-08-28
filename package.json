@@ -1,7 +1,22 @@
 {
   "name": "openplatodotorg",
-  "type": "module",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openplato/openplatodotorg.git"
+  },
+  "keywords": [
+    "plato",
+    "alcibiades",
+    "philosophy",
+    "digital humanities"
+  ],
+  "author": "Open Plato Project",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openplato/openplatodotorg/issues"
+  },
+  "homepage": "https://github.com/openplato/openplatodotorg#readme",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -10,23 +25,21 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.8.2",
-    "@astrojs/react": "^3.6.0",
-    "astro": "^4.12.1",
+    "@astrojs/check": "^0.9.1",
+    "@astrojs/react": "^3.6.1",
+    "astro": "^4.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.5.3",
-    "utf8": "^3.0.0"
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@nanostores/react": "^0.7.2",
-    "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
-    "@typescript-eslint/parser": "^7.16.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-astro": "^1.2.3",
+    "@typescript-eslint/parser": "^7.14.1",
+    "eslint": "^9.5.0",
+    "eslint-plugin-astro": "^1.2.2",
     "nanostores": "^0.10.3",
-    "prettier": "^3.3.3",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier": "^3.3.2",
+    "prettier-plugin-astro": "^0.14.0"
   }
 }

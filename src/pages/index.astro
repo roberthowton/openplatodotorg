@@ -1,92 +1,25 @@
 ---
-import DefaultLayout from "../layouts/DefaultLayout.astro";
-import StephanusPage from "../components/StephanusPage.astro";
-
 import { getEntry } from "astro:content";
-import { getCollection } from "astro:content";
-import type { InferEntrySchema } from "astro:content";
-const dialogs = await getCollection("dialogs");
-
-type DialogEntry = {
-	id: string;
-	collection: string;
-	data: InferEntrySchema<"dialogs">;
-};
-
-type DialogEntry2 = {
-	id: string;
-	collection: string;
-	data: Record<string, Partial<Record<string, string>>>;
-};
-
-const getDialogs = (query: string, suffix?: string): Array<DialogEntry> =>
-	dialogs.filter(({ id }) => {
-		return suffix ? id.match(query + "/" + suffix) : id.startsWith(query);
-	});
-
-const getDialog = (query: string, suffix: string): DialogEntry =>
-	dialogs.filter(({ id }) => {
-		return id.match(`${query}/${suffix}`);
-	})[0];
-
-const getDialog2 = async (query: string, suffix: string) => {
-	var tmp = {};
-	await getEntry({ collection: "dialogs", id: `${query}/${suffix}` }).then(
-		(value) => {
-			return value;
-		},
-	);
-};
-
-// var tmp = getDialog2("Alcibiades_a", "Blondell");
-// console.log("\n", tmp, typeof tmp);
-
-var options = {};
-dialogs.forEach(({ id }) => {
-	var parts = ((a) => ({ dialog: a[0], author: a[1] }))(id.split("/"));
-	if (!Object.hasOwn(options, parts.dialog)) {
-		Object.defineProperty(options, parts.dialog, {
-			value: [],
-			enumerable: true,
-		});
-	}
-	var tmp: Object[] = Object.getOwnPropertyDescriptor(
-		options,
-		parts.dialog,
-	)?.value;
-	tmp.push(parts.author);
-});
+import PageLayout from "../layouts/page-layout.astro";
+import DialogContainer from "../components/dialog-container";
+import ShowDropdown from "../components/show-dropdown";
+import type { DialogContainerProps } from "../components/dialog-container";
+async function translations(dialog: string): Promise<DialogContainerProps> {
+  return {
+    EN: await getEntry("dialogs", `${dialog}/english`),
+    EL: await getEntry("dialogs", `${dialog}/greek`),
+  };
+}
+// const english = await getEntry("dialogs", "alcibiades-one/english");
+// const greek = await getEntry("dialogs", "alcibiades-one/greek");
+const alcibiades = await translations("alcibiades-one");
+// const template = await translations("template");
 ---
 
-<div id="search" slot="search">
-	<label for="search">Search: </label>
-	<input type="text" name="search" />
-	<label for="dialogs">Dialogs</label>
-	<select name="dialogs">
-		<option selected>--</option>
-		{
-			Object.entries(options).map(([key, val]: [string, any]) => (
-				<optgroup label={key}>
-					{Object.entries(val).map(([, val]: [string, any]) => (
-						<option>
-							{key}/{val}
-						</option>
-					))}
-				</optgroup>
-			))
-		}
-	</select>
-</div>
-{JSON.stringify(dialogs[1].data[0])}
-<DefaultLayout>
-	<div id="page_1">
-		<StephanusPage
-			collection={getDialog("Alcibiades_a", "Original").data}
-		/>
-	</div>
-	<div id="page_2">
-		<StephanusPage
-			collection={getDialog("Alcibiades_a", "Blondell").data}
-		/>
-	</div>
-</DefaultLayout>
+<PageLayout>
+  <h1>Dialog Test</h1>
+  <ShowDropdown client:load />
+  <main>
+    <DialogContainer EN={alcibiades.EN} EL={alcibiades.EL} client:load />
+  </main>
+</PageLayout>
