@@ -3,15 +3,23 @@ import { getEntry } from "astro:content";
 import PageLayout from "../layouts/page-layout.astro";
 import DialogContainer from "../components/dialog-container";
 import ShowDropdown from "../components/show-dropdown";
-
-const english = await getEntry("dialogs", "alcibiades-one/english");
-const greek = await getEntry("dialogs", "alcibiades-one/greek");
+import type { DialogContainerProps } from "../components/dialog-container";
+async function translations(dialog: string): Promise<DialogContainerProps> {
+  return {
+    EN: await getEntry("dialogs", `${dialog}/english`),
+    EL: await getEntry("dialogs", `${dialog}/greek`),
+  };
+}
+// const english = await getEntry("dialogs", "alcibiades-one/english");
+// const greek = await getEntry("dialogs", "alcibiades-one/greek");
+const alcibiades = await translations("alcibiades-one");
+// const template = await translations("template");
 ---
 
 <PageLayout>
   <h1>Dialog Test</h1>
   <ShowDropdown client:load />
   <main>
-    <DialogContainer englishText={english} greekText={greek} client:load />
+    <DialogContainer EN={alcibiades.EN} EL={alcibiades.EL} client:load />
   </main>
 </PageLayout>
