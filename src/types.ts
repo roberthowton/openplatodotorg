@@ -1,5 +1,7 @@
 export enum ShowState {
   GREEK = "greek",
   ENGLISH = "english",
-  BOTH = "both"
+  BOTH = "both",
 }
+
+export type UrlParams = "ref";
