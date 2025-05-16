@@ -1,5 +1,5 @@
 ---
-import "../styles/Stephanus.css";
+import "../styles/reset.css";
 import Head from "../components/head.astro";
 ---
 
@@ -10,47 +10,3 @@ import Head from "../components/head.astro";
     <slot />
   </body>
 </html>
-<script>
-  let stylerules = () => {
-    let ss = document.styleSheets[Symbol.iterator]();
-    let res = ss.next();
-    let t = 0;
-
-    while (!res.done || t > 10) {
-      console.log(res.done, res.value);
-      res = ss.next();
-      t++;
-    }
-
-    console.log("------------");
-
-    ss = document.styleSheets[Symbol.iterator]();
-    let sl = document.styleSheets;
-    Array.from(sl).forEach((sheet: CSSStyleSheet) => {
-      console.log(sheet);
-      switch (sheet.ownerNode?.nodeName) {
-        case "STYLE":
-          console.log(" -", sheet.cssRules);
-          let rules = sheet.cssRules;
-          console.log(Array.from(rules));
-          Array.from(rules).forEach((rule: CSSRule) => {
-            console.log("  -", rule);
-
-            (rule as CSSStyleRule).styleMap.forEach((t) => {
-              console.log(t, " | ", t.toString());
-            });
-
-            console.log((rule as CSSStyleRule).cssText.replace("{", "{\n"));
-          });
-          break;
-        case "LINK":
-          console.log(" -", sheet.href);
-          break;
-      }
-    });
-  };
-
-  setTimeout(stylerules, 1000);
-
-  // stylerules();
-</script>
