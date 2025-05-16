@@ -4,6 +4,7 @@ import {
   handleLineBegin,
   handleLabel,
   handleTeiHeader,
+  handleDiv,
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
 import type { UrlParams } from "../types";
@@ -12,6 +13,7 @@ export * from "./behaviors";
 
 export const customBehaviors = {
   teiHeader: handleTeiHeader,
+  div: handleDiv,
   milestone: handleStephanusMilestone,
   lb: handleLineBegin,
   label: handleLabel,
