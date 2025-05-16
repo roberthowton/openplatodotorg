@@ -1,4 +1,4 @@
-export const handleTeiHeader = (element: HTMLElement) => {
+export const handleTeiHeader = (element: Element) => {
   // hide elements displayed by default
   const title = element.querySelector("tei-title");
   const author = element.querySelector("tei-author");
