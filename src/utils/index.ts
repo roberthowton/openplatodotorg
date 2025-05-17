@@ -1,6 +1,4 @@
-import type { DialogContainerProps } from "../components/dialog-container";
 import {
-  handleStephanusMilestone,
   handleLineBegin,
   handleLabel,
   handleTeiHeader,
@@ -8,30 +6,33 @@ import {
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
 import type { UrlParams } from "../types";
+import { STEPHANUS_COLUMN_REGEX } from "../consts";
 
 export * from "./behaviors";
 
 export const customBehaviors = {
   teiHeader: handleTeiHeader,
   div: handleDiv,
-  milestone: handleStephanusMilestone,
+  // milestone: handleStephanusMilestone,
   lb: handleLineBegin,
   label: handleLabel,
+  said: handleSaid,
 };
 
-export const wrapTextNode = (
-  textNode: Node | Range,
-  wrapperElement: keyof HTMLElementTagNameMap,
+export const parseStephanusReference = (reference: string) => {
+  const [page, column, line] = reference.split(STEPHANUS_COLUMN_REGEX);
+  return { page, column, line };
+};
+
+export const getStephanusLineMarker = (
+  page: string,
+  column: string,
+  line: string,
 ) => {
-  if (textNode instanceof Range) {
-    const wrapper = document.createElement(wrapperElement);
-    textNode.surroundContents(wrapper);
-    return wrapper;
-  } else if (textNode.nodeType === Node.TEXT_NODE) {
-    const wrapper = document.createElement(wrapperElement);
-    textNode.parentNode?.insertBefore(wrapper, textNode);
-    wrapper.appendChild(textNode);
-    return wrapper;
+  if (line === "1") {
+    return column === "a" ? page : column;
+  } else {
+    return line;
   }
 };
 

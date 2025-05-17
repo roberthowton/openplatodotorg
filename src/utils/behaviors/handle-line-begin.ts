@@ -1,8 +1,8 @@
-import { wrapTextNode } from "..";
+import { getStephanusLineMarker, parseStephanusReference } from "..";
 import {
-  LINE_MARKER_STYLE,
+  ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE,
+  GRID_STYLE,
   LINE_NUMBERS_TO_DISPLAY,
-  STEPHANUS_COLUMN_REGEX,
 } from "../../consts";
 
 export const handleLineBegin = (element: HTMLElement) => {
@@ -21,26 +21,35 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const rangeToNextLineBegin = getRangeToNextLineBegin(element);
 
-  const wrappedTextNode = wrapTextNode(rangeToNextLineBegin, "span");
+  const textDiv = renderRangeInDiv(rangeToNextLineBegin);
 
-  if (!wrappedTextNode) {
-    return;
-  }
+  element.appendChild(textDiv);
+
+  Object.assign(element.style, {
+    ...GRID_STYLE,
+  });
 
   const stephanusReference = element.getAttribute("n") ?? "";
-  wrappedTextNode.id = stephanusReference;
+  element.id = stephanusReference;
+  textDiv.id = `${stephanusReference}-text`;
 
-  const lineNumber = getLineNumberFromStephanusReference(stephanusReference);
+  const { page, column, line } = parseStephanusReference(stephanusReference);
 
-  if (LINE_NUMBERS_TO_DISPLAY.includes(lineNumber)) {
-    const lineMarker = document.createElement("b");
-    lineMarker.innerText = lineNumber;
+  if (LINE_NUMBERS_TO_DISPLAY.includes(line)) {
+    const lineMarker = document.createElement("strong");
+    lineMarker.innerText =
+      stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE
+        ? column
+        : getStephanusLineMarker(page, column, line);
+
     Object.assign(lineMarker.style, {
-      ...LINE_MARKER_STYLE,
-      fontWeight: 400,
+      gridColumn: "annotation",
+      userSelect: "none",
+      fontWeight: 800,
+      fontStyle: "italic",
     });
 
-    wrappedTextNode.appendChild(lineMarker);
+    element.appendChild(lineMarker);
   }
 };
 
@@ -54,16 +63,54 @@ const getNextTextNode = (element: HTMLElement) => {
 
 const getRangeToNextLineBegin = (element: HTMLElement) => {
   const range = document.createRange();
+  let shouldSetRangeEndAfter = false;
+
+  range.setStartAfter(element);
+
   let rangeEnd = element?.nextSibling;
   while (rangeEnd && rangeEnd.nodeName !== "TEI-LB") {
-    rangeEnd = rangeEnd.nextSibling;
+    if (rangeEnd.nextSibling) {
+      rangeEnd = rangeEnd.nextSibling;
+    } else {
+      shouldSetRangeEndAfter = true;
+      break;
+    }
   }
-  range.setStartAfter(element);
+
   if (rangeEnd) {
-    range.setEndBefore(rangeEnd);
+    if (shouldSetRangeEndAfter) {
+      range.setEndAfter(rangeEnd);
+    } else {
+      range.setEndBefore(rangeEnd);
+    }
   }
+
   return range;
 };
 
-const getLineNumberFromStephanusReference = (reference: string) =>
-  reference.split(STEPHANUS_COLUMN_REGEX).slice(-1).toString();
+const renderRangeInDiv = (range: Range) => {
+  const container = document.createElement("div");
+  let labelText = "";
+
+  const dom = range.extractContents();
+  dom
+    .querySelectorAll("tei-milestone")
+    .forEach((milestone) => milestone.remove());
+
+  const label = dom.querySelector("tei-label");
+  if (label) {
+    labelText = label.innerHTML;
+    label.remove();
+  }
+
+  const text = dom.textContent ?? "";
+
+  container.innerHTML = `${labelText ? `<b>${labelText}</b>` : ""} ${text.trim()}`;
+  Object.assign(container.style, {
+    display: "block",
+    gridColumn: "text",
+    textAlign: "justify",
+    ...(labelText && { marginLeft: "2rem" }),
+  });
+  return container;
+};

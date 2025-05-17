@@ -57,8 +57,7 @@ const { pages } = Astro.props;
   function selectItem(value: string | null) {
     searchInput.value = value || "";
     dropdownList.style.display = "none";
-    const selectedLine = document.querySelector(`span[id='${value}']`);
-    console.log("item preselected");
+    const selectedLine = document.querySelector(`div[id='${value}-text']`);
 
     if (value && selectedLine) {
       selectedLine.scrollIntoView({ behavior: "smooth" });
