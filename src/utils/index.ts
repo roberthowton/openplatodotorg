@@ -16,7 +16,6 @@ export const customBehaviors = {
   // milestone: handleStephanusMilestone,
   lb: handleLineBegin,
   label: handleLabel,
-  said: handleSaid,
 };
 
 export const parseStephanusReference = (reference: string) => {
