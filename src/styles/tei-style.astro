@@ -16,4 +16,16 @@ import TeiBaseStyle from "./tei-base-style.astro";
   tei-said {
     margin: 0;
   }
+
+  .stephanus-line:after {
+    /* workaround to justify text */
+    content: "";
+    display: inline-block;
+    width: 100%;
+  }
+
+  .stephanus-line {
+    /* fix space added by workaround */
+    height: 1.5em;
+  }
 </style>

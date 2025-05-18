@@ -23,6 +23,17 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const textDiv = renderRangeInDiv(rangeToNextLineBegin);
 
+  if (element.getAttribute("n") === "104c6") {
+    console.log({ element: element.nextElementSibling });
+  }
+
+  // add class to handle justify text
+  if (!element.nextSibling) {
+    textDiv.classList.add("stephanus-line-last");
+  } else {
+    textDiv.classList.add("stephanus-line");
+  }
+
   element.appendChild(textDiv);
 
   Object.assign(element.style, {
@@ -36,14 +47,14 @@ export const handleLineBegin = (element: HTMLElement) => {
   const { page, column, line } = parseStephanusReference(stephanusReference);
 
   if (LINE_NUMBERS_TO_DISPLAY.includes(line)) {
-    const lineMarker = document.createElement("strong");
+    const lineMarker = document.createElement("b");
     lineMarker.innerText =
       stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE
         ? column
         : getStephanusLineMarker(page, column, line);
 
     Object.assign(lineMarker.style, {
-      gridColumn: "annotation",
+      gridColumn: "lineRef",
       userSelect: "none",
       fontWeight: 800,
       fontStyle: "italic",

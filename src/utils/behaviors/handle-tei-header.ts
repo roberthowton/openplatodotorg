@@ -52,7 +52,7 @@ export const handleTeiHeader = (element: Element) => {
   Object.assign(startingPageDiv.style, {
     fontStyle: "italic",
     fontWeight: "800",
-    gridColumn: "annotation",
+    gridColumn: "lineRef",
   });
   startingPageDiv.innerText = page;
   dramatisPersonaeContainer.appendChild(startingPageDiv);

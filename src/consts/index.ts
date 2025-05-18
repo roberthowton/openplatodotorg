@@ -7,7 +7,7 @@ export const LINE_MARKER_STYLE: Partial<CSSStyleDeclaration> = {
 
 export const GRID_STYLE = {
   display: "grid",
-  gridTemplateColumns: "[text] 14fr [annotation] 1fr",
+  gridTemplateColumns: "[text] 14fr [lineRef] 1fr",
   gridColumnGap: "1rem",
   justifyItems: "stretch",
 };
