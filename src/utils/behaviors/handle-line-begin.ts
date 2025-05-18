@@ -23,10 +23,6 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const textDiv = renderRangeInDiv(rangeToNextLineBegin);
 
-  if (element.getAttribute("n") === "104c6") {
-    console.log({ element: element.nextElementSibling });
-  }
-
   // add class to handle justify text
   if (!element.nextSibling) {
     textDiv.classList.add("stephanus-line-last");
