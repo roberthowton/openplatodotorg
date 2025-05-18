@@ -55,6 +55,8 @@ export const handleTeiHeader = (element: Element) => {
     gridColumn: "lineRef",
   });
   startingPageDiv.innerText = page;
+  startingPageDiv.ariaHidden = "true";
+
   dramatisPersonaeContainer.appendChild(startingPageDiv);
 
   //append dramatis personae container to tei-head element

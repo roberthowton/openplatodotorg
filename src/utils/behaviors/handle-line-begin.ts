@@ -58,6 +58,8 @@ export const handleLineBegin = (element: HTMLElement) => {
       fontStyle: "italic",
     });
 
+    lineMarker.ariaHidden = "true";
+
     element.appendChild(lineMarker);
   }
 };
