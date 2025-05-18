@@ -3,6 +3,7 @@ import {
   handleLabel,
   handleTeiHeader,
   handleDiv,
+  handleHead,
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
 import type { UrlParams } from "../types";
@@ -13,9 +14,9 @@ export * from "./behaviors";
 export const customBehaviors = {
   teiHeader: handleTeiHeader,
   div: handleDiv,
-  // milestone: handleStephanusMilestone,
   lb: handleLineBegin,
   label: handleLabel,
+  head: handleHead,
 };
 
 export const parseStephanusReference = (reference: string) => {
