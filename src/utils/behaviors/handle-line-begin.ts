@@ -25,7 +25,12 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   // add class to handle justify text
   const isLastLine = !element.nextSibling;
-  textDiv.classList.add(isLastLine ? "stephanus-line-last" : "stephanus-line");
+  textDiv.classList.add("stephanus-line");
+
+  // exclude the last line in each speech block
+  if (isLastLine) {
+    textDiv.classList.add("last");
+  }
 
   element.appendChild(textDiv);
 

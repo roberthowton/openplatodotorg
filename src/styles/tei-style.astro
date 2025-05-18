@@ -17,7 +17,7 @@ import TeiBaseStyle from "./tei-base-style.astro";
     margin: 0;
   }
 
-  .stephanus-line:after {
+  .stephanus-line:not(.last):after {
     /* workaround to justify text */
     content: "";
     display: inline-block;
