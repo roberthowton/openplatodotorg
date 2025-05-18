@@ -24,11 +24,8 @@ export const handleLineBegin = (element: HTMLElement) => {
   const textDiv = renderRangeInDiv(rangeToNextLineBegin);
 
   // add class to handle justify text
-  if (!element.nextSibling) {
-    textDiv.classList.add("stephanus-line-last");
-  } else {
-    textDiv.classList.add("stephanus-line");
-  }
+  const isLastLine = !element.nextSibling;
+  textDiv.classList.add(isLastLine ? "stephanus-line-last" : "stephanus-line");
 
   element.appendChild(textDiv);
 
