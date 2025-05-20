@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader xml:lang="eng">
+
+        <fileDesc>
+
+            <titleStmt>
+                <title>Alcibiades 1</title>
+                <author>Plato</author>
+                <editor role="translator">Walter Rangeley Maitland Lamb</editor>
+                <sponsor>Perseus Project, Tufts University</sponsor>
+                <principal>Gregory Crane</principal>
+                <respStmt>
+                    <resp>Prepared under the supervision of</resp>
+                    <name>Lisa Cerrato</name>
+                    <name>William Merrill</name>
+                    <name>Elli Mylonas</name>
+                    <name>David Smith</name>
+                </respStmt>
+                <funder n="org:AnnCPB">The Annenberg CPB/Project</funder>
+
+            </titleStmt>
+
+
+            <publicationStmt>
+                <publisher>Trustees of Tufts University</publisher>
+                <pubPlace>Medford, MA</pubPlace>
+                <authority>Perseus Project</authority>
+                <date type="release">1996</date>
+            </publicationStmt>
+            <notesStmt>
+                <note anchored="true">Text was scanned at St. Olaf Spring, 1992.</note>
+                <note>Perseus 2.0</note>
+            </notesStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <monogr>
+                        <author>Plato</author>
+                        <title>Plato in Twelve Volumes</title>
+                        <editor role="translator">Walter Rangeley Maitland Lamb</editor>
+                        <imprint>
+                            <pubPlace>Cambridge, MA</pubPlace>
+                            <publisher>Harvard University Press</publisher>
+                            <pubPlace>London</pubPlace>
+                            <publisher>William Heinemann Ltd.</publisher>
+                            <date type="printing">1927</date>
+                            <note>volumes renumbered in various printings</note>
+                        </imprint>
+                        <biblScope unit="volume">12</biblScope>
+                    </monogr>
+                    <ref target="https://archive.org/details/b2900049x_0012/page/99/mode/1up">Internet
+                        Archive</ref>
+                </biblStruct>
+            </sourceDesc>
+
+
+        </fileDesc>
+
+        <encodingDesc>
+            <refsDecl n="CTS">
+                <cRefPattern n="section" matchPattern="(\w+)"
+                    replacementPattern="#xpath(/tei:TEI/tei:text/tei:body/tei:div/tei:div[@n='$1'])">
+                    <p>This pointer pattern extracts section</p>
+                </cRefPattern>
+            </refsDecl>
+
+            <!--<refsDecl
+            doctype="TEI.2">
+<state unit="text"/>
+<state unit="section"/>
+</refsDecl>
+<refsDecl doctype="TEI.2">
+<state unit="text"/>
+<state unit="page"/>
+</refsDecl>-->
+        </encodingDesc>
+
+        <profileDesc>
+            <langUsage>
+                <language ident="eng">English</language>
+                <language ident="grc">Greek</language>
+            </langUsage>
+            <particDesc>
+                <person>
+                    <persName>Socrates</persName>
+                </person>
+                <person>
+                    <persName>Alcibiades</persName>
+                </person>
+            </particDesc>
+        </profileDesc>
+        <revisionDesc>
+            <change when="2017-05-15" who="Lisa Cerrato">EpiDoc and CTS conversion.</change>
+            <change when="2014-07-01" who="Stella Dee">split composite text and converted to unicode</change>
+            <change when="1992-07-01" who="WPM">Tagged in conformance with Prose.e dtd.</change>
+        </revisionDesc>
+
+    </teiHeader>
+
+    <text xml:lang="eng">
+        <body>
+            <div type="translation" n="urn:cts:greekLit:tlg0059.tlg013.perseus-eng2" xml:lang="eng">
+                <head>Alcibiades 1</head>
+                <said who="#Socrates">
+                    <p>
+                        <lb n="103a1" />
+                        <milestone unit="page" resp="Stephanus" n="103" />
+                        <milestone
+                            unit="section" resp="Stephanus" n="103a" />
+                        <label>Soc.</label> Son of
+                        Cleinias, I think it must surprise you that I, the first of all your lovers, <lb
+                            n="103a2" />am the only one of them who has not given up his suit and
+                        thrown you over, <lb n="103a3" />and whereas they have all pestered you with
+                        their conversation I have not <lb n="103a4" />spoken one word to you for so
+                        many years. The cause of this has been nothing <lb n="103a5" /> human, but a
+                        certain spiritual opposition, <!-- <note anchored="true"
+                        resp="Loeb">Socrates
+                        refers to the <q type="emph">spiritual sign</q> which occasionally warned
+                        him against an intended action: cf. <bibl n="Plat. Apol. 31c">Plat.
+                                Apol. 31c-d</bibl>, <bibl n="Plat. Apol. 40a">Plat. Apol. 40a-b</bibl>
+                        .</note> -->
+                        <lb n="103a6" />of whose power you shall be
+                        informed at some later time. However, it now opposes me no longer, <lb
+                            n="103b1" /><milestone
+                            unit="section"
+                            resp="Stephanus"
+                            n="103b" />so I have accordingly come to you; and I am in good hopes <lb
+                            n="103b2" />that it will not oppose me again in the future. Now I have
+                        been observing <lb n="103b3" />you all this time, and have formed a pretty
+                        good notion of your behavior to <lb n="103b4" />your lovers: for although
+                        they were many and high-spirited, everyone of them <lb n="103b5" />has found
+                        your spirit too strong for him and has run away. <lb n="104a1" />
+                <milestone
+                            unit="page" resp="Stephanus" n="104" />
+                <milestone unit="section"
+                            resp="Stephanus" n="104a" /> Let me explain the reason of your spirit <lb
+                            n="104a2" />being too much for them. You say you have no need of any man
+                        in any matter; <lb n="104a3" />for your resources are so great, beginning
+                        with the body and ending with the <lb n="104a4" />soul, that you lack
+                        nothing. You think, in the first place, that you are <lb n="104a5" />foremost
+                        in beauty and stature—and you are not mistaken in this, as is plain <lb
+                            n="104a6" />for all to see—and in the second place, that you are of the
+                        most gallant <lb n="104a7" />family in your city, the greatest city in <placeName
+                            key="tgn,1000074">Greece</placeName>, and <lb n="104b1" /><milestone
+                            unit="section"
+                            resp="Stephanus" n="104b" />that there you have, through your father, <lb
+                            n="104b2" />very many of the best people as your friends and kinsmen,
+                        who would assist <lb n="104b3" />you in case of need, and other connections
+                        also, through your mother, who <lb n="104b4" />are not a whit inferior to
+                        these, nor fewer. And you reckon upon a stronger <lb n="104b5" />power than
+                        all those that I have mentioned, in Pericles, son of Xanthippus, <lb
+                            n="104b6" />whom your father left as guardian of you and your brother
+                        when he died, and <lb n="104b7" />who is able to do whatever he likes not
+                        only in this city but all over <lb n="104b8" /><placeName
+                            key="tgn,1000074">Greece</placeName> and among many great nations of the
+                        barbarians. <lb n="104c1" /><milestone unit="section" resp="Stephanus"
+                            n="104c" />And I will add besides the wealth of your house: but on this, <lb
+                            n="104c2" />I observe, you presume least of all. Well, you puff yourself
+                        up on all these <lb n="104c3" />advantages, and have overcome your lovers,
+                        while they in their inferiority <lb n="104c4" />have yielded to your might,
+                        and all this has not escaped you; so I am very <lb n="104c5" />sure that you
+                        wonder what on earth I mean by not getting rid of my passion, <lb n="104c7" />and
+                        what can be my hope in remaining when the rest have fled. </p>
+                </said>
+                <said who="#Alcibiades">
+                    <p>
+                        <lb n="104c8" /><label>Alc.</label> Perhaps also, Socrates, you are not
+                        aware that <lb
+                            n="104d1" /> <milestone
+                            unit="section" resp="Stephanus" n="104d" />you have only just
+                        anticipated me. For I, in fact, had the intention of coming and asking you <lb
+                            n="104d2" />first that very same question—what is your aim and
+                        expectation in bothering <lb n="104d3" />me by making a particular point of
+                        always turning up wherever I may be. For <lb
+                            n="104d4" />I really do wonder what can be your object, and should be
+                        very glad if you <lb
+                            n="104d5" />would tell me. </p>
+                </said>
+                <said who="#Socrates">
+                    <p>
+                        <lb
+                            n="104d6" /><label>Soc.</label> Then you will listen to me, presumably,
+                        with keen <lb
+                            n="104d7" />attention if, as you say, you long to know what I mean, and
+                        I have in you a <lb
+                            n="104d8" />listener who will stay to hear me out. </p>
+                </said>
+                <said who="#Alcibiades">
+                    <p><lb
+                            n="104d9" /><label>Alc.</label> Why, to be sure: only speak.</p>
+                </said>
+
+                <said who="#Socrates">
+                    <p>
+                        <lb n="104e1" />
+                        <milestone unit="section" resp="Stephanus" n="104e" />
+                        <label>
+                        Soc.</label> Look to it, then; for it would be no wonder if I should make as <lb
+                            n="104e2" />much difficulty about stopping as I have made about
+                        starting. </p>
+                </said>
+                <said who="#Alcibiades">
+                    <p>
+                        <lb n="104e3" /><label>Alc.</label> My good sir, speak; for I will listen. </p>
+                </said>
+            </div>
+
+        </body>
+    </text>
+
+</TEI>

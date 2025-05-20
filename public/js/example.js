@@ -23,7 +23,7 @@ $(document).ready(function(){
 		$(commentid).toggle();
 	}
 	$('.hl').click(hlclick);
-	$('.hl').hover(function(e){
+	$('.hl').hover(function(){
 		hlid = $(this).attr('id').substring(1);
 		greekid = '#g'+hlid;
 		englishid = '#e'+hlid;
@@ -50,7 +50,7 @@ $(document).ready(function(){
 		'grid-auto-columns': 		'485px 525px 1fr',
 		'padding': 					'5rem 0rem'
 	};
-	$('#nav-greek').click(function(e){
+	$('#nav-greek').click(function(){
 		if($('#greek:visible').length==1){
 			$('#greek').hide();
 			$(this).removeClass('current-view');
@@ -83,7 +83,7 @@ $(document).ready(function(){
 			}
 		}
 	});
-	$('#nav-comments').click(function(e){
+	$('#nav-comments').click(function(){
 		if($('#comments:visible').length==1){
 			$('#comments').hide();
 			$(this).removeClass('current-view');
@@ -112,7 +112,7 @@ $(document).ready(function(){
 			}
 		}
 	});
-	$('#nav-frs').click(function(e){
+	$('#nav-frs').click(function(){
 		if($('#greek:visible').length==1){
 			$('#greek').hide();
 			$('#nav-greek').removeClass('current-view');
@@ -143,7 +143,7 @@ $(document).ready(function(){
 			
 		}		
 	});
-	$('#nav-sch').click(function(e){
+	$('#nav-sch').click(function(){
 		if(!$(this).hasClass('current-view')){ //store scholarly and load fr
 			$('#english').html($('#english-tmp').html());
 			$('#comments').html($('#comments-tmp').html());

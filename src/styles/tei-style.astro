@@ -1,0 +1,31 @@
+---
+import TeiBaseStyle from "./tei-base-style.astro";
+---
+
+<TeiBaseStyle />
+<style is:inline>
+  tei-note cetei-content {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 0.5em;
+    margin: 0.5em 0;
+  }
+  tei-p {
+    margin: 0;
+  }
+  tei-said {
+    margin: 0;
+  }
+
+  .stephanus-line:not(.last):after {
+    /* workaround to justify text */
+    content: "";
+    display: inline-block;
+    width: 100%;
+  }
+
+  .stephanus-line {
+    /* fix space added by workaround */
+    height: 1.5em;
+  }
+</style>

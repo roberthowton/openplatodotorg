@@ -1,0 +1,122 @@
+---
+type Props = {
+  pages: (string | null)[];
+};
+
+const ref = Astro.url.searchParams.get("ref");
+const initialValue = ref ?? "";
+
+const { pages } = Astro.props;
+---
+
+<div class="dropdown" data-lines={JSON.stringify(pages)}>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Go to reference..."
+    autocomplete="off"
+    value={initialValue}
+  />
+  <ul id="dropdownList" class="dropdown-list"></ul>
+</div>
+
+<script>
+  import { addOrUpdateUrlParam } from "../utils";
+
+  const dropdown = document.querySelector(".dropdown") as HTMLElement;
+  const searchInput = document.getElementById(
+    "searchInput",
+  ) as HTMLInputElement;
+  const dropdownList = document.getElementById("dropdownList") as HTMLElement;
+
+  const items: (string | null)[] = JSON.parse(dropdown?.dataset?.lines || "[]");
+
+  function filterItems(searchText: string) {
+    // Convert input to lowercase for case-insensitive search
+    const filteredItems = items.filter((item) =>
+      item?.toLowerCase().includes(searchText.toLowerCase()),
+    );
+
+    // Clear previous results
+    dropdownList.innerHTML = "";
+
+    // Show the dropdown only if results exist
+    if (filteredItems.length > 0) {
+      dropdownList.style.display = "block";
+      filteredItems.forEach((item) => {
+        let li = document.createElement("li");
+        li.innerText = item ?? "";
+        li.onclick = () => selectItem(item);
+        dropdownList.appendChild(li);
+      });
+    } else {
+      dropdownList.style.display = "none";
+    }
+  }
+
+  function selectItem(value: string | null) {
+    searchInput.value = value || "";
+    dropdownList.style.display = "none";
+    const selectedLine = document.querySelector(`div[id='${value}-text']`);
+
+    if (value && selectedLine) {
+      selectedLine.scrollIntoView({ behavior: "smooth" });
+      selectedLine.classList.add("highlight");
+      addOrUpdateUrlParam("ref", value);
+      setTimeout(() => {
+        selectedLine.classList.remove("highlight");
+      }, 2000);
+    }
+  }
+
+  document.onreadystatechange = () => {
+    if (document.readyState === "complete" && searchInput.value) {
+      selectItem(searchInput.value);
+    }
+  };
+
+  // Listen for input changes
+  searchInput.addEventListener("input", () => filterItems(searchInput.value));
+</script>
+
+<style is:global>
+  .highlight {
+    background-color: yellow;
+  }
+</style>
+
+<style>
+  .dropdown {
+    position: relative;
+    width: 300px;
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .dropdown-list {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    list-style: none;
+    padding: 0;
+  }
+
+  .dropdown-list li {
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .dropdown-list li:hover {
+    background: #f0f0f0;
+  }
+</style>

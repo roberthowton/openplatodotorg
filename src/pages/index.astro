@@ -1,0 +1,26 @@
+---
+import PageLayout from "../layouts/page-layout.astro";
+import "../styles/fonts.css";
+import ShowDropdown from "../components/show-dropdown";
+import { getLineNumbersFromTeiDom } from "../utils";
+import Tei from "../components/Tei.astro";
+import PageSelect from "../components/page-select.astro";
+import processTei from "../utils/processTei";
+
+const teiFile = (await import("../assets/dialog/alcibiades_gr.xml?raw"))
+  .default;
+
+const teiData = processTei(teiFile);
+const lineNumbers = getLineNumbersFromTeiDom(teiData.dom);
+---
+
+<PageLayout>
+  <h1>Dialog Test</h1>
+  <ShowDropdown client:load />
+  <PageSelect pages={lineNumbers} />
+  <main>
+    <div style="width: max-content; margin: 0 2rem">
+      <Tei teiData={teiData} />
+    </div>
+  </main>
+</PageLayout>

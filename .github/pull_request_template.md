@@ -1,8 +1,10 @@
-# Problem 
+# ‼️ Problem
 <!-- What is the problem you're trying to solve with this PR? -->
 
-# Solution
+
+# 💡 Solution
 <!-- What is the proposed solution, and what changes did you make to the codebase in implementing it? -->
 
 
-# Screenshots/recordings of UI changes
+# 🖼️ Screenshots/recordings of UI changes
+

@@ -1,0 +1,62 @@
+:root {
+	--page-max: 120ch;
+}
+
+header {
+	height: fit-content;
+}
+
+main {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+#page_1,
+#page_2,
+#greek,
+#english {
+	counter-reset: page 102;
+	display: flex;
+	flex-flow: column wrap;
+	/* max-height: var(--page-max); */
+	/* tab-size: 4; */
+	font-family: sans-serif;
+}
+
+article {
+	counter-increment: page;
+	counter-reset: section;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	margin-left: 1in;
+	flex-shrink: 1;
+
+	/* height: var(--page-max); */
+	border: 1px solid black;
+}
+
+section::marker {
+	content: counter(page, numeric) counter(section, lower-alpha) " ";
+	font-family: monospace, sans-serif;
+}
+
+section {
+	counter-increment: section;
+
+	display: list-item;
+	text-align: justify;
+	text-align-last: left;
+	white-space: preserve;
+	white-space-collapse: break-spaces;
+	width: min-content;
+	min-width: 60ch;
+	line-height: 2ch;
+	/* height: 30ch; */
+}
+
+section:hover {
+	background: orange;
+}

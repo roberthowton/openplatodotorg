@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng"
+schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader xml:lang="eng">
+
+    <fileDesc>
+
+      <titleStmt>
+        <title>Ἀλκιβιάδης αʹ</title>
+        <author>Plato</author>
+        <editor>John Burnet</editor>
+        <!-- <respStmt>
+          <resp>Prepared under the supervision of</resp>
+          <name>Lisa Cerrato</name>
+          <name>William Merrill</name>
+          <name>Elli Mylonas</name>
+          <name>David Smith</name>
+        </respStmt>
+        <funder n="org:AnnCPB">The Annenberg CPB/Project</funder> -->
+      </titleStmt>
+
+
+      <publicationStmt>
+        <publisher>Trustees of Tufts University</publisher>
+        <pubPlace>Medford, MA</pubPlace>
+        <authority>Perseus Project</authority>
+        <date type="release">1996</date>
+      </publicationStmt>
+      <notesStmt>
+        <note anchored="true">Text was scanned at St. Olaf Spring, 1992.</note>
+        <note>Perseus 2.0</note>
+      </notesStmt>
+      <sourceDesc>
+        <biblStruct>
+          <monogr>
+            <author>Plato</author>
+            <title xml:lang="lat">Platonis Opera</title>
+            <editor>John Burnet</editor>
+            <imprint>
+              <pubPlace>Oxford</pubPlace>
+              <publisher>Clarendon Press</publisher>
+              <date>1910</date>
+            </imprint>
+            <biblScope unit="volume">2</biblScope>
+          </monogr>
+          <ref
+            target="https://archive.org/details/operarecognovitb02platuoft/page/298/mode/1up">Internet
+            Archive</ref>
+        </biblStruct>
+      </sourceDesc>
+
+
+    </fileDesc>
+
+    <encodingDesc>
+      <refsDecl n="CTS">
+        <cRefPattern n="section" matchPattern="(\w+)"
+          replacementPattern="#xpath(/tei:TEI/tei:text/tei:body/tei:div/tei:div[@n='$1'])">
+          <p>This pointer pattern extracts section</p>
+        </cRefPattern>
+      </refsDecl>
+
+      <!--<refsDecl
+                        doctype="TEI.2">
+                <state unit="text"/>
+                <state unit="section"/>
+            </refsDecl>
+            <refsDecl doctype="TEI.2">
+                <state unit="text"/>
+                <state unit="page"/>
+            </refsDecl>-->
+    </encodingDesc>
+
+    <profileDesc>
+      <langUsage>
+        <language ident="grc">Greek</language>
+        <!-- <language ident="eng">English</language> -->
+      </langUsage>
+      <particDesc>
+        <person>
+          <persName>Σωκράτης</persName>
+        </person>
+        <person>
+          <persName>Ἀλκιβιάδης</persName>
+        </person>
+      </particDesc>
+    </profileDesc>
+
+    <revisionDesc>
+      <change when="2025-05-16" who="Robert Howton">Updated EpiDoc markup</change>
+      <change when="2017-05-12" who="Lisa Cerrato">EpiDoc and CTS conversion.</change>
+      <change when="2014-05-01" who="Bridget Almas">Converted speaker to said and
+        section milestones to divs.</change>
+      <change when="1992-07-01" who="WPM">Tagged in conformance with Prose.e dtd.</change>
+    </revisionDesc>
+  </teiHeader>
+
+
+  <text xml:lang="grc">
+    <body>
+      <div type="edition" n="urn:cts:greekLit:tlg0059.tlg013.perseus-grc2"
+        xml:lang="grc">
+        <head>Ἀλκιβιάδης α</head>
+        <said who="#Σωκράτης">
+          <p>
+            <lb n="103a1" />
+            <milestone n="103" unit="page" />
+            <milestone
+              unit="section" resp="Stephanus"
+              n="103a" />
+            <label>ΣΩ.</label> ὦ παῖ Κλεινίου, οἶμαί σε θαυμάζειν ὅτι πρῶτος <lb
+              n="103a2" />ἐραστής σου γενόμενος τῶν ἄλλων πεπαυμένων μόνος οὐκ <lb n="103a3" />ἀπαλλάττομαι,
+            καὶ ὅτι οἱ μὲν ἄλλοι διʼ ὄχλου ἐγένοντό σοι <lb n="103a4" />διαλεγόμενοι, ἐγὼ δὲ
+            τοσούτων ἐτῶν οὐδὲ προσεῖπον. τούτου <lb n="103a5" />δὲ τὸ αἴτιον γέγονεν οὐκ
+            ἀνθρώπειον, ἀλλά τι δαιμόνιον <lb n="103a6" />ἐναντίωμα, οὗ σὺ τὴν δύναμιν καὶ ὕστερον
+            πεύσῃ. νῦν δὲ <lb n="103b1" /><milestone unit="section" resp="Stephanus" n="103b" />
+            ἐπειδὴ οὐκέτι ἐναντιοῦται, οὕτω προσελήλυθα· εὔελπις δʼ <lb n="103b2" />εἰμὶ καὶ τὸ
+            λοιπὸν μὴ ἐναντιώσεσθαι αὐτό. σχεδὸν οὖν <lb
+              n="103b3" />κατανενόηκα ἐν τούτῳ τῷ χρόνῳ σκοπούμενος ὡς πρὸς τοὺς <lb
+              n="103b4" />ἐραστὰς ἔσχες · πολλῶν γὰρ γενομένων καὶ μεγαλοφρόνων <lb n="103b5" />οὐδεὶς
+            ὃς οὐχ ὑπερβληθεὶς τῷ φρονήματι ὑπὸ σοῦ πέφευγεν. <lb n="104a1" />
+            <milestone
+              n="104" unit="page" />
+            <milestone
+              unit="section" resp="Stephanus"
+              n="104a" /> τὸν δὲ λόγον, ᾧ ὑπερπεφρόνηκας, ἐθέλω διελθεῖν. οὐδενὸς <lb
+              n="104a2" />φῂς ἀνθρώπων ἐνδεὴς εἶναι εἰς οὐδέν· τὰ γὰρ ὑπάρχοντά <lb n="104a3" />σοι
+            μεγάλα εἶναι, ὥστε μηδενὸς δεῖσθαι, ἀπὸ τοῦ σώματος <lb n="104a4" />ἀρξάμενα τελευτῶντα
+            εἰς τὴν ψυχήν. οἴει γὰρ δὴ εἶναι <lb n="104a5" />πρῶτον μὲν κάλλιστός τε καὶ
+            μέγιστος—καὶ τοῦτο μὲν δὴ <lb n="104a6" />παντὶ δῆλον ἰδεῖν ὅτι οὐ ψεύδῃ—ἔπειτα
+            νεανικωτάτου γένους <lb n="104a7" />ἐν τῇ σεαυτοῦ πόλει, οὔσῃ μεγίστῃ τῶν Ἑλληνίδων, καὶ <lb
+              n="104b1" />
+            <milestone
+              unit="section"
+              resp="Stephanus" n="104b" />ἐνταῦθα πρὸς πατρός τέ σοι φίλους καὶ συγγενεῖς πλείστους <lb
+              n="104b2" />εἶναι καὶ ἀρίστους, οἳ εἴ τι δέοι ὑπηρετοῖεν ἄν σοι, τούτων <lb n="104b3" />δὲ
+            τοὺς πρὸς μητρὸς οὐδὲν χείρους οὐδʼ ἐλάττους. συμπάντων <lb
+              n="104b4" />δὲ ὧν εἶπον μείζω οἴει σοι δύναμιν ὑπάρχειν Περικλέα τὸν <lb n="104b5" />Ξανθίππου,
+            ὃν ὁ πατὴρ ἐπίτροπον κατέλιπε σοί τε καὶ τῷ <lb n="104b6" />ἀδελφῷ· ὃς οὐ μόνον ἐν τῇδε
+            τῇ πόλει δύναται πράττειν ὅτι <lb n="104b7" />ἂν βούληται, ἀλλʼ ἐν πάσῃ τῇ Ἑλλάδι καὶ
+            τῶν βαρβάρων <lb n="104b8" />ἐν πολλοῖς καὶ μεγάλοις γένεσιν. προσθήσω δὲ καὶ ὅτι τῶν <lb
+              n="104c1" /><milestone
+              unit="section" resp="Stephanus"
+              n="104c" />πλουσίων· δοκεῖς δέ μοι ἐπὶ τούτῳ ἥκιστα μέγα φρονεῖν. <lb
+              n="104c2" />κατὰ πάντα δὴ ταῦτα σὺ τε μεγαλαυχούμενος κεκράτηκας τῶν <lb n="104c3" />ἐραστῶν
+            ἐκεῖνοί τε ὑποδεέστεροι ὄντες ἐκρατήθησαν, καί σε <lb n="104c4" break="no" />ταῦτʼ οὐ
+            λέληθεν· ὅθεν δὴ εὖ οἶδα ὅτι θαυμάζεις τί διανοού<lb n="104c5" />μενός ποτε οὐκ
+            ἀπαλλάττομαι τοῦ ἔρωτος, καὶ ἥντινʼ <lb n="104c6" />ἔχων ἐλπίδα ὑπομένω τῶν ἄλλων
+            πεφευγότων. </p>
+        </said>
+
+        <said who="#Ἀλκιβιάδης">
+          <p>
+            <lb n="104c7" /><label>ΑΛ.</label> καὶ ἴσως γε, ὦ Σώκρατες, οὐκ οἶσθʼ ὅτι σμικρόν <lb
+              n="104d1" /><milestone
+              unit="section" resp="Stephanus"
+              n="104d" />με ἔφθης. ἐγὼ γάρ τοι ἐν νῷ εἶχον πρότερός σοι προσελθὼν <lb
+              n="104d2" />αὐτὰ ταῦτʼ ἐρέσθαι, τί ποτε βούλει καὶ εἰς τίνα ἐλπίδα βλέπων <lb
+              n="104d3" />ἐνοχλεῖς με, ἀεὶ ὅπου ἂν ὦ ἐπιμελέστατα παρών· τῷ ὄντι <lb n="104d4" />γὰρ
+            θαυμάζω ὅτι ποτʼ ἐστὶ τὸ σὸν πρᾶγμα, καὶ ἥδιστʼ ἂν <lb n="104d5" />πυθοίμην. </p>
+        </said>
+
+        <said who="#Σωκράτης">
+          <p>
+            <lb n="104d6" /><label>ΣΩ.</label> ἀκούσῃ μὲν ἄρα μου, ὡς τὸ εἰκός, προθύμως, εἴπερ, <lb
+              n="104d7" />ὡς φῄς, ἐπιθυμεῖς εἰδέναι τί διανοοῦμαι, καὶ ὡς ἀκουσομένῳ <lb n="104d8" />καὶ
+            περιμενοῦντι λέγω. </p>
+        </said>
+
+        <said who="#Ἀλκιβιάδης">
+          <p><lb n="104d9" /><label>ΑΛ.</label> πάνυ μὲν οὖν· ἀλλὰ λέγε.</p>
+        </said>
+
+        <said who="#Σωκράτης">
+          <p>
+            <lb n="104e1" />
+            <milestone unit="section"
+              resp="Stephanus" n="104e" />
+              <label>
+              ΣΩ.</label> ὅρα δή· οὐ γάρ τοι εἴη ἂν θαυμαστὸν εἰ, ὥσπερ <lb n="104e2" />μόγις
+            ἠρξάμην, οὕτω μόγις καὶ παυσαίμην. </p>
+        </said>
+
+        <said who="#Ἀλκιβιάδης">
+          <p>
+            <lb n="104e3" /><label>ΑΛ.</label> ὠγαθὲ λέγε· ἀκούσομαι γάρ. </p>
+        </said>
+
+        <!-- INSERT rest-of-greek.xml here -->
+
+      </div>
+    </body>
+  </text>
+</TEI>
