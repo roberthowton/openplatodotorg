@@ -27,6 +27,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/react": "^4.2.7",
+    "@astrojs/vercel": "^8.1.4",
     "CETEIcean": "^1.9.4",
     "astro": "^5.7.13",
     "react": "^18.3.1",
