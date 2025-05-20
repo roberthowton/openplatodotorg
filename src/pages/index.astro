@@ -1,26 +1,12 @@
 ---
 import PageLayout from "../layouts/page-layout.astro";
 import "../styles/fonts.css";
-import DialogContainer, {
-  type DialogContainerProps,
-} from "../components/dialog-container";
 import ShowDropdown from "../components/show-dropdown";
 import { getLineNumbersFromTeiDom } from "../utils";
 import Tei from "../components/Tei.astro";
 import PageSelect from "../components/page-select.astro";
 import processTei from "../utils/processTei";
-import { getEntry } from "astro:content";
 
-export async function fetchTranslations(
-  dialog: string,
-): Promise<DialogContainerProps> {
-  return {
-    EN: await getEntry("dialogs", `${dialog}/english`),
-    EL: await getEntry("dialogs", `${dialog}/greek`),
-  };
-}
-
-const { EN, EL } = await fetchTranslations("alcibiades-one");
 const teiFile = (await import("../assets/dialog/alcibiades_gr.xml?raw"))
   .default;
 
@@ -33,8 +19,6 @@ const lineNumbers = getLineNumbersFromTeiDom(teiData.dom);
   <ShowDropdown client:load />
   <PageSelect pages={lineNumbers} />
   <main>
-    <!-- <DialogContainer EN={EN} EL={EL} client:load /> -->
-    <!-- <BasicRouter elements={tei.elements} tei={tei.serialized} /> -->
     <div style="width: max-content; margin: 0 2rem">
       <Tei teiData={teiData} />
     </div>
