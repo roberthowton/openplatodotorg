@@ -41,7 +41,7 @@ const tei = teiData.serialized.replace(
         ceteicean.utilities.dom = teiDom;
         ceteicean.applyBehaviors();
       }
-
+      // Display TEI content only after behaviors are applied to avoid flickering
       this.style.display = "block";
     }
   }
