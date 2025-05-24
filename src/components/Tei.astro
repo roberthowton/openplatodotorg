@@ -22,8 +22,7 @@ const tei = teiData.serialized.replace(
   import CETEI from "CETEIcean";
 
   class Tei extends HTMLElement {
-    constructor() {
-      super();
+    connectedCallback() {
       if (this.dataset.rootId) {
         this.id = this.dataset.rootId;
       }
