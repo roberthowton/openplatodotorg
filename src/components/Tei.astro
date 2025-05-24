@@ -5,9 +5,10 @@ import { type ProcessedTei } from "../utils/processTei.ts";
 export interface Props {
   useBehaviors?: boolean;
   teiData: ProcessedTei;
+  rootId?: string;
 }
 
-let { teiData, useBehaviors = true } = Astro.props;
+let { teiData, useBehaviors = true, rootId } = Astro.props;
 
 // Expand self-closing elements
 const tei = teiData.serialized.replace(
@@ -18,30 +19,39 @@ const tei = teiData.serialized.replace(
 
 <script>
   import { customBehaviors } from "../utils";
+  import CETEI from "CETEIcean";
 
-  const root = document.querySelector("#__astrotei") as HTMLElement;
-  const teiDom = root.firstChild as HTMLElement;
+  class Tei extends HTMLElement {
+    constructor() {
+      super();
+      if (this.dataset.rootId) {
+        this.id = this.dataset.rootId;
+      }
 
-  if (root.dataset.usebehaviors === "true") {
-    const CETEI = (await import("CETEIcean")).default;
-    const ceteicean = new CETEI();
-    ceteicean.addBehaviors({
-      tei: {
-        ...customBehaviors,
-      },
-    });
-    ceteicean.els = root.dataset.elements?.split(",");
-    ceteicean.utilities.dom = teiDom;
-    ceteicean.applyBehaviors();
+      const teiDom = this.firstChild as HTMLElement;
+
+      if (this.dataset.usebehaviors === "true") {
+        const ceteicean = new CETEI();
+        ceteicean.addBehaviors({
+          tei: {
+            ...customBehaviors,
+          },
+        });
+        ceteicean.els = this.dataset.elements?.split(",");
+        ceteicean.utilities.dom = teiDom;
+        ceteicean.applyBehaviors();
+      }
+
+      this.style.display = "block";
+    }
   }
 
-  // Show text only after behaviors are applied
-  root.style.display = "block";
+  customElements.define("tei-container", Tei);
 </script>
 
-<div
-  id="__astrotei"
+<tei-container
   set:html={tei}
+  data-root-id={rootId}
   data-usebehaviors={useBehaviors.toString()}
   data-elements={teiData.elements.toString()}
   style="display: none;"
