@@ -1,0 +1,36 @@
+---
+import { ShowState } from "../types";
+
+type Props = {
+  show: ShowState;
+};
+
+const { show } = Astro.props;
+---
+
+<show-button data-show={show}>
+  <button>
+    <slot />
+  </button>
+</show-button>
+
+<script>
+  import { getUrlWithSearchParam } from "@utils";
+  import { navigate } from "astro:transitions/client";
+  import { ShowState } from "../types";
+
+  class ShowButton extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector("button");
+      button?.addEventListener("click", () => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const currentShowParams = searchParams.getAll("show");
+        const show = this.dataset.show;
+        const redirectUrl = getUrlWithSearchParam("show", show as ShowState);
+        navigate(redirectUrl.href);
+      });
+    }
+  }
+
+  customElements.define("show-button", ShowButton);
+</script>

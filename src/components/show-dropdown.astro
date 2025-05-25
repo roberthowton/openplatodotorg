@@ -1,0 +1,9 @@
+---
+import { ShowState } from "../types";
+
+import ShowButton from "./show-button.astro";
+---
+
+<ShowButton show={ShowState.GREEK}> Greek </ShowButton>
+<ShowButton show={ShowState.ENGLISH}> English </ShowButton>
+<ShowButton show={ShowState.BOTH}> Both </ShowButton>

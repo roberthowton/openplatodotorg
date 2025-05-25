@@ -1,7 +1,7 @@
 ---
 import PageLayout from "@layouts/page-layout.astro";
 import "@styles/fonts.css";
-import ShowDropdown from "@components/show-dropdown";
+import ShowDropdown from "@components/show-dropdown.astro";
 import { getLineNumbersFromTeiDom } from "@utils";
 import Tei from "@components/Tei.astro";
 import PageSelect from "@components/page-select.astro";
@@ -28,16 +28,31 @@ const lineNumbers = getLineNumbersFromTeiDom(teiDataGr.dom);
 
 <PageLayout>
   <h1>Dialog Test</h1>
-  <ShowDropdown client:load />
+  <ShowDropdown />
   <PageSelect pages={lineNumbers} />
   <main>
     <section class="dialogueContainer">
-      <div style="width: max-content; margin: 0 2rem">
-        <Tei teiData={teiDataGr} />
-      </div>
-      <div style="width: max-content; margin: 0 2rem">
-        <Tei teiData={teiDataEn} />
-      </div>
+      {
+        !showFirstRead && showGreek && (
+          <div style="width: max-content; margin: 0 2rem">
+            <Tei teiData={teiDataGr} />
+          </div>
+        )
+      }
+      {
+        !showFirstRead && showEnglish && (
+          <div style="width: max-content; margin: 0 2rem">
+            <Tei teiData={teiDataEn} />
+          </div>
+        )
+      }
+      {
+        showFirstRead && (
+          <div style="width: max-content; margin: 0 2rem">
+            <p>First read content goes here</p>
+          </div>
+        )
+      }
     </section>
   </main>
 </PageLayout>
