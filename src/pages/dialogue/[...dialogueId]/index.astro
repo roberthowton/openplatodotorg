@@ -6,12 +6,15 @@ import { getLineNumbersFromTeiDom } from "@utils";
 import Tei from "@components/Tei.astro";
 import PageSelect from "@components/page-select.astro";
 import processTei from "@utils/processTei";
+import { ShowState } from "@types";
 
 const { dialogueId } = Astro.params;
-const showParams = Astro.url.searchParams.getAll("show");
-const showGreek = showParams.includes("gr");
-const showEnglish = showParams.includes("en");
-const showFirstRead = showParams.includes("firstRead");
+const showParams = Astro.url.searchParams.getAll("show") as ShowState[];
+
+// If no params, default to both languages
+const defaultParams = showParams.length === 0
+  ? [ShowState.GREEK, ShowState.ENGLISH]
+  : showParams;
 
 const teiFileGr = (
   await import(`../../../content/dialogue/${dialogueId}/gr.xml?raw`)
@@ -24,6 +27,11 @@ const teiFileEn = (
 ).default;
 const teiDataEn = processTei(teiFileEn);
 const lineNumbers = getLineNumbersFromTeiDom(teiDataGr.dom);
+
+// If firstRead is present, only show first read (it takes precedence)
+const showFirstRead = defaultParams.includes(ShowState.FIRST_READ);
+const showGreek = !showFirstRead && defaultParams.includes(ShowState.GREEK);
+const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
 ---
 
 <PageLayout>
@@ -33,14 +41,14 @@ const lineNumbers = getLineNumbersFromTeiDom(teiDataGr.dom);
   <main>
     <section class="dialogueContainer">
       {
-        !showFirstRead && showGreek && (
+        showGreek && (
           <div style="width: max-content; margin: 0 2rem">
             <Tei teiData={teiDataGr} />
           </div>
         )
       }
       {
-        !showFirstRead && showEnglish && (
+        showEnglish && (
           <div style="width: max-content; margin: 0 2rem">
             <Tei teiData={teiDataEn} />
           </div>

@@ -1,9 +1,19 @@
 ---
 import { ShowState } from "../types";
-
 import ShowButton from "./show-button.astro";
 ---
 
-<ShowButton show={ShowState.GREEK}> Greek </ShowButton>
-<ShowButton show={ShowState.ENGLISH}> English </ShowButton>
-<ShowButton show={ShowState.BOTH}> Both </ShowButton>
+<section style="margin: 1rem 0; display: flex; gap: 1rem;">
+  <ShowButton show={ShowState.GREEK}>
+    <span slot="show_text">Show Greek</span>
+    <span slot="hide_text">Hide Greek</span>
+  </ShowButton>
+  <ShowButton show={ShowState.ENGLISH}>
+    <span slot="show_text">Show English</span>
+    <span slot="hide_text">Hide English</span>
+  </ShowButton>
+  <ShowButton show={ShowState.FIRST_READ}>
+    <span slot="show_text">Go to First Read</span>
+    <span slot="hide_text">Exit First Read</span>
+  </ShowButton>
+</section>

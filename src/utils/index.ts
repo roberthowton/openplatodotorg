@@ -6,7 +6,7 @@ import {
   handleHead,
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
-import { ShowState, type UrlParams } from "../types";
+import { ShowState, ShowStateAction, type UrlParams } from "../types";
 import { STEPHANUS_COLUMN_REGEX } from "../consts";
 
 export * from "./behaviors";
@@ -66,9 +66,70 @@ export const getShowStateFromUrl = (): ShowState => {
   if (showStates.length > 1) {
     return showStates.includes(ShowState.ENGLISH) &&
       showStates.includes(ShowState.GREEK)
-      ? ShowState.BOTH
+      ? ShowState.GREEK_AND_ENGLISH
       : ShowState.FIRST_READ;
   }
 
   return showStates[0];
+};
+
+export const updateShowState = (
+  currentShowState: ShowState,
+  newShowParam: ShowState,
+  action: ShowStateAction,
+): ShowState => {
+  if (action === ShowStateAction.HIDE) {
+    return removeShowState(currentShowState, newShowParam);
+  } else {
+    return addShowState(currentShowState, newShowParam);
+  }
+};
+
+const removeShowState = (
+  currentShowState: ShowState,
+  showStateToRemove: ShowState,
+): ShowState => {
+  if (currentShowState === showStateToRemove) {
+    return ShowState.FIRST_READ;
+  }
+  return currentShowState;
+};
+
+const addShowState = (
+  currentShowState: ShowState,
+  newShowState: ShowState,
+): ShowState => {
+  if (newShowState === ShowState.FIRST_READ) {
+    return newShowState;
+  }
+  if (currentShowState === newShowState) {
+    return currentShowState;
+  }
+  return currentShowState;
+};
+
+export const getIsShowing = ({
+  urlShowState,
+  buttonShowState,
+}: {
+  urlShowState: ShowState;
+  buttonShowState: ShowState;
+}): boolean => {
+  switch (buttonShowState) {
+    case ShowState.GREEK:
+      return [ShowState.GREEK, ShowState.GREEK_AND_ENGLISH].includes(
+        urlShowState,
+      );
+    case ShowState.ENGLISH:
+      return [ShowState.ENGLISH, ShowState.GREEK_AND_ENGLISH].includes(
+        urlShowState,
+      );
+    case ShowState.GREEK_AND_ENGLISH:
+      return urlShowState === ShowState.GREEK_AND_ENGLISH;
+    case ShowState.FIRST_READ:
+      return urlShowState === ShowState.FIRST_READ;
+    case ShowState.UNKNOWN:
+    default:
+      return false;
+  }
 };

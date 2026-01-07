@@ -5,32 +5,149 @@ type Props = {
   show: ShowState;
 };
 
-const { show } = Astro.props;
+const { show: buttonShowState } = Astro.props;
+const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
+
+// Determine if this button's state is currently active
+let isShowing = false;
+if (buttonShowState === ShowState.FIRST_READ) {
+  isShowing = urlShowParams.includes(ShowState.FIRST_READ);
+} else if (buttonShowState === ShowState.GREEK || buttonShowState === ShowState.ENGLISH) {
+  isShowing = urlShowParams.includes(buttonShowState);
+}
 ---
 
-<show-button data-show={show}>
-  <button>
-    <slot />
-  </button>
+<show-button data-show={buttonShowState}>
+  <div class="control">
+    <label class=`show-${buttonShowState}`>
+      <input
+        type="radio"
+        name=`toggle-${buttonShowState}`
+        checked={isShowing}
+      />
+      <slot name="show_text" />
+    </label>
+    <label class=`hide-${buttonShowState}`>
+      <input
+        type="radio"
+        name=`toggle-${buttonShowState}`
+        checked={!isShowing}
+      />
+      <slot name="hide_text" />
+    </label>
+  </div>
 </show-button>
 
 <script>
-  import { getUrlWithSearchParam } from "@utils";
   import { navigate } from "astro:transitions/client";
   import { ShowState } from "../types";
 
   class ShowButton extends HTMLElement {
     connectedCallback() {
-      const button = this.querySelector("button");
-      button?.addEventListener("click", () => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const currentShowParams = searchParams.getAll("show");
-        const show = this.dataset.show;
-        const redirectUrl = getUrlWithSearchParam("show", show as ShowState);
-        navigate(redirectUrl.href);
+      const show = this.dataset.show;
+      const showRadio = this.querySelector(
+        `label[class="show-${show}"]`,
+      )?.querySelector("input");
+      const hideRadio = this.querySelector(
+        `label[class="hide-${show}"]`,
+      )?.querySelector("input");
+
+      showRadio?.addEventListener("change", () => {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        if (show === ShowState.FIRST_READ) {
+          // Entering first read mode - clear all and set firstRead
+          params.delete("show");
+          params.set("show", ShowState.FIRST_READ);
+        } else {
+          // Add this show state if not already present
+          const currentShowParams = params.getAll("show");
+          if (!currentShowParams.includes(show as string)) {
+            params.append("show", show as string);
+          }
+        }
+
+        url.search = params.toString();
+        navigate(url.href);
+      });
+
+      hideRadio?.addEventListener("change", () => {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        if (show === ShowState.FIRST_READ) {
+          // Exiting first read mode - show both languages
+          params.delete("show");
+          params.append("show", ShowState.GREEK);
+          params.append("show", ShowState.ENGLISH);
+        } else {
+          // Remove this specific show state
+          const currentShowParams = params.getAll("show");
+          params.delete("show");
+          currentShowParams.forEach((param) => {
+            if (param !== show) {
+              params.append("show", param);
+            }
+          });
+        }
+
+        url.search = params.toString();
+        navigate(url.href);
       });
     }
   }
 
   customElements.define("show-button", ShowButton);
 </script>
+
+<style>
+  .control label:has(:checked) {
+    display: none;
+  }
+</style>
+
+<!-- <style>
+  .control {
+    /* width: 100px; */
+    /* line-height: 100px; */
+    label {
+      width: inherit;
+      position: absolute;
+      text-align: center;
+      border: 2px solid;
+      border-radius: 10px;
+      cursor: pointer;
+      input {
+        appearance: none;
+        margin: 0;
+      }
+    }
+    .show_text {
+      pointer-events: none;
+      background: rgb(247 248 251);
+      border-color: rgb(199 203 211);
+    }
+    .hide_text {
+      background: rgb(228 236 248);
+      border-color: rgb(40 68 212);
+    }
+  }
+
+  label:has(:checked) {
+    ~ label {
+      opacity: 0;
+    }
+    &:is(:not(:first-child)) {
+      pointer-events: none;
+      ~ label {
+        pointer-events: none;
+      }
+    }
+    &:is(:first-child) {
+      ~ label {
+        pointer-events: auto;
+      }
+    }
+  }
+</style> -->
