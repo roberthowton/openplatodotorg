@@ -23,6 +23,14 @@ const { pages } = Astro.props;
 <script>
   import { addOrUpdateUrlParam } from "../utils";
 
+  // TypeScript interface for search results
+  interface SearchResult {
+    type: 'reference' | 'text';
+    reference: string;
+    textPreview?: string;
+    matchIndex?: number;
+  }
+
   const dropdown = document.querySelector(".dropdown") as HTMLElement;
   const searchInput = document.getElementById(
     "searchInput",
@@ -30,6 +38,54 @@ const { pages } = Astro.props;
   const dropdownList = document.getElementById("dropdownList") as HTMLElement;
 
   const items: (string | null)[] = JSON.parse(dropdown?.dataset?.lines || "[]");
+
+  // Helper function to detect which text languages are currently visible
+  function getVisibleLanguages(): string[] {
+    const containers = document.querySelectorAll('tei-container');
+    const languages: string[] = [];
+
+    containers.forEach((container) => {
+      const element = container as HTMLElement;
+      if (element.offsetParent !== null) {
+        const language = element.dataset.language;
+        if (language) languages.push(language);
+      }
+    });
+
+    return languages;
+  }
+
+  // Helper function to extract reference from text div ID
+  function extractReferenceFromId(id: string, language: string): string {
+    return id.replace(`-${language}-text`, '');
+  }
+
+  // Helper function to create text preview with context around match
+  function createPreview(text: string, matchIndex: number, matchLength: number): string {
+    const contextBefore = 30;
+    const contextAfter = 30;
+
+    const start = Math.max(0, matchIndex - contextBefore);
+    const end = Math.min(text.length, matchIndex + matchLength + contextAfter);
+
+    let preview = text.slice(start, end).trim();
+
+    if (start > 0) preview = '...' + preview;
+    if (end < text.length) preview = preview + '...';
+
+    return preview;
+  }
+
+  // Helper function to escape regex special characters
+  function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Helper function to highlight search term in preview
+  function highlightMatch(preview: string, searchTerm: string): string {
+    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+    return preview.replace(regex, '<mark>$1</mark>');
+  }
 
   function filterItems(searchText: string) {
     // Convert input to lowercase for case-insensitive search
@@ -57,14 +113,30 @@ const { pages } = Astro.props;
   function selectItem(value: string | null) {
     searchInput.value = value || "";
     dropdownList.style.display = "none";
-    const selectedLine = document.querySelector(`div[id='${value}-text']`);
 
-    if (value && selectedLine) {
-      selectedLine.scrollIntoView({ behavior: "smooth" });
-      selectedLine.classList.add("highlight");
+    if (!value) return;
+
+    // Find all matching text divs (Greek, English, or both)
+    const selectedLines = document.querySelectorAll(
+      `div[id='${value}-gr-text'], div[id='${value}-en-text']`
+    );
+
+    if (selectedLines.length > 0) {
+      // Scroll to the first visible reference
+      selectedLines[0].scrollIntoView({ behavior: "smooth" });
+
+      // Highlight all visible references
+      selectedLines.forEach((line) => {
+        line.classList.add("highlight");
+      });
+
       addOrUpdateUrlParam("ref", value);
+
+      // Remove highlight from all after 2 seconds
       setTimeout(() => {
-        selectedLine.classList.remove("highlight");
+        selectedLines.forEach((line) => {
+          line.classList.remove("highlight");
+        });
       }, 2000);
     }
   }
