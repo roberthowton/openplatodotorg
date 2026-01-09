@@ -6,9 +6,10 @@ export interface Props {
   useBehaviors?: boolean;
   teiData: ProcessedTei;
   rootId?: string;
+  language?: string;
 }
 
-let { teiData, useBehaviors = true, rootId } = Astro.props;
+let { teiData, useBehaviors = true, rootId, language } = Astro.props;
 
 // Expand self-closing elements
 const tei = teiData.serialized.replace(
@@ -51,6 +52,7 @@ const tei = teiData.serialized.replace(
 <tei-container
   set:html={tei}
   data-root-id={rootId}
+  data-language={language}
   data-usebehaviors={useBehaviors.toString()}
   data-elements={teiData.elements.toString()}
   style="display: none;"

@@ -26,7 +26,9 @@ const teiFileEn = (
   await import(`../../../content/dialogue/${dialogueId}/en.xml?raw`)
 ).default;
 const teiDataEn = processTei(teiFileEn);
-const lineNumbers = getLineNumbersFromTeiDom(teiDataGr.dom);
+const lineNumbersGr = getLineNumbersFromTeiDom(teiDataGr.dom);
+const lineNumbersEn = getLineNumbersFromTeiDom(teiDataEn.dom);
+const lineNumbers = Array.from(new Set([...lineNumbersGr, ...lineNumbersEn]));
 
 // If firstRead is present, only show first read (it takes precedence)
 const showFirstRead = defaultParams.includes(ShowState.FIRST_READ);
@@ -43,14 +45,14 @@ const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
       {
         showGreek && (
           <div style="width: max-content; margin: 0 2rem">
-            <Tei teiData={teiDataGr} />
+            <Tei teiData={teiDataGr} language="gr" />
           </div>
         )
       }
       {
         showEnglish && (
           <div style="width: max-content; margin: 0 2rem">
-            <Tei teiData={teiDataEn} />
+            <Tei teiData={teiDataEn} language="en" />
           </div>
         )
       }
