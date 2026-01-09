@@ -57,14 +57,30 @@ const { pages } = Astro.props;
   function selectItem(value: string | null) {
     searchInput.value = value || "";
     dropdownList.style.display = "none";
-    const selectedLine = document.querySelector(`div[id='${value}-text']`);
 
-    if (value && selectedLine) {
-      selectedLine.scrollIntoView({ behavior: "smooth" });
-      selectedLine.classList.add("highlight");
+    if (!value) return;
+
+    // Find all matching text divs (Greek, English, or both)
+    const selectedLines = document.querySelectorAll(
+      `div[id='${value}-gr-text'], div[id='${value}-en-text']`
+    );
+
+    if (selectedLines.length > 0) {
+      // Scroll to the first visible reference
+      selectedLines[0].scrollIntoView({ behavior: "smooth" });
+
+      // Highlight all visible references
+      selectedLines.forEach((line) => {
+        line.classList.add("highlight");
+      });
+
       addOrUpdateUrlParam("ref", value);
+
+      // Remove highlight from all after 2 seconds
       setTimeout(() => {
-        selectedLine.classList.remove("highlight");
+        selectedLines.forEach((line) => {
+          line.classList.remove("highlight");
+        });
       }, 2000);
     }
   }

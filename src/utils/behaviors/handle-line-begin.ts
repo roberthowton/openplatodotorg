@@ -39,8 +39,17 @@ export const handleLineBegin = (element: HTMLElement) => {
   });
 
   const stephanusReference = element.getAttribute("n") ?? "";
-  element.id = stephanusReference;
-  textDiv.id = `${stephanusReference}-text`;
+
+  // Get language from parent tei-container
+  let parent = element.parentElement;
+  while (parent && parent.tagName !== 'TEI-CONTAINER') {
+    parent = parent.parentElement;
+  }
+  const language = (parent as HTMLElement)?.dataset?.language || 'gr';
+
+  // Create unique IDs with language suffix
+  element.id = `${stephanusReference}-${language}`;
+  textDiv.id = `${stephanusReference}-${language}-text`;
 
   const { page, column, line } = parseStephanusReference(stephanusReference);
 
