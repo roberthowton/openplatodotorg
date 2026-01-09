@@ -13,7 +13,7 @@ const { pages } = Astro.props;
   <input
     type="text"
     id="searchInput"
-    placeholder="Go to reference..."
+    placeholder="Search references or text..."
     autocomplete="off"
     value={initialValue}
   />
@@ -23,6 +23,14 @@ const { pages } = Astro.props;
 <script>
   import { addOrUpdateUrlParam } from "../utils";
 
+  // TypeScript interface for search results
+  interface SearchResult {
+    type: 'reference' | 'text';
+    reference: string;
+    textPreview?: string;
+    matchIndex?: number;
+  }
+
   const dropdown = document.querySelector(".dropdown") as HTMLElement;
   const searchInput = document.getElementById(
     "searchInput",
@@ -31,30 +39,187 @@ const { pages } = Astro.props;
 
   const items: (string | null)[] = JSON.parse(dropdown?.dataset?.lines || "[]");
 
-  function filterItems(searchText: string) {
-    // Convert input to lowercase for case-insensitive search
-    const filteredItems = items.filter((item) =>
-      item?.toLowerCase().includes(searchText.toLowerCase()),
+  // Helper function to detect which text languages are currently visible
+  function getVisibleLanguages(): string[] {
+    const containers = document.querySelectorAll('tei-container');
+    const languages: string[] = [];
+
+    containers.forEach((container) => {
+      const element = container as HTMLElement;
+      if (element.offsetParent !== null) {
+        const language = element.dataset.language;
+        if (language) languages.push(language);
+      }
+    });
+
+    return languages;
+  }
+
+  // Helper function to extract reference from text div ID
+  function extractReferenceFromId(id: string, language: string): string {
+    return id.replace(`-${language}-text`, '');
+  }
+
+  // Helper function to create text preview with context around match
+  function createPreview(text: string, matchIndex: number, matchLength: number): string {
+    const contextBefore = 30;
+    const contextAfter = 30;
+
+    const start = Math.max(0, matchIndex - contextBefore);
+    const end = Math.min(text.length, matchIndex + matchLength + contextAfter);
+
+    let preview = text.slice(start, end).trim();
+
+    if (start > 0) preview = '...' + preview;
+    if (end < text.length) preview = preview + '...';
+
+    return preview;
+  }
+
+  // Helper function to escape regex special characters
+  function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Helper function to highlight search term in preview
+  function highlightMatch(preview: string, searchTerm: string): string {
+    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+    return preview.replace(regex, '<mark>$1</mark>');
+  }
+
+  // Search text content in visible languages
+  function searchTextContent(searchText: string): SearchResult[] {
+    const textResults: SearchResult[] = [];
+    const searchLower = searchText.toLowerCase();
+    const MAX_TEXT_RESULTS = 50;
+
+    const visibleLanguages = getVisibleLanguages();
+
+    visibleLanguages.forEach(language => {
+      if (textResults.length >= MAX_TEXT_RESULTS) return;
+
+      const textDivs = document.querySelectorAll(`div[id$="-${language}-text"]`);
+
+      textDivs.forEach((div) => {
+        if (textResults.length >= MAX_TEXT_RESULTS) return;
+
+        const textContent = div.textContent || '';
+        const lowerText = textContent.toLowerCase();
+
+        if (lowerText.includes(searchLower)) {
+          const matchIndex = lowerText.indexOf(searchLower);
+          const reference = extractReferenceFromId(div.id, language);
+          const preview = createPreview(textContent, matchIndex, searchText.length);
+
+          textResults.push({
+            type: 'text',
+            reference,
+            textPreview: preview,
+            matchIndex
+          });
+        }
+      });
+    });
+
+    return textResults;
+  }
+
+  // Perform dual search: references and text content
+  function performSearch(searchText: string): {
+    referenceResults: SearchResult[];
+    textResults: SearchResult[];
+  } {
+    const referenceResults: SearchResult[] = [];
+    const textResults: SearchResult[] = [];
+
+    if (!searchText) {
+      return { referenceResults, textResults };
+    }
+
+    const searchLower = searchText.toLowerCase();
+
+    // 1. Search references
+    const matchingRefs = items.filter((item) =>
+      item?.toLowerCase().includes(searchLower)
     );
 
-    // Clear previous results
-    dropdownList.innerHTML = "";
+    referenceResults.push(...matchingRefs.map(ref => ({
+      type: 'reference' as const,
+      reference: ref || ''
+    })));
 
-    // Show the dropdown only if results exist
-    if (filteredItems.length > 0) {
-      dropdownList.style.display = "block";
-      filteredItems.forEach((item) => {
-        let li = document.createElement("li");
-        li.innerText = item ?? "";
-        li.onclick = () => selectItem(item);
+    // 2. Search text content
+    textResults.push(...searchTextContent(searchText));
+
+    return { referenceResults, textResults };
+  }
+
+  // Render organized dropdown with References and Search Results sections
+  function renderDropdown(
+    referenceResults: SearchResult[],
+    textResults: SearchResult[]
+  ): void {
+    dropdownList.innerHTML = '';
+
+    const hasResults = referenceResults.length > 0 || textResults.length > 0;
+
+    if (!hasResults) {
+      dropdownList.style.display = 'none';
+      return;
+    }
+
+    dropdownList.style.display = 'block';
+
+    // Render References Section
+    if (referenceResults.length > 0) {
+      const refHeader = document.createElement('li');
+      refHeader.className = 'section-header';
+      refHeader.textContent = 'References';
+      dropdownList.appendChild(refHeader);
+
+      referenceResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'reference-item';
+        li.textContent = result.reference;
+        li.dataset.ref = result.reference;
+        li.onclick = () => selectReference(result.reference);
         dropdownList.appendChild(li);
       });
-    } else {
-      dropdownList.style.display = "none";
+    }
+
+    // Render Text Results Section
+    if (textResults.length > 0) {
+      const textHeader = document.createElement('li');
+      textHeader.className = 'section-header';
+      textHeader.textContent = 'Search Results';
+      dropdownList.appendChild(textHeader);
+
+      textResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'text-item';
+        li.dataset.ref = result.reference;
+
+        const refDiv = document.createElement('div');
+        refDiv.className = 'result-ref';
+        refDiv.textContent = result.reference;
+
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'result-preview';
+        previewDiv.innerHTML = highlightMatch(
+          result.textPreview || '',
+          searchInput.value
+        );
+
+        li.appendChild(refDiv);
+        li.appendChild(previewDiv);
+        li.onclick = () => selectReference(result.reference);
+
+        dropdownList.appendChild(li);
+      });
     }
   }
 
-  function selectItem(value: string | null) {
+  function selectReference(value: string | null) {
     searchInput.value = value || "";
     dropdownList.style.display = "none";
 
@@ -87,12 +252,41 @@ const { pages } = Astro.props;
 
   document.onreadystatechange = () => {
     if (document.readyState === "complete" && searchInput.value) {
-      selectItem(searchInput.value);
+      selectReference(searchInput.value);
     }
   };
 
-  // Listen for input changes
-  searchInput.addEventListener("input", () => filterItems(searchInput.value));
+  // Listen for input changes with debouncing
+  let searchTimeout: number;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+
+    const searchText = searchInput.value;
+
+    if (!searchText) {
+      dropdownList.style.display = 'none';
+      return;
+    }
+
+    // Debounce for 150ms to avoid searching on every keystroke
+    searchTimeout = window.setTimeout(() => {
+      const { referenceResults, textResults } = performSearch(searchText);
+      renderDropdown(referenceResults, textResults);
+    }, 150);
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target as Node)) {
+      dropdownList.style.display = 'none';
+    }
+  });
+
+  // Prevent dropdown from closing when clicking inside
+  dropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
 </script>
 
 <style is:global>
@@ -117,7 +311,7 @@ const { pages } = Astro.props;
   .dropdown-list {
     position: absolute;
     width: 100%;
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
     background: #fff;
     border: 1px solid #ccc;
@@ -125,14 +319,77 @@ const { pages } = Astro.props;
     display: none;
     list-style: none;
     padding: 0;
+    z-index: 1000;
   }
 
-  .dropdown-list li {
-    padding: 8px;
+  /* Section headers */
+  .section-header {
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #666;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: default;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    user-select: none;
+  }
+
+  .section-header:not(:first-child) {
+    margin-top: 4px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* Reference items */
+  .reference-item {
+    padding: 8px 12px;
     cursor: pointer;
+    font-family: monospace;
   }
 
-  .dropdown-list li:hover {
+  .reference-item:hover {
     background: #f0f0f0;
+  }
+
+  /* Text search result items */
+  .text-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .text-item:last-child {
+    border-bottom: none;
+  }
+
+  .text-item:hover {
+    background: #f9f9f9;
+  }
+
+  .result-ref {
+    font-family: monospace;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+  }
+
+  .result-preview {
+    color: #666;
+    font-size: 0.85em;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Highlight matched text in preview */
+  .result-preview mark {
+    background-color: #ffeb3b;
+    color: #000;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
   }
 </style>
