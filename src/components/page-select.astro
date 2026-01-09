@@ -87,30 +87,91 @@ const { pages } = Astro.props;
     return preview.replace(regex, '<mark>$1</mark>');
   }
 
-  function filterItems(searchText: string) {
-    // Convert input to lowercase for case-insensitive search
-    const filteredItems = items.filter((item) =>
-      item?.toLowerCase().includes(searchText.toLowerCase()),
-    );
+  // Search text content in visible languages
+  function searchTextContent(searchText: string): SearchResult[] {
+    const textResults: SearchResult[] = [];
+    const searchLower = searchText.toLowerCase();
+    const MAX_TEXT_RESULTS = 50;
 
-    // Clear previous results
-    dropdownList.innerHTML = "";
+    const visibleLanguages = getVisibleLanguages();
 
-    // Show the dropdown only if results exist
-    if (filteredItems.length > 0) {
-      dropdownList.style.display = "block";
-      filteredItems.forEach((item) => {
-        let li = document.createElement("li");
-        li.innerText = item ?? "";
-        li.onclick = () => selectItem(item);
-        dropdownList.appendChild(li);
+    visibleLanguages.forEach(language => {
+      if (textResults.length >= MAX_TEXT_RESULTS) return;
+
+      const textDivs = document.querySelectorAll(`div[id$="-${language}-text"]`);
+
+      textDivs.forEach((div) => {
+        if (textResults.length >= MAX_TEXT_RESULTS) return;
+
+        const textContent = div.textContent || '';
+        const lowerText = textContent.toLowerCase();
+
+        if (lowerText.includes(searchLower)) {
+          const matchIndex = lowerText.indexOf(searchLower);
+          const reference = extractReferenceFromId(div.id, language);
+          const preview = createPreview(textContent, matchIndex, searchText.length);
+
+          textResults.push({
+            type: 'text',
+            reference,
+            textPreview: preview,
+            matchIndex
+          });
+        }
       });
-    } else {
-      dropdownList.style.display = "none";
-    }
+    });
+
+    return textResults;
   }
 
-  function selectItem(value: string | null) {
+  // Perform dual search: references and text content
+  function performSearch(searchText: string): {
+    referenceResults: SearchResult[];
+    textResults: SearchResult[];
+  } {
+    const referenceResults: SearchResult[] = [];
+    const textResults: SearchResult[] = [];
+
+    if (!searchText) {
+      return { referenceResults, textResults };
+    }
+
+    const searchLower = searchText.toLowerCase();
+
+    // 1. Search references
+    const matchingRefs = items.filter((item) =>
+      item?.toLowerCase().includes(searchLower)
+    );
+
+    referenceResults.push(...matchingRefs.map(ref => ({
+      type: 'reference' as const,
+      reference: ref || ''
+    })));
+
+    // 2. Search text content
+    textResults.push(...searchTextContent(searchText));
+
+    return { referenceResults, textResults };
+  }
+
+  // Temporary renderer for Phase 2 testing
+  function renderReferences(results: SearchResult[]): void {
+    dropdownList.innerHTML = '';
+    if (results.length === 0) {
+      dropdownList.style.display = 'none';
+      return;
+    }
+
+    dropdownList.style.display = 'block';
+    results.forEach(result => {
+      const li = document.createElement('li');
+      li.textContent = result.reference;
+      li.onclick = () => selectReference(result.reference);
+      dropdownList.appendChild(li);
+    });
+  }
+
+  function selectReference(value: string | null) {
     searchInput.value = value || "";
     dropdownList.style.display = "none";
 
@@ -143,12 +204,21 @@ const { pages } = Astro.props;
 
   document.onreadystatechange = () => {
     if (document.readyState === "complete" && searchInput.value) {
-      selectItem(searchInput.value);
+      selectReference(searchInput.value);
     }
   };
 
   // Listen for input changes
-  searchInput.addEventListener("input", () => filterItems(searchInput.value));
+  searchInput.addEventListener("input", () => {
+    const searchText = searchInput.value;
+    if (!searchText) {
+      dropdownList.style.display = 'none';
+      return;
+    }
+    const { referenceResults, textResults } = performSearch(searchText);
+    // For now, just render references (text rendering comes in Phase 3)
+    renderReferences(referenceResults);
+  });
 </script>
 
 <style is:global>
