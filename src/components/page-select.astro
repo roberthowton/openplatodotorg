@@ -13,7 +13,7 @@ const { pages } = Astro.props;
   <input
     type="text"
     id="searchInput"
-    placeholder="Go to reference..."
+    placeholder="Search references or text..."
     autocomplete="off"
     value={initialValue}
   />
@@ -256,15 +256,36 @@ const { pages } = Astro.props;
     }
   };
 
-  // Listen for input changes
-  searchInput.addEventListener("input", () => {
+  // Listen for input changes with debouncing
+  let searchTimeout: number;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+
     const searchText = searchInput.value;
+
     if (!searchText) {
       dropdownList.style.display = 'none';
       return;
     }
-    const { referenceResults, textResults } = performSearch(searchText);
-    renderDropdown(referenceResults, textResults);
+
+    // Debounce for 150ms to avoid searching on every keystroke
+    searchTimeout = window.setTimeout(() => {
+      const { referenceResults, textResults } = performSearch(searchText);
+      renderDropdown(referenceResults, textResults);
+    }, 150);
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target as Node)) {
+      dropdownList.style.display = 'none';
+    }
+  });
+
+  // Prevent dropdown from closing when clicking inside
+  dropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
   });
 </script>
 
