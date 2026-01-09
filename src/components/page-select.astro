@@ -290,7 +290,7 @@ const { pages } = Astro.props;
   .dropdown-list {
     position: absolute;
     width: 100%;
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
     background: #fff;
     border: 1px solid #ccc;
@@ -298,14 +298,77 @@ const { pages } = Astro.props;
     display: none;
     list-style: none;
     padding: 0;
+    z-index: 1000;
   }
 
-  .dropdown-list li {
-    padding: 8px;
+  /* Section headers */
+  .section-header {
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #666;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: default;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    user-select: none;
+  }
+
+  .section-header:not(:first-child) {
+    margin-top: 4px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* Reference items */
+  .reference-item {
+    padding: 8px 12px;
     cursor: pointer;
+    font-family: monospace;
   }
 
-  .dropdown-list li:hover {
+  .reference-item:hover {
     background: #f0f0f0;
+  }
+
+  /* Text search result items */
+  .text-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .text-item:last-child {
+    border-bottom: none;
+  }
+
+  .text-item:hover {
+    background: #f9f9f9;
+  }
+
+  .result-ref {
+    font-family: monospace;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+  }
+
+  .result-preview {
+    color: #666;
+    font-size: 0.85em;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Highlight matched text in preview */
+  .result-preview mark {
+    background-color: #ffeb3b;
+    color: #000;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
   }
 </style>
