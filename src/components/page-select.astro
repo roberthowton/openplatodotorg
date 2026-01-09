@@ -154,21 +154,69 @@ const { pages } = Astro.props;
     return { referenceResults, textResults };
   }
 
-  // Temporary renderer for Phase 2 testing
-  function renderReferences(results: SearchResult[]): void {
+  // Render organized dropdown with References and Search Results sections
+  function renderDropdown(
+    referenceResults: SearchResult[],
+    textResults: SearchResult[]
+  ): void {
     dropdownList.innerHTML = '';
-    if (results.length === 0) {
+
+    const hasResults = referenceResults.length > 0 || textResults.length > 0;
+
+    if (!hasResults) {
       dropdownList.style.display = 'none';
       return;
     }
 
     dropdownList.style.display = 'block';
-    results.forEach(result => {
-      const li = document.createElement('li');
-      li.textContent = result.reference;
-      li.onclick = () => selectReference(result.reference);
-      dropdownList.appendChild(li);
-    });
+
+    // Render References Section
+    if (referenceResults.length > 0) {
+      const refHeader = document.createElement('li');
+      refHeader.className = 'section-header';
+      refHeader.textContent = 'References';
+      dropdownList.appendChild(refHeader);
+
+      referenceResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'reference-item';
+        li.textContent = result.reference;
+        li.dataset.ref = result.reference;
+        li.onclick = () => selectReference(result.reference);
+        dropdownList.appendChild(li);
+      });
+    }
+
+    // Render Text Results Section
+    if (textResults.length > 0) {
+      const textHeader = document.createElement('li');
+      textHeader.className = 'section-header';
+      textHeader.textContent = 'Search Results';
+      dropdownList.appendChild(textHeader);
+
+      textResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'text-item';
+        li.dataset.ref = result.reference;
+
+        const refDiv = document.createElement('div');
+        refDiv.className = 'result-ref';
+        refDiv.textContent = result.reference;
+
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'result-preview';
+        previewDiv.innerHTML = highlightMatch(
+          result.textPreview || '',
+          searchInput.value
+        );
+
+        li.appendChild(refDiv);
+        li.appendChild(previewDiv);
+        li.onclick = () => selectReference(result.reference);
+
+        dropdownList.appendChild(li);
+      });
+    }
   }
 
   function selectReference(value: string | null) {
@@ -216,8 +264,7 @@ const { pages } = Astro.props;
       return;
     }
     const { referenceResults, textResults } = performSearch(searchText);
-    // For now, just render references (text rendering comes in Phase 3)
-    renderReferences(referenceResults);
+    renderDropdown(referenceResults, textResults);
   });
 </script>
 
