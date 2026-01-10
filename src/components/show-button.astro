@@ -12,8 +12,12 @@ const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 let isShowing = false;
 if (buttonShowState === ShowState.FIRST_READ) {
   isShowing = urlShowParams.includes(ShowState.FIRST_READ);
-} else if (buttonShowState === ShowState.GREEK || buttonShowState === ShowState.ENGLISH) {
-  isShowing = urlShowParams.includes(buttonShowState);
+} else if (
+  buttonShowState === ShowState.GREEK ||
+  buttonShowState === ShowState.ENGLISH
+) {
+  isShowing =
+    urlShowParams.includes(buttonShowState) || urlShowParams.length === 0;
 }
 ---
 
@@ -106,48 +110,3 @@ if (buttonShowState === ShowState.FIRST_READ) {
     display: none;
   }
 </style>
-
-<!-- <style>
-  .control {
-    /* width: 100px; */
-    /* line-height: 100px; */
-    label {
-      width: inherit;
-      position: absolute;
-      text-align: center;
-      border: 2px solid;
-      border-radius: 10px;
-      cursor: pointer;
-      input {
-        appearance: none;
-        margin: 0;
-      }
-    }
-    .show_text {
-      pointer-events: none;
-      background: rgb(247 248 251);
-      border-color: rgb(199 203 211);
-    }
-    .hide_text {
-      background: rgb(228 236 248);
-      border-color: rgb(40 68 212);
-    }
-  }
-
-  label:has(:checked) {
-    ~ label {
-      opacity: 0;
-    }
-    &:is(:not(:first-child)) {
-      pointer-events: none;
-      ~ label {
-        pointer-events: none;
-      }
-    }
-    &:is(:first-child) {
-      ~ label {
-        pointer-events: auto;
-      }
-    }
-  }
-</style> -->
