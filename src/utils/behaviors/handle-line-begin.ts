@@ -40,12 +40,13 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const stephanusReference = element.getAttribute("n") ?? "";
 
-  // Get language from parent tei-container
+  // Get language and hideLineNumbers from parent tei-container
   let parent = element.parentElement;
   while (parent && parent.tagName !== 'TEI-CONTAINER') {
     parent = parent.parentElement;
   }
   const language = (parent as HTMLElement)?.dataset?.language || 'gr';
+  const hideLineNumbers = (parent as HTMLElement)?.dataset?.hideLineNumbers === 'true';
 
   // Create unique IDs with language suffix
   element.id = `${stephanusReference}-${language}`;
@@ -53,7 +54,7 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const { page, column, line } = parseStephanusReference(stephanusReference);
 
-  if (LINE_NUMBERS_TO_DISPLAY.includes(line)) {
+  if (LINE_NUMBERS_TO_DISPLAY.includes(line) && !hideLineNumbers) {
     const lineMarker = document.createElement("b");
     lineMarker.innerText =
       stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE

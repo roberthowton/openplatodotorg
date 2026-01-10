@@ -52,7 +52,7 @@ const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
       {
         showEnglish && (
           <div style="width: max-content; margin: 0 2rem">
-            <Tei teiData={teiDataEn} language="en" />
+            <Tei teiData={teiDataEn} language="en" hideLineNumbers={showGreek} />
           </div>
         )
       }

@@ -7,9 +7,10 @@ export interface Props {
   teiData: ProcessedTei;
   rootId?: string;
   language?: string;
+  hideLineNumbers?: boolean;
 }
 
-let { teiData, useBehaviors = true, rootId, language } = Astro.props;
+let { teiData, useBehaviors = true, rootId, language, hideLineNumbers = false } = Astro.props;
 
 // Expand self-closing elements
 const tei = teiData.serialized.replace(
@@ -31,6 +32,7 @@ const tei = teiData.serialized.replace(
   data-language={language}
   data-usebehaviors={useBehaviors.toString()}
   data-elements={teiData.elements.toString()}
+  data-hide-line-numbers={hideLineNumbers.toString()}
   style="display: none;"
 />
 
