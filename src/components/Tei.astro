@@ -19,34 +19,10 @@ const tei = teiData.serialized.replace(
 ---
 
 <script>
-  import { customBehaviors } from "../utils";
-  import CETEI from "CETEIcean";
+  import { createTeiCustomElement } from "./TeiCustomElement";
 
-  class Tei extends HTMLElement {
-    connectedCallback() {
-      if (this.dataset.rootId) {
-        this.id = this.dataset.rootId;
-      }
-
-      const teiDom = this.firstChild as HTMLElement;
-
-      if (this.dataset.usebehaviors === "true") {
-        const ceteicean = new CETEI();
-        ceteicean.addBehaviors({
-          tei: {
-            ...customBehaviors,
-          },
-        });
-        ceteicean.els = this.dataset.elements?.split(",");
-        ceteicean.utilities.dom = teiDom;
-        ceteicean.applyBehaviors();
-      }
-      // Display TEI content only after behaviors are applied to avoid flickering
-      this.style.display = "block";
-    }
-  }
-
-  customElements.define("tei-container", Tei);
+  const TeiContainer = createTeiCustomElement();
+  customElements.define("tei-container", TeiContainer);
 </script>
 
 <tei-container

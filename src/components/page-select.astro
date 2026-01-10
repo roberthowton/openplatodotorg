@@ -22,22 +22,18 @@ const { pages } = Astro.props;
 
 <script>
   import { addOrUpdateUrlParam } from "../utils";
-
-  // TypeScript interface for search results
-  interface SearchResult {
-    type: 'reference' | 'text';
-    reference: string;
-    textPreview?: string;
-    matchIndex?: number;
-  }
+  import {
+    type SearchResult,
+    extractReferenceFromId,
+    createPreview,
+    highlightMatch
+  } from "./page-select-client";
 
   const dropdown = document.querySelector(".dropdown") as HTMLElement;
-  const searchInput = document.getElementById(
-    "searchInput",
-  ) as HTMLInputElement;
+  const searchInput = document.getElementById("searchInput") as HTMLInputElement;
   const dropdownList = document.getElementById("dropdownList") as HTMLElement;
 
-  const items: (string | null)[] = JSON.parse(dropdown?.dataset?.lines || "[]");
+  const items: (string | null)[] = JSON.parse(dropdown.dataset?.lines || "[]");
 
   // Helper function to detect which text languages are currently visible
   function getVisibleLanguages(): string[] {
@@ -53,38 +49,6 @@ const { pages } = Astro.props;
     });
 
     return languages;
-  }
-
-  // Helper function to extract reference from text div ID
-  function extractReferenceFromId(id: string, language: string): string {
-    return id.replace(`-${language}-text`, '');
-  }
-
-  // Helper function to create text preview with context around match
-  function createPreview(text: string, matchIndex: number, matchLength: number): string {
-    const contextBefore = 30;
-    const contextAfter = 30;
-
-    const start = Math.max(0, matchIndex - contextBefore);
-    const end = Math.min(text.length, matchIndex + matchLength + contextAfter);
-
-    let preview = text.slice(start, end).trim();
-
-    if (start > 0) preview = '...' + preview;
-    if (end < text.length) preview = preview + '...';
-
-    return preview;
-  }
-
-  // Helper function to escape regex special characters
-  function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
-  // Helper function to highlight search term in preview
-  function highlightMatch(preview: string, searchTerm: string): string {
-    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
-    return preview.replace(regex, '<mark>$1</mark>');
   }
 
   // Search text content in visible languages
