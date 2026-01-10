@@ -18,14 +18,22 @@ export function buildShowUrl(baseUrl: string, show: string, isShowing: boolean):
       params.append("show", ShowState.GREEK);
       params.append("show", ShowState.ENGLISH);
     } else {
-      // Remove this specific show state
       const currentShowParams = params.getAll("show");
       params.delete("show");
-      currentShowParams.forEach((param) => {
-        if (param !== show) {
-          params.append("show", param);
-        }
-      });
+
+      if (currentShowParams.length === 0) {
+        // No params means both shown; add the opposite language
+        const opposite =
+          show === ShowState.GREEK ? ShowState.ENGLISH : ShowState.GREEK;
+        params.append("show", opposite);
+      } else {
+        // Remove this specific show state
+        currentShowParams.forEach((param) => {
+          if (param !== show) {
+            params.append("show", param);
+          }
+        });
+      }
     }
   } else {
     // Show action

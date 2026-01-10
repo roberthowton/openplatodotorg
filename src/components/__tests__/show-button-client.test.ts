@@ -39,6 +39,18 @@ describe('buildShowUrl', () => {
       expect(result).not.toContain('show=gr');
     });
 
+    it('hiding Greek with no params adds English', () => {
+      const result = buildShowUrl(baseUrl, ShowState.GREEK, true);
+      expect(result).toContain('show=en');
+      expect(result).not.toContain('show=gr');
+    });
+
+    it('hiding English with no params adds Greek', () => {
+      const result = buildShowUrl(baseUrl, ShowState.ENGLISH, true);
+      expect(result).toContain('show=gr');
+      expect(result).not.toContain('show=en');
+    });
+
     it('removes English but keeps Greek', () => {
       const urlWithBoth = 'https://example.com/page?show=gr&show=en';
       const result = buildShowUrl(urlWithBoth, ShowState.ENGLISH, true);

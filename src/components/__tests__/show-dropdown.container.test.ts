@@ -34,4 +34,32 @@ describe('ShowDropdown component (Container API)', () => {
     expect(result).toContain('Hide English');
     expect(result).toContain('Exit First Read');
   });
+
+  describe('first read mode', () => {
+    it('hides Greek button in first read mode', async () => {
+      const container = await AstroContainer.create();
+      const result = await container.renderToString(ShowDropdown, {
+        request: new Request('https://example.com/?show=firstRead'),
+      });
+      expect(result).not.toContain('Show Greek');
+      expect(result).not.toContain('Hide Greek');
+    });
+
+    it('hides English button in first read mode', async () => {
+      const container = await AstroContainer.create();
+      const result = await container.renderToString(ShowDropdown, {
+        request: new Request('https://example.com/?show=firstRead'),
+      });
+      expect(result).not.toContain('Show English');
+      expect(result).not.toContain('Hide English');
+    });
+
+    it('shows Exit First Read in first read mode', async () => {
+      const container = await AstroContainer.create();
+      const result = await container.renderToString(ShowDropdown, {
+        request: new Request('https://example.com/?show=firstRead'),
+      });
+      expect(result).toContain('Exit First Read');
+    });
+  });
 });
