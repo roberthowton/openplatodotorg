@@ -7,8 +7,10 @@ import Tei from "@components/Tei.astro";
 import PageSelect from "@components/page-select.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
+import { loadComments } from "@utils/loadComments";
 
 const { dialogueId } = Astro.params;
+if (!dialogueId) throw new Error("dialogueId is required");
 const showParams = Astro.url.searchParams.getAll("show") as ShowState[];
 
 // If no params, default to both languages
@@ -34,6 +36,14 @@ const lineNumbers = Array.from(new Set([...lineNumbersGr, ...lineNumbersEn]));
 const showFirstRead = defaultParams.includes(ShowState.FIRST_READ);
 const showGreek = !showFirstRead && defaultParams.includes(ShowState.GREEK);
 const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
+
+// Load comments for displayed languages
+const commentsEn = showEnglish || showFirstRead
+  ? await loadComments(dialogueId, "en", showFirstRead)
+  : null;
+const commentsGr = showGreek
+  ? await loadComments(dialogueId, "gr", false)
+  : null;
 ---
 
 <PageLayout>
@@ -66,6 +76,13 @@ const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
     </section>
   </main>
 </PageLayout>
+
+{commentsEn && (
+  <script type="application/json" id="comments-en" set:html={JSON.stringify(commentsEn)} />
+)}
+{commentsGr && (
+  <script type="application/json" id="comments-gr" set:html={JSON.stringify(commentsGr)} />
+)}
 
 <style>
   .dialogueContainer {
