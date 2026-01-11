@@ -1,5 +1,6 @@
 import { glob } from "astro/loaders";
 import { defineCollection } from "astro:content";
+import { z } from "astro:schema";
 
 // const dialogCollection = defineCollection({
 //   type: "data",
@@ -13,7 +14,28 @@ const dialogue = defineCollection({
   loader: glob({ pattern: "**/*.xml", base: "./src/content/dialogue" }),
 });
 
+const comment = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/comment" }),
+  schema: z.object({
+    id: z.string(),
+    type: z.literal("commentary"),
+    firstRead: z.boolean().default(false),
+    targets: z.array(
+      z.object({
+        stephanus: z.string().optional(),
+        stephanusRange: z
+          .object({
+            start: z.string(),
+            end: z.string(),
+          })
+          .optional(),
+        match: z.string().optional(),
+      })
+    ),
+  }),
+});
+
 export const collections = {
-  // dialogs: dialogCollection,
   dialogue,
+  comment,
 };
