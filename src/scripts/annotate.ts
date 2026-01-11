@@ -40,26 +40,22 @@ function findMatchPosition(
   anchor: HTMLElement,
   match: string
 ): { node: Text; offset: number } | null {
+  // Find the tei-container to search within
+  const container = anchor.closest("tei-container") || document.body;
+
   const walker = document.createTreeWalker(
-    anchor.parentElement || anchor,
+    container,
     NodeFilter.SHOW_TEXT
   );
 
-  // Start from anchor's position
-  let foundAnchor = false;
+  // Position walker at the anchor
+  walker.currentNode = anchor;
+
+  // Search forward from anchor
   let node: Text | null;
-
   while ((node = walker.nextNode() as Text | null)) {
-    if (!foundAnchor) {
-      // Check if we've passed the anchor
-      if (anchor.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING) {
-        foundAnchor = true;
-      } else {
-        continue;
-      }
-    }
-
-    const idx = node.textContent?.indexOf(match) ?? -1;
+    const text = node.textContent || "";
+    const idx = text.indexOf(match);
     if (idx !== -1) {
       return { node, offset: idx };
     }
@@ -207,21 +203,22 @@ function collectBoundaries(
 }
 
 /**
- * Wrap a text range with an annotation span
+ * Wrap a single text node (or portion) with an annotation span
  */
-function wrapRange(
-  startNode: Text,
+function wrapTextNode(
+  node: Text,
   startOffset: number,
-  endNode: Text,
   endOffset: number,
   noteIds: Set<string>
 ): void {
-  const range = document.createRange();
-  range.setStart(startNode, startOffset);
-  range.setEnd(endNode, endOffset);
+  const text = node.textContent || "";
+  if (startOffset >= endOffset || startOffset >= text.length) return;
 
-  // Check if range is valid and has content
-  if (range.collapsed) return;
+  const actualEnd = Math.min(endOffset, text.length);
+
+  const range = document.createRange();
+  range.setStart(node, startOffset);
+  range.setEnd(node, actualEnd);
 
   const span = document.createElement("span");
   span.className = "annotated";
@@ -230,11 +227,65 @@ function wrapRange(
   try {
     range.surroundContents(span);
   } catch {
-    // surroundContents fails if range crosses element boundaries
-    // Fall back to extracting and wrapping
-    const fragment = range.extractContents();
-    span.appendChild(fragment);
-    range.insertNode(span);
+    // This shouldn't fail for single text nodes, but handle gracefully
+    return;
+  }
+}
+
+/**
+ * Wrap a text range with annotation spans (handles cross-element ranges)
+ */
+function wrapRange(
+  startNode: Text,
+  startOffset: number,
+  endNode: Text,
+  endOffset: number,
+  noteIds: Set<string>
+): void {
+  // Same node - simple case
+  if (startNode === endNode) {
+    wrapTextNode(startNode, startOffset, endOffset, noteIds);
+    return;
+  }
+
+  // Different nodes - wrap each text node individually
+  const noteIdsStr = Array.from(noteIds).join(",");
+
+  // Wrap the start node (from offset to end)
+  wrapTextNode(startNode, startOffset, startNode.textContent?.length || 0, noteIds);
+
+  // Walk through intermediate text nodes and wrap fully
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT
+  );
+  walker.currentNode = startNode;
+
+  let node = walker.nextNode() as Text | null;
+  while (node && node !== endNode) {
+    // Skip nodes already wrapped or empty
+    if (node.parentElement?.classList.contains("annotated") ||
+        !node.textContent?.trim()) {
+      node = walker.nextNode() as Text | null;
+      continue;
+    }
+
+    const span = document.createElement("span");
+    span.className = "annotated";
+    span.dataset.noteIds = noteIdsStr;
+
+    const parent = node.parentNode;
+    if (parent) {
+      parent.insertBefore(span, node);
+      span.appendChild(node);
+    }
+
+    node = walker.nextNode() as Text | null;
+  }
+
+  // Wrap the end node (from start to offset)
+  if (endNode && !endNode.parentElement?.classList.contains("annotated")) {
+    wrapTextNode(endNode, 0, endOffset, noteIds);
   }
 }
 

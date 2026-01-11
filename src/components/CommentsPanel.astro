@@ -1,0 +1,88 @@
+---
+// Side panel for displaying comments
+---
+
+<aside id="comments-panel" class="comments-panel">
+  <header class="comments-panel-header">
+    <h2>Comments</h2>
+  </header>
+  <div id="comments-panel-content" class="comments-panel-content">
+    <p class="comments-panel-empty">Click highlighted text to view comments</p>
+  </div>
+</aside>
+
+<script>
+  import { initCommentsPanel } from "../scripts/commentsPanel";
+  initCommentsPanel();
+</script>
+
+<style>
+  .comments-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 320px;
+    height: 100vh;
+    background: var(--panel-bg, #fafafa);
+    border-left: 1px solid var(--panel-border, #e5e5e5);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    font-family: system-ui, sans-serif;
+  }
+
+  .comments-panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--panel-border, #e5e5e5);
+  }
+
+  .comments-panel-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .comments-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .comments-panel-empty {
+    color: var(--text-muted, #737373);
+    font-style: italic;
+  }
+
+  .comment-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--panel-border, #e5e5e5);
+  }
+
+  .comment-item:last-child {
+    border-bottom: none;
+  }
+
+  .comment-item-id {
+    font-size: 0.75rem;
+    color: var(--text-muted, #737373);
+    margin-bottom: 0.5rem;
+    font-family: monospace;
+  }
+
+  .comment-item-body {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .comments-panel {
+      width: 100%;
+      height: 40vh;
+      top: auto;
+      bottom: 0;
+      border-left: none;
+      border-top: 1px solid var(--panel-border, #e5e5e5);
+    }
+  }
+</style>
