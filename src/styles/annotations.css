@@ -1,0 +1,22 @@
+.annotated {
+  text-decoration: underline;
+  text-decoration-color: var(--annotation-color, #6366f1);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Thicker underline for multi-note segments */
+.annotated[data-note-ids*=","] {
+  text-decoration-thickness: 3px;
+}
+
+.annotated:hover,
+.annotated.active {
+  background: var(--annotation-highlight, rgba(99, 102, 241, 0.15));
+}
+
+.tei-anchor {
+  /* Invisible but present in DOM for positioning */
+  display: contents;
+}

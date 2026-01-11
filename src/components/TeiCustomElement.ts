@@ -2,6 +2,7 @@
 import { customBehaviors } from "../utils";
 import CETEI from "CETEIcean";
 import { injectAnchors, type AnchorIndex } from "../scripts/injectAnchors";
+import { annotate } from "../scripts/annotate";
 
 export interface TeiElementConfig {
   rootId?: string;
@@ -38,9 +39,12 @@ export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig): 
         const anchorIndex = injectAnchors(element, lang);
         anchorIndices.set(lang, anchorIndex);
 
-        // Dispatch event for annotation layer
+        // Apply annotations (segment decomposition)
+        annotate(element, lang, anchorIndex);
+
+        // Dispatch event for UI layer
         element.dispatchEvent(
-          new CustomEvent("tei-anchors-ready", {
+          new CustomEvent("tei-annotations-ready", {
             detail: { language: lang, anchorIndex },
             bubbles: true,
           })
