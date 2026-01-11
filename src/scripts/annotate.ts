@@ -43,24 +43,53 @@ function findMatchPosition(
   // Find the tei-container to search within
   const container = anchor.closest("tei-container") || document.body;
 
+  // Get anchor's position for proximity comparison
+  const anchorRect = anchor.getBoundingClientRect();
+
+  // Search ALL text nodes in container, find closest match to anchor
   const walker = document.createTreeWalker(
     container,
     NodeFilter.SHOW_TEXT
   );
 
-  // Position walker at the anchor
-  walker.currentNode = anchor;
-
-  // Search forward from anchor
   let node: Text | null;
+  let bestMatch: { node: Text; offset: number; distance: number } | null = null;
+  let searchCount = 0;
+
   while ((node = walker.nextNode() as Text | null)) {
+    searchCount++;
     const text = node.textContent || "";
     const idx = text.indexOf(match);
+
     if (idx !== -1) {
-      return { node, offset: idx };
+      // Found a match - calculate distance from anchor
+      const range = document.createRange();
+      range.setStart(node, idx);
+      range.setEnd(node, idx + match.length);
+      const matchRect = range.getBoundingClientRect();
+
+      // Distance based on vertical position (same line = 0)
+      const distance = Math.abs(matchRect.top - anchorRect.top);
+
+      if (!bestMatch || distance < bestMatch.distance) {
+        bestMatch = { node, offset: idx, distance };
+        // If very close (same line), use immediately
+        if (distance < 30) {
+          console.log(`[annotate] Found "${match}" at distance ${distance.toFixed(0)}px`);
+          return { node: bestMatch.node, offset: bestMatch.offset };
+        }
+      }
     }
+
+    if (searchCount > 2000) break;
   }
 
+  if (bestMatch) {
+    console.log(`[annotate] Found "${match}" at distance ${bestMatch.distance.toFixed(0)}px (closest of ${searchCount} nodes)`);
+    return { node: bestMatch.node, offset: bestMatch.offset };
+  }
+
+  console.warn(`[annotate] Match not found: "${match}" (searched ${searchCount} nodes)`);
   return null;
 }
 
@@ -123,7 +152,8 @@ function comparePositions(
  */
 function collectBoundaries(
   comments: Comment[],
-  anchorIndex: AnchorIndex
+  anchorIndex: AnchorIndex,
+  lang: "en" | "gr"
 ): Boundary[] {
   const boundaries: Boundary[] = [];
 
@@ -147,9 +177,10 @@ function collectBoundaries(
 
       if (target.match) {
         // Find exact match position
+        console.log(`[annotate] Looking for "${target.match}" after anchor ${startStephanus}`);
         const matchPos = findMatchPosition(startAnchor, target.match);
         if (!matchPos) {
-          console.warn(`Match not found: "${target.match}" after ${startStephanus}`);
+          console.warn(`[annotate] Match not found: "${target.match}" after ${startStephanus}`);
           continue;
         }
         startPos = matchPos;
@@ -182,8 +213,9 @@ function collectBoundaries(
       }
 
       if (startPos && endPos) {
-        boundaries.push({ ...startPos, noteId: comment.id, type: "start" });
-        boundaries.push({ ...endPos, noteId: comment.id, type: "end" });
+        const prefixedId = `${lang}:${comment.id}`;
+        boundaries.push({ ...startPos, noteId: prefixedId, type: "start" });
+        boundaries.push({ ...endPos, noteId: prefixedId, type: "end" });
       }
     }
   }
@@ -293,14 +325,14 @@ function wrapRange(
  * Apply annotations using segment decomposition
  */
 export function annotate(
-  container: HTMLElement,
+  _container: HTMLElement,
   lang: "en" | "gr",
   anchorIndex: AnchorIndex
 ): void {
   const data = getCommentsData(lang);
   if (!data || !data.comments.length) return;
 
-  const boundaries = collectBoundaries(data.comments, anchorIndex);
+  const boundaries = collectBoundaries(data.comments, anchorIndex, lang);
   if (!boundaries.length) return;
 
   const activeNotes = new Set<string>();

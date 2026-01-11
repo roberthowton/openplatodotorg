@@ -7,4 +7,6 @@ targets:
     match: "ὦ παῖ Κλεινίου"
 ---
 
+Greek comment.
+
 Addressing someone by patronymic was formal in Athenian discourse. Cleinias was a distinguished Athenian who died at Coronea (447 BCE).

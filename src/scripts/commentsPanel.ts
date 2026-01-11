@@ -12,6 +12,7 @@ type CommentsData = {
 
 /**
  * Get all comments data from both language JSON scripts
+ * Keys are prefixed with language: "en:commentId" or "gr:commentId"
  */
 function getAllComments(): Map<string, Comment> {
   const commentsMap = new Map<string, Comment>();
@@ -23,7 +24,8 @@ function getAllComments(): Map<string, Comment> {
     try {
       const data: CommentsData = JSON.parse(script.textContent || "");
       for (const comment of data.comments) {
-        commentsMap.set(comment.id, comment);
+        // Prefix with language to avoid collisions
+        commentsMap.set(`${lang}:${comment.id}`, comment);
       }
     } catch {
       // Ignore parse errors
