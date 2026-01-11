@@ -14,4 +14,8 @@ Additionally, the application aims to incorporate functionality to support comme
 
 ## TEI Schema version
 
-https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng
+<https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng>
+
+## Github PRs and Issues
+
+All PRs and issues (including subissues) should be created in my fork of the openplatodotorg repo.
