@@ -54,7 +54,7 @@ src/
 
 ### TEI Processing
 
-CETEIcean converts TEI XML to `tei-*` custom elements. Behaviors in `utils/behaviors/` handle:
+CETEIcean converts TEI XML to `tei-*` custom elements in a preprocessing approach adapted from [astro-tei](https://github.com/raffazizzi/astro-tei). Behaviors in `utils/behaviors/` handle:
 
 - `tei-lb`: Grid layout for text + Stephanus line numbers
 - `tei-milestone`: Stephanus page markers
