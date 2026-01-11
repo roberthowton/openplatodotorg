@@ -75,14 +75,13 @@ const commentsGr = showGreek
       }
     </section>
   </main>
+  {commentsEn && (
+    <script type="application/json" id="comments-en" set:html={JSON.stringify(commentsEn)} />
+  )}
+  {commentsGr && (
+    <script type="application/json" id="comments-gr" set:html={JSON.stringify(commentsGr)} />
+  )}
 </PageLayout>
-
-{commentsEn && (
-  <script type="application/json" id="comments-en" set:html={JSON.stringify(commentsEn)} />
-)}
-{commentsGr && (
-  <script type="application/json" id="comments-gr" set:html={JSON.stringify(commentsGr)} />
-)}
 
 <style>
   .dialogueContainer {
