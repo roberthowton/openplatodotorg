@@ -40,31 +40,56 @@ function findMatchPosition(
   anchor: HTMLElement,
   match: string
 ): { node: Text; offset: number } | null {
+  // Find the tei-container to search within
+  const container = anchor.closest("tei-container") || document.body;
+
+  // Get anchor's position for proximity comparison
+  const anchorRect = anchor.getBoundingClientRect();
+
+  // Search ALL text nodes in container, find closest match to anchor
   const walker = document.createTreeWalker(
-    anchor.parentElement || anchor,
+    container,
     NodeFilter.SHOW_TEXT
   );
 
-  // Start from anchor's position
-  let foundAnchor = false;
   let node: Text | null;
+  let bestMatch: { node: Text; offset: number; distance: number } | null = null;
+  let searchCount = 0;
 
   while ((node = walker.nextNode() as Text | null)) {
-    if (!foundAnchor) {
-      // Check if we've passed the anchor
-      if (anchor.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING) {
-        foundAnchor = true;
-      } else {
-        continue;
+    searchCount++;
+    const text = node.textContent || "";
+    const idx = text.indexOf(match);
+
+    if (idx !== -1) {
+      // Found a match - calculate distance from anchor
+      const range = document.createRange();
+      range.setStart(node, idx);
+      range.setEnd(node, idx + match.length);
+      const matchRect = range.getBoundingClientRect();
+
+      // Distance based on vertical position (same line = 0)
+      const distance = Math.abs(matchRect.top - anchorRect.top);
+
+      if (!bestMatch || distance < bestMatch.distance) {
+        bestMatch = { node, offset: idx, distance };
+        // If very close (same line), use immediately
+        if (distance < 30) {
+          console.log(`[annotate] Found "${match}" at distance ${distance.toFixed(0)}px`);
+          return { node: bestMatch.node, offset: bestMatch.offset };
+        }
       }
     }
 
-    const idx = node.textContent?.indexOf(match) ?? -1;
-    if (idx !== -1) {
-      return { node, offset: idx };
-    }
+    if (searchCount > 2000) break;
   }
 
+  if (bestMatch) {
+    console.log(`[annotate] Found "${match}" at distance ${bestMatch.distance.toFixed(0)}px (closest of ${searchCount} nodes)`);
+    return { node: bestMatch.node, offset: bestMatch.offset };
+  }
+
+  console.warn(`[annotate] Match not found: "${match}" (searched ${searchCount} nodes)`);
   return null;
 }
 
@@ -127,7 +152,8 @@ function comparePositions(
  */
 function collectBoundaries(
   comments: Comment[],
-  anchorIndex: AnchorIndex
+  anchorIndex: AnchorIndex,
+  lang: "en" | "gr"
 ): Boundary[] {
   const boundaries: Boundary[] = [];
 
@@ -151,9 +177,10 @@ function collectBoundaries(
 
       if (target.match) {
         // Find exact match position
+        console.log(`[annotate] Looking for "${target.match}" after anchor ${startStephanus}`);
         const matchPos = findMatchPosition(startAnchor, target.match);
         if (!matchPos) {
-          console.warn(`Match not found: "${target.match}" after ${startStephanus}`);
+          console.warn(`[annotate] Match not found: "${target.match}" after ${startStephanus}`);
           continue;
         }
         startPos = matchPos;
@@ -186,8 +213,9 @@ function collectBoundaries(
       }
 
       if (startPos && endPos) {
-        boundaries.push({ ...startPos, noteId: comment.id, type: "start" });
-        boundaries.push({ ...endPos, noteId: comment.id, type: "end" });
+        const prefixedId = `${lang}:${comment.id}`;
+        boundaries.push({ ...startPos, noteId: prefixedId, type: "start" });
+        boundaries.push({ ...endPos, noteId: prefixedId, type: "end" });
       }
     }
   }
@@ -207,21 +235,22 @@ function collectBoundaries(
 }
 
 /**
- * Wrap a text range with an annotation span
+ * Wrap a single text node (or portion) with an annotation span
  */
-function wrapRange(
-  startNode: Text,
+function wrapTextNode(
+  node: Text,
   startOffset: number,
-  endNode: Text,
   endOffset: number,
   noteIds: Set<string>
 ): void {
-  const range = document.createRange();
-  range.setStart(startNode, startOffset);
-  range.setEnd(endNode, endOffset);
+  const text = node.textContent || "";
+  if (startOffset >= endOffset || startOffset >= text.length) return;
 
-  // Check if range is valid and has content
-  if (range.collapsed) return;
+  const actualEnd = Math.min(endOffset, text.length);
+
+  const range = document.createRange();
+  range.setStart(node, startOffset);
+  range.setEnd(node, actualEnd);
 
   const span = document.createElement("span");
   span.className = "annotated";
@@ -230,11 +259,65 @@ function wrapRange(
   try {
     range.surroundContents(span);
   } catch {
-    // surroundContents fails if range crosses element boundaries
-    // Fall back to extracting and wrapping
-    const fragment = range.extractContents();
-    span.appendChild(fragment);
-    range.insertNode(span);
+    // This shouldn't fail for single text nodes, but handle gracefully
+    return;
+  }
+}
+
+/**
+ * Wrap a text range with annotation spans (handles cross-element ranges)
+ */
+function wrapRange(
+  startNode: Text,
+  startOffset: number,
+  endNode: Text,
+  endOffset: number,
+  noteIds: Set<string>
+): void {
+  // Same node - simple case
+  if (startNode === endNode) {
+    wrapTextNode(startNode, startOffset, endOffset, noteIds);
+    return;
+  }
+
+  // Different nodes - wrap each text node individually
+  const noteIdsStr = Array.from(noteIds).join(",");
+
+  // Wrap the start node (from offset to end)
+  wrapTextNode(startNode, startOffset, startNode.textContent?.length || 0, noteIds);
+
+  // Walk through intermediate text nodes and wrap fully
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT
+  );
+  walker.currentNode = startNode;
+
+  let node = walker.nextNode() as Text | null;
+  while (node && node !== endNode) {
+    // Skip nodes already wrapped or empty
+    if (node.parentElement?.classList.contains("annotated") ||
+        !node.textContent?.trim()) {
+      node = walker.nextNode() as Text | null;
+      continue;
+    }
+
+    const span = document.createElement("span");
+    span.className = "annotated";
+    span.dataset.noteIds = noteIdsStr;
+
+    const parent = node.parentNode;
+    if (parent) {
+      parent.insertBefore(span, node);
+      span.appendChild(node);
+    }
+
+    node = walker.nextNode() as Text | null;
+  }
+
+  // Wrap the end node (from start to offset)
+  if (endNode && !endNode.parentElement?.classList.contains("annotated")) {
+    wrapTextNode(endNode, 0, endOffset, noteIds);
   }
 }
 
@@ -242,14 +325,14 @@ function wrapRange(
  * Apply annotations using segment decomposition
  */
 export function annotate(
-  container: HTMLElement,
+  _container: HTMLElement,
   lang: "en" | "gr",
   anchorIndex: AnchorIndex
 ): void {
   const data = getCommentsData(lang);
   if (!data || !data.comments.length) return;
 
-  const boundaries = collectBoundaries(data.comments, anchorIndex);
+  const boundaries = collectBoundaries(data.comments, anchorIndex, lang);
   if (!boundaries.length) return;
 
   const activeNotes = new Set<string>();

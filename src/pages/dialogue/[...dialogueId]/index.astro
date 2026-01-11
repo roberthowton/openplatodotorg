@@ -6,6 +6,7 @@ import ShowDropdown from "@components/show-dropdown.astro";
 import { getLineNumbersFromTeiDom } from "@utils";
 import Tei from "@components/Tei.astro";
 import PageSelect from "@components/page-select.astro";
+import CommentsPanel from "@components/CommentsPanel.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
 import { loadComments } from "@utils/loadComments";
@@ -76,6 +77,7 @@ const commentsGr = showGreek
       }
     </section>
   </main>
+  <CommentsPanel />
   {commentsEn && (
     <script type="application/json" id="comments-en" set:html={JSON.stringify(commentsEn)} />
   )}
@@ -90,5 +92,15 @@ const commentsGr = showGreek
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    /* Account for comments panel width */
+    padding-right: 340px;
+  }
+
+  @media (max-width: 768px) {
+    .dialogueContainer {
+      padding-right: 0;
+      /* Account for bottom panel on mobile */
+      padding-bottom: 45vh;
+    }
   }
 </style>
