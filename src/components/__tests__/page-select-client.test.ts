@@ -114,6 +114,46 @@ describe('highlightMatch', () => {
     expect(highlightMatch('test [value]', '[value]'))
       .toBe('test <mark>[value]</mark>');
   });
+
+  // XSS prevention tests
+  it('escapes HTML in preview text', () => {
+    const result = highlightMatch('<script>alert("xss")</script>', 'script');
+    // Raw <script> tag should be escaped
+    expect(result).not.toContain('<script>');
+    // The word "script" is still highlighted within escaped text
+    expect(result).toContain('<mark>script</mark>');
+    // Angle brackets are escaped
+    expect(result).toContain('&lt;');
+    expect(result).toContain('&gt;');
+  });
+
+  it('escapes HTML in search term', () => {
+    const result = highlightMatch('test <img> here', '<img>');
+    // Raw <img> tag should be escaped
+    expect(result).not.toContain('<img>');
+    // Escaped version should be highlighted
+    expect(result).toContain('<mark>&lt;img&gt;</mark>');
+  });
+
+  it('prevents XSS via malicious search term', () => {
+    const malicious = '<img src=x onerror=alert(1)>';
+    const result = highlightMatch(`text ${malicious} more`, malicious);
+    // Raw HTML should not exist
+    expect(result).not.toContain('<img ');
+    // Escaped version exists and is highlighted
+    expect(result).toContain('&lt;img');
+    expect(result).toContain('&gt;');
+  });
+
+  it('escapes ampersands correctly', () => {
+    expect(highlightMatch('foo & bar', '&'))
+      .toBe('foo <mark>&amp;</mark> bar');
+  });
+
+  it('escapes quotes in preview', () => {
+    expect(highlightMatch('say "hello"', 'hello'))
+      .toBe('say &quot;<mark>hello</mark>&quot;');
+  });
 });
 
 describe('filterReferences', () => {

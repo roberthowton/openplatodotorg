@@ -125,8 +125,13 @@ const commentsGr = showGreek
     grid-template-columns: fit-content(45%) fit-content(55%);
     gap: 2rem;
     align-items: start;
-    padding-right: 340px;
+    padding-right: 60px;
     padding-left: 1rem;
+    transition: padding-right 0.3s ease;
+  }
+
+  body.comments-panel-pinned .dialogueContainer {
+    padding-right: 340px;
   }
 
   /* When only one column, center it */
@@ -170,6 +175,12 @@ const commentsGr = showGreek
       flex-direction: column;
       padding-right: 0;
       padding-left: 0;
+      padding-bottom: 60px;
+      transition: padding-bottom 0.3s ease;
+    }
+
+    body.comments-panel-pinned .dialogueContainer {
+      padding-right: 0;
       padding-bottom: 45vh;
     }
 

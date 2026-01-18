@@ -30,9 +30,24 @@ export function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Escape HTML to prevent XSS
+ */
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export function highlightMatch(preview: string, searchTerm: string): string {
-  const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
-  return preview.replace(regex, '<mark>$1</mark>');
+  // Escape HTML first for defense in depth
+  const escapedPreview = escapeHtml(preview);
+  const escapedTerm = escapeHtml(searchTerm);
+  const regex = new RegExp(`(${escapeRegex(escapedTerm)})`, 'gi');
+  return escapedPreview.replace(regex, '<mark>$1</mark>');
 }
 
 export function filterReferences(items: (string | null)[], searchText: string): string[] {

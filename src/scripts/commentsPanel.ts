@@ -1,50 +1,78 @@
-type Comment = {
+// ============================================
+// Types
+// ============================================
+
+export type Comment = {
   id: string;
   firstRead: boolean;
   targets: unknown[];
   body: string;
 };
 
-type CommentsData = {
+export type CommentsData = {
   comments: Comment[];
   anchorPositions: string[];
 };
 
+// ============================================
+// Pure utility functions (testable)
+// ============================================
+
 /**
- * Get all comments data from both language JSON scripts
- * Keys are prefixed with language: "en:commentId" or "gr:commentId"
+ * Escape HTML to prevent XSS
  */
-function getAllComments(): Map<string, Comment> {
-  const commentsMap = new Map<string, Comment>();
-
-  for (const lang of ["en", "gr"]) {
-    const script = document.getElementById(`comments-${lang}`);
-    if (!script) continue;
-
-    try {
-      const data: CommentsData = JSON.parse(script.textContent || "");
-      for (const comment of data.comments) {
-        // Prefix with language to avoid collisions
-        commentsMap.set(`${lang}:${comment.id}`, comment);
-      }
-    } catch {
-      // Ignore parse errors
-    }
-  }
-
-  return commentsMap;
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /**
- * Render comments in the panel
+ * Parse comment IDs from URL parameter value
  */
-function renderComments(commentIds: string[], commentsMap: Map<string, Comment>): void {
-  const content = document.getElementById("comments-panel-content");
-  if (!content) return;
+export function parseCommentParam(param: string | null): string[] {
+  return param ? param.split(",").filter(Boolean) : [];
+}
 
+/**
+ * Build comment parameter value from IDs
+ */
+export function buildCommentParam(commentIds: string[]): string | null {
+  return commentIds.length > 0 ? commentIds.join(",") : null;
+}
+
+/**
+ * Check if panel state is pinned
+ */
+export function isPinned(panelParam: string | null): boolean {
+  return panelParam === "pinned";
+}
+
+/**
+ * Determine panel visibility state from URL params
+ * Returns: 'pinned' | 'overlay' | 'closed'
+ */
+export function getPanelVisibility(
+  panelParam: string | null,
+  commentParam: string | null
+): "pinned" | "overlay" | "closed" {
+  if (panelParam === "pinned") return "pinned";
+  if (commentParam && commentParam.length > 0) return "overlay";
+  return "closed";
+}
+
+/**
+ * Build HTML for rendering comments
+ */
+export function buildCommentsHtml(
+  commentIds: string[],
+  commentsMap: Map<string, Comment>
+): string {
   if (commentIds.length === 0) {
-    content.innerHTML = '<p class="comments-panel-empty">Click highlighted text to view comments</p>';
-    return;
+    return '<p class="comments-panel-empty">Click highlighted text to view comments</p>';
   }
 
   const html = commentIds
@@ -62,16 +90,44 @@ function renderComments(commentIds: string[], commentsMap: Map<string, Comment>)
     .filter(Boolean)
     .join("");
 
-  content.innerHTML = html || '<p class="comments-panel-empty">Comment not found</p>';
+  return html || '<p class="comments-panel-empty">Comment not found</p>';
+}
+
+// ============================================
+// DOM-dependent functions
+// ============================================
+
+/**
+ * Get all comments data from both language JSON scripts
+ * Keys are prefixed with language: "en:commentId" or "gr:commentId"
+ */
+function getAllComments(): Map<string, Comment> {
+  const commentsMap = new Map<string, Comment>();
+
+  for (const lang of ["en", "gr"]) {
+    const script = document.getElementById(`comments-${lang}`);
+    if (!script) continue;
+
+    try {
+      const data: CommentsData = JSON.parse(script.textContent || "");
+      for (const comment of data.comments) {
+        commentsMap.set(`${lang}:${comment.id}`, comment);
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }
+
+  return commentsMap;
 }
 
 /**
- * Escape HTML to prevent XSS
+ * Render comments in the panel
  */
-function escapeHtml(text: string): string {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+function renderComments(commentIds: string[], commentsMap: Map<string, Comment>): void {
+  const content = document.getElementById("comments-panel-content");
+  if (!content) return;
+  content.innerHTML = buildCommentsHtml(commentIds, commentsMap);
 }
 
 /**
@@ -79,8 +135,9 @@ function escapeHtml(text: string): string {
  */
 function updateUrlWithComment(commentIds: string[]): void {
   const url = new URL(window.location.href);
-  if (commentIds.length > 0) {
-    url.searchParams.set("comment", commentIds.join(","));
+  const param = buildCommentParam(commentIds);
+  if (param) {
+    url.searchParams.set("comment", param);
   } else {
     url.searchParams.delete("comment");
   }
@@ -88,12 +145,32 @@ function updateUrlWithComment(commentIds: string[]): void {
 }
 
 /**
+ * Update URL with pinned state
+ */
+function updateUrlWithPinnedState(pinned: boolean): void {
+  const url = new URL(window.location.href);
+  if (pinned) {
+    url.searchParams.set("panel", "pinned");
+  } else {
+    url.searchParams.delete("panel");
+  }
+  window.history.replaceState({}, "", url.toString());
+}
+
+/**
+ * Check if panel is pinned from URL
+ */
+function isPinnedFromUrl(): boolean {
+  const url = new URL(window.location.href);
+  return isPinned(url.searchParams.get("panel"));
+}
+
+/**
  * Get comment IDs from URL parameter
  */
 function getCommentFromUrl(): string[] {
   const url = new URL(window.location.href);
-  const param = url.searchParams.get("comment");
-  return param ? param.split(",").filter(Boolean) : [];
+  return parseCommentParam(url.searchParams.get("comment"));
 }
 
 /**
@@ -140,20 +217,118 @@ function activateCommentFromUrl(
 export function initCommentsPanel(): void {
   const commentsMap = getAllComments();
   let activeElement: Element | null = null;
+  const panel = document.getElementById("comments-panel");
+  const toggleBtn = document.getElementById("comments-panel-toggle");
+  const pinBtn = document.getElementById("comments-panel-pin");
+  const closeBtn = document.getElementById("comments-panel-close");
 
-  // Restore from URL on load
+  if (!panel || !toggleBtn) return;
+
+  /**
+   * Open panel as overlay (not pinned)
+   */
+  function openOverlay(): void {
+    panel!.classList.remove("collapsed");
+    panel!.classList.remove("pinned");
+    document.body.classList.remove("comments-panel-pinned");
+  }
+
+  /**
+   * Close panel and clear comment
+   */
+  function closePanel(): void {
+    panel!.classList.add("collapsed");
+    panel!.classList.remove("pinned");
+    document.body.classList.remove("comments-panel-pinned");
+    updateUrlWithPinnedState(false);
+    updateUrlWithComment([]);
+  }
+
+  /**
+   * Pin panel (pushes content aside)
+   */
+  function pinPanel(): void {
+    panel!.classList.remove("collapsed");
+    panel!.classList.add("pinned");
+    document.body.classList.add("comments-panel-pinned");
+    updateUrlWithPinnedState(true);
+  }
+
+  /**
+   * Unpin panel (back to overlay)
+   */
+  function unpinPanel(): void {
+    panel!.classList.remove("pinned");
+    document.body.classList.remove("comments-panel-pinned");
+    updateUrlWithPinnedState(false);
+  }
+
+  /**
+   * Toggle panel open/closed (for toggle button)
+   */
+  function togglePanel(): void {
+    const isCollapsed = panel!.classList.contains("collapsed");
+    if (isCollapsed) {
+      openOverlay();
+    } else {
+      closePanel();
+    }
+  }
+
+  /**
+   * Toggle pin state
+   */
+  function togglePin(): void {
+    const isPinned = panel!.classList.contains("pinned");
+    if (isPinned) {
+      unpinPanel();
+    } else {
+      pinPanel();
+    }
+  }
+
+  // Restore state from URL on load
   const urlCommentIds = getCommentFromUrl();
+  const urlPinned = isPinnedFromUrl();
+
+  if (urlPinned) {
+    pinPanel();
+  } else if (urlCommentIds.length > 0) {
+    // Comment param present → open overlay
+    openOverlay();
+  }
+  // Otherwise stay collapsed (default)
+
+  // Scroll to anchor if comment present
   if (urlCommentIds.length > 0) {
-    // Defer to allow DOM to be ready
     setTimeout(() => {
       activeElement = activateCommentFromUrl(urlCommentIds, commentsMap);
     }, 100);
   }
 
-  // Handle clicks on annotated text
+  // Handle toggle button click
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    togglePanel();
+  });
+
+  // Handle pin button click
+  pinBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    togglePin();
+  });
+
+  // Handle close button click
+  closeBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closePanel();
+  });
+
+  // Handle clicks on annotated text and dismiss overlay on click-away
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
     const annotated = target.closest(".annotated");
+    const clickedInPanel = target.closest("#comments-panel");
 
     // Remove active state from previous element
     if (activeElement) {
@@ -171,11 +346,24 @@ export function initCommentsPanel(): void {
       annotated.classList.add("active");
       activeElement = annotated;
 
+      // Open panel as overlay if collapsed (don't change if already pinned)
+      const isCollapsed = panel!.classList.contains("collapsed");
+      if (isCollapsed) {
+        openOverlay();
+      }
+
       // Update URL for sharability
       updateUrlWithComment(commentIds);
 
       // Render comments in panel
       renderComments(commentIds, commentsMap);
+    } else if (!clickedInPanel) {
+      // Clicked outside panel and not on annotation - dismiss overlay if in transient mode
+      const isOverlay = !panel!.classList.contains("collapsed") && !panel!.classList.contains("pinned");
+      if (isOverlay) {
+        panel!.classList.add("collapsed");
+        updateUrlWithComment([]);
+      }
     }
   });
 

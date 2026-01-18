@@ -2,9 +2,24 @@
 // Side panel for displaying comments
 ---
 
-<aside id="comments-panel" class="comments-panel">
+<aside id="comments-panel" class="comments-panel collapsed">
+  <button id="comments-panel-toggle" class="comments-panel-toggle" aria-label="Toggle comments panel">
+    <span class="toggle-icon"></span>
+  </button>
   <header class="comments-panel-header">
     <h2>Comments</h2>
+    <div class="comments-panel-actions">
+      <button id="comments-panel-pin" class="comments-panel-btn" aria-label="Pin panel" title="Pin panel">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182a.5.5 0 0 1-.707-.707l3.182-3.182L2.403 7.213a.5.5 0 0 1 0-.707c.688-.688 1.673-.766 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+        </svg>
+      </button>
+      <button id="comments-panel-close" class="comments-panel-btn" aria-label="Close panel" title="Close panel">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </button>
+    </div>
   </header>
   <div id="comments-panel-content" class="comments-panel-content">
     <p class="comments-panel-empty">Click highlighted text to view comments</p>
@@ -29,17 +44,93 @@
     flex-direction: column;
     z-index: 100;
     font-family: system-ui, sans-serif;
+    transition: transform 0.3s ease;
+  }
+
+  .comments-panel.collapsed {
+    transform: translateX(100%);
+  }
+
+  .comments-panel-toggle {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 48px;
+    background: var(--panel-bg, #fafafa);
+    border: 1px solid var(--panel-border, #e5e5e5);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 101;
+  }
+
+  .comments-panel-toggle:hover {
+    background: var(--panel-hover, #f0f0f0);
+  }
+
+  .toggle-icon {
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid var(--text-muted, #737373);
+    transition: transform 0.3s ease;
+  }
+
+  .comments-panel.collapsed .toggle-icon {
+    transform: rotate(180deg);
   }
 
   .comments-panel-header {
     padding: 1rem;
     border-bottom: 1px solid var(--panel-border, #e5e5e5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .comments-panel-header h2 {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
+  }
+
+  .comments-panel-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .comments-panel-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--text-muted, #737373);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .comments-panel-btn:hover {
+    background: var(--panel-hover, #f0f0f0);
+    color: var(--text-color, #333);
+  }
+
+  /* Pin button active state when pinned */
+  .comments-panel.pinned #comments-panel-pin {
+    color: var(--accent-color, #0066cc);
+    background: var(--panel-hover, #f0f0f0);
+  }
+
+  /* Overlay mode shadow */
+  .comments-panel:not(.collapsed):not(.pinned) {
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
   }
 
   .comments-panel-content {
@@ -83,6 +174,32 @@
       bottom: 0;
       border-left: none;
       border-top: 1px solid var(--panel-border, #e5e5e5);
+    }
+
+    .comments-panel.collapsed {
+      transform: translateY(100%);
+    }
+
+    .comments-panel-toggle {
+      left: 50%;
+      top: -40px;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 40px;
+      border: 1px solid var(--panel-border, #e5e5e5);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .toggle-icon {
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 8px solid var(--text-muted, #737373);
+      border-top: none;
+    }
+
+    .comments-panel.collapsed .toggle-icon {
+      transform: rotate(180deg);
     }
   }
 </style>
