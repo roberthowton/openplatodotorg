@@ -17,15 +17,30 @@ import TeiBaseStyle from "./tei-base-style.astro";
     margin: 0;
   }
 
-  .stephanus-line:not(.last):after {
-    /* workaround to justify text */
-    content: "";
-    display: inline-block;
-    width: 100%;
+  .stephanus-line {
+    min-height: 1.5em;
+    line-height: 1.5;
+    text-align-last: justify;
   }
 
-  .stephanus-line {
-    /* fix space added by workaround */
-    height: 1.5em;
+  /* Hide inline markers by default, show block markers */
+  .line-marker-inline {
+    display: none;
+  }
+
+  /* When overflow detected (.inline-mode), show inline markers, continuous flow */
+  .inline-mode .line-marker-inline {
+    display: inline !important;
+  }
+  .inline-mode .line-marker-block {
+    display: none !important;
+  }
+  .inline-mode tei-lb {
+    display: inline !important;
+  }
+  .inline-mode .stephanus-line {
+    display: inline !important;
+    min-height: unset;
+    text-align-last: auto;
   }
 </style>

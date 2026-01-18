@@ -1,8 +1,7 @@
 export const LINE_MARKER_STYLE: Partial<CSSStyleDeclaration> = {
   display: "inline",
-
-  position: "absolute",
-  left: "500px",
+  float: "right",
+  marginRight: "1rem",
 };
 
 export const GRID_STYLE = {

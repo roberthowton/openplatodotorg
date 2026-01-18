@@ -54,8 +54,34 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const { page, column, line } = parseStephanusReference(stephanusReference);
 
+  // Smart inline marker for narrow viewports: [103a] at page start, [b] at column change, [5] for line only
+  // Always create inline markers (CSS controls visibility)
+  {
+    const inlineMarker = document.createElement("b");
+    inlineMarker.className = "line-marker-inline";
+
+    let markerText: string;
+    if (line === "1" && column === "a") {
+      markerText = `${page}${column}`;
+    } else if (line === "1") {
+      markerText = column;
+    } else {
+      markerText = line;
+    }
+    inlineMarker.innerText = `[${markerText}] `;
+
+    Object.assign(inlineMarker.style, {
+      fontWeight: "800",
+      fontStyle: "italic",
+    });
+    inlineMarker.ariaHidden = "true";
+    textDiv.prepend(inlineMarker);
+  }
+
+  // Block marker for wide viewports (only on lines 1, 5, 10, 15)
   if (LINE_NUMBERS_TO_DISPLAY.includes(line) && !hideLineNumbers) {
     const lineMarker = document.createElement("b");
+    lineMarker.className = "line-marker-block";
     lineMarker.innerText =
       stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE
         ? column
@@ -64,7 +90,7 @@ export const handleLineBegin = (element: HTMLElement) => {
     Object.assign(lineMarker.style, {
       gridColumn: "lineRef",
       userSelect: "none",
-      fontWeight: 800,
+      fontWeight: "800",
       fontStyle: "italic",
     });
 
