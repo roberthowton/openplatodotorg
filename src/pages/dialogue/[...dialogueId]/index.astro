@@ -16,9 +16,8 @@ if (!dialogueId) throw new Error("dialogueId is required");
 const showParams = Astro.url.searchParams.getAll("show") as ShowState[];
 
 // If no params, default to both languages
-const defaultParams = showParams.length === 0
-  ? [ShowState.GREEK, ShowState.ENGLISH]
-  : showParams;
+const defaultParams =
+  showParams.length === 0 ? [ShowState.GREEK, ShowState.ENGLISH] : showParams;
 
 const teiFileGr = (
   await import(`../../../content/dialogue/${dialogueId}/gr.xml?raw`)
@@ -40,9 +39,10 @@ const showGreek = !showFirstRead && defaultParams.includes(ShowState.GREEK);
 const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
 
 // Load comments for displayed languages
-const commentsEn = showEnglish || showFirstRead
-  ? await loadComments(dialogueId, "en", showFirstRead)
-  : null;
+const commentsEn =
+  showEnglish || showFirstRead
+    ? await loadComments(dialogueId, "en", showFirstRead)
+    : null;
 const commentsGr = showGreek
   ? await loadComments(dialogueId, "gr", false)
   : null;
@@ -64,7 +64,11 @@ const commentsGr = showGreek
       {
         showEnglish && (
           <div class="text-column text-column-en">
-            <Tei teiData={teiDataEn} language="en" hideLineNumbers={showGreek} />
+            <Tei
+              teiData={teiDataEn}
+              language="en"
+              hideLineNumbers={showGreek}
+            />
           </div>
         )
       }
@@ -78,40 +82,56 @@ const commentsGr = showGreek
     </section>
   </main>
   <CommentsPanel />
-  {commentsEn && (
-    <script type="application/json" id="comments-en" set:html={JSON.stringify(commentsEn)} />
-  )}
-  {commentsGr && (
-    <script type="application/json" id="comments-gr" set:html={JSON.stringify(commentsGr)} />
-  )}
+  {
+    commentsEn && (
+      <script
+        type="application/json"
+        id="comments-en"
+        set:html={JSON.stringify(commentsEn)}
+      />
+    )
+  }
+  {
+    commentsGr && (
+      <script
+        type="application/json"
+        id="comments-gr"
+        set:html={JSON.stringify(commentsGr)}
+      />
+    )
+  }
   <script>
     // Detect text wrapping and switch to inline mode dynamically
     function checkOverflow() {
-      document.querySelectorAll('.text-column').forEach(column => {
-        const lines = column.querySelectorAll('.stephanus-line');
+      document.querySelectorAll(".text-column").forEach((column) => {
+        const lines = column.querySelectorAll(".stephanus-line");
         let hasWrapping = false;
 
         // Get computed line-height to detect wrapping
-        lines.forEach(line => {
+        lines.forEach((line) => {
           const style = window.getComputedStyle(line);
-          const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
+          const lineHeight =
+            parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
           // If element height is significantly more than one line, text has wrapped
-          if (line.offsetHeight > lineHeight * 1.3) {
+          if (
+            line instanceof HTMLElement &&
+            line.offsetHeight > lineHeight * 1.3
+          ) {
             hasWrapping = true;
           }
         });
 
         if (hasWrapping) {
-          column.classList.add('inline-mode');
+          column.classList.add("inline-mode");
         } else {
-          column.classList.remove('inline-mode');
+          column.classList.remove("inline-mode");
         }
       });
     }
 
     // Run on load and resize
-    window.addEventListener('load', checkOverflow);
-    window.addEventListener('resize', checkOverflow);
+    window.addEventListener("load", checkOverflow);
+    window.addEventListener("resize", checkOverflow);
 
     // Also observe DOM changes (for when TEI content renders)
     const observer = new MutationObserver(checkOverflow);
