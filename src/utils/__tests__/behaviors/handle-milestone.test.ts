@@ -43,6 +43,7 @@ describe('handleStephanusMilestone', () => {
     el.setAttribute('n', '103a');
     handleStephanusMilestone(el);
     expect(el.style.display).toBe('inline');
-    expect(el.style.position).toBe('absolute');
+    expect(el.style.float).toBe('right');
+    expect(el.style.marginRight).toBe('1rem');
   });
 });

@@ -9,10 +9,10 @@ describe('handleDiv', () => {
     expect(div.style.flexDirection).toBe('column');
   });
 
-  it('sets width to fit-content', () => {
+  it('sets width to 100%', () => {
     const div = document.createElement('div');
     handleDiv(div);
-    expect(div.style.width).toBe('fit-content');
+    expect(div.style.width).toBe('100%');
   });
 
   it('sets Porson font family', () => {

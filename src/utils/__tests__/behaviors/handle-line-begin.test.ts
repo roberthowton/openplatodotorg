@@ -71,33 +71,47 @@ describe('handleLineBegin', () => {
     expect(textDiv?.classList.contains('stephanus-line')).toBe(true);
   });
 
-  it('adds line marker for line 1 column a (shows page)', () => {
+  it('adds block line marker for line 1 column a (shows column)', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
     handleLineBegin(lb);
-    const marker = lb.querySelector('b');
+    const marker = lb.querySelector('.line-marker-block');
     // First line of document shows column (103a1 is ALCIBIADES_FIRST_LINE)
-    expect(marker?.innerText).toBe('a');
+    expect(marker?.textContent).toBe('a');
   });
 
-  it('adds line marker for line 5', () => {
+  it('adds inline line marker for line 1 column a (shows page+column)', () => {
+    const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
+    handleLineBegin(lb);
+    const marker = lb.querySelector('.line-marker-inline');
+    expect(marker?.textContent).toBe('[103a] ');
+  });
+
+  it('adds block line marker for line 5', () => {
     const lb = document.querySelector('tei-lb[n="103a5"]') as HTMLElement;
     handleLineBegin(lb);
-    const marker = lb.querySelector('b');
-    expect(marker?.innerText).toBe('5');
+    const marker = lb.querySelector('.line-marker-block');
+    expect(marker?.textContent).toBe('5');
   });
 
-  it('adds line marker for line 10', () => {
+  it('adds block line marker for line 10', () => {
     const lb = document.querySelector('tei-lb[n="103a10"]') as HTMLElement;
     handleLineBegin(lb);
-    const marker = lb.querySelector('b');
-    expect(marker?.innerText).toBe('10');
+    const marker = lb.querySelector('.line-marker-block');
+    expect(marker?.textContent).toBe('10');
   });
 
-  it('does not add marker for line 2', () => {
+  it('does not add block marker for line 2', () => {
     const lb = document.querySelector('tei-lb[n="103a2"]') as HTMLElement;
     handleLineBegin(lb);
-    const marker = lb.querySelector('b');
+    const marker = lb.querySelector('.line-marker-block');
     expect(marker).toBeNull();
+  });
+
+  it('adds inline marker for line 2', () => {
+    const lb = document.querySelector('tei-lb[n="103a2"]') as HTMLElement;
+    handleLineBegin(lb);
+    const marker = lb.querySelector('.line-marker-inline');
+    expect(marker?.textContent).toBe('[2] ');
   });
 
   it('extracts text content into div', () => {
