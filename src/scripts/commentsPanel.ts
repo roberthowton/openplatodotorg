@@ -97,6 +97,8 @@ export function buildCommentsHtml(
 // DOM-dependent functions
 // ============================================
 
+import { dispatch, getUrlState } from "../state/url";
+
 /**
  * Get all comments data from both language JSON scripts
  * Keys are prefixed with language: "en:commentId" or "gr:commentId"
@@ -131,46 +133,35 @@ function renderComments(commentIds: string[], commentsMap: Map<string, Comment>)
 }
 
 /**
- * Update URL with comment parameter
+ * Update URL with comment parameter via centralized dispatch
  */
 function updateUrlWithComment(commentIds: string[]): void {
-  const url = new URL(window.location.href);
-  const param = buildCommentParam(commentIds);
-  if (param) {
-    url.searchParams.set("comment", param);
-  } else {
-    url.searchParams.delete("comment");
-  }
-  window.history.replaceState({}, "", url.toString());
+  dispatch({ type: "SET_COMMENT", payload: commentIds });
 }
 
 /**
- * Update URL with pinned state
+ * Update URL with pinned state via centralized dispatch
  */
 function updateUrlWithPinnedState(pinned: boolean): void {
-  const url = new URL(window.location.href);
   if (pinned) {
-    url.searchParams.set("panel", "pinned");
+    dispatch({ type: "PIN_PANEL" });
   } else {
-    url.searchParams.delete("panel");
+    dispatch({ type: "UNPIN_PANEL" });
   }
-  window.history.replaceState({}, "", url.toString());
 }
 
 /**
  * Check if panel is pinned from URL
  */
 function isPinnedFromUrl(): boolean {
-  const url = new URL(window.location.href);
-  return isPinned(url.searchParams.get("panel"));
+  return getUrlState().panel === "pinned";
 }
 
 /**
  * Get comment IDs from URL parameter
  */
 function getCommentFromUrl(): string[] {
-  const url = new URL(window.location.href);
-  return parseCommentParam(url.searchParams.get("comment"));
+  return getUrlState().comment;
 }
 
 /**

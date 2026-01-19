@@ -43,12 +43,12 @@ if (buttonShowState === ShowState.FIRST_READ) {
 </show-button>
 
 <script>
-  import { navigate } from "astro:transitions/client";
+  import { dispatch, getUrlState } from "../state/url";
   import { ShowState } from "../types";
 
   class ShowButton extends HTMLElement {
     connectedCallback() {
-      const show = this.dataset.show;
+      const show = this.dataset.show as ShowState;
       const showRadio = this.querySelector(
         `label[class="show-${show}"]`,
       )?.querySelector("input");
@@ -57,57 +57,32 @@ if (buttonShowState === ShowState.FIRST_READ) {
       )?.querySelector("input");
 
       showRadio?.addEventListener("change", () => {
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
-
         if (show === ShowState.FIRST_READ) {
-          // Entering first read mode - clear all and set firstRead
-          params.delete("show");
-          params.set("show", ShowState.FIRST_READ);
+          dispatch({ type: "SET_FIRST_READ" });
         } else {
-          // Add this show state if not already present
-          const currentShowParams = params.getAll("show");
-          if (!currentShowParams.includes(show as string)) {
-            params.append("show", show as string);
+          // Add this language to current show state
+          const state = getUrlState();
+          if (!state.show.includes(show)) {
+            dispatch({ type: "SET_SHOW", payload: [...state.show.filter(s => s !== ShowState.FIRST_READ), show] });
           }
         }
-
-        url.search = params.toString();
-        navigate(url.href);
       });
 
       hideRadio?.addEventListener("change", () => {
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
-
         if (show === ShowState.FIRST_READ) {
-          // Exiting first read mode - show both languages
-          params.delete("show");
-          params.append("show", ShowState.GREEK);
-          params.append("show", ShowState.ENGLISH);
+          dispatch({ type: "EXIT_FIRST_READ" });
         } else {
-          const currentShowParams = params.getAll("show");
-          params.delete("show");
-
-          if (currentShowParams.length === 0) {
-            // No params means both shown; add the opposite language
-            const opposite =
-              show === ShowState.GREEK
-                ? ShowState.ENGLISH
-                : ShowState.GREEK;
-            params.append("show", opposite);
+          // Remove this language from current show state
+          const state = getUrlState();
+          const newShow = state.show.filter((s) => s !== show && s !== ShowState.FIRST_READ);
+          if (newShow.length === 0) {
+            // If nothing left, go to opposite language
+            const opposite = show === ShowState.GREEK ? ShowState.ENGLISH : ShowState.GREEK;
+            dispatch({ type: "SET_SHOW", payload: [opposite] });
           } else {
-            // Remove this specific show state
-            currentShowParams.forEach((param) => {
-              if (param !== show) {
-                params.append("show", param);
-              }
-            });
+            dispatch({ type: "SET_SHOW", payload: newShow });
           }
         }
-
-        url.search = params.toString();
-        navigate(url.href);
       });
     }
   }

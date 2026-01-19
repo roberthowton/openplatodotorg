@@ -5,10 +5,3 @@ export enum ShowState {
   FIRST_READ = "firstRead",
   UNKNOWN = "unknown",
 }
-
-export enum ShowStateAction {
-  SHOW = "show",
-  HIDE = "hide",
-}
-
-export type UrlParams = "ref" | "show";
