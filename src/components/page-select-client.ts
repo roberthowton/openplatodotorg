@@ -1,5 +1,7 @@
 // Extracted helper functions from page-select.astro for testing
 
+import { escapeHtml } from "../utils/sanitize";
+
 export interface SearchResult {
   type: 'reference' | 'text';
   reference: string;
@@ -28,18 +30,6 @@ export function createPreview(text: string, matchIndex: number, matchLength: num
 
 export function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-export function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 export function highlightMatch(preview: string, searchTerm: string): string {
