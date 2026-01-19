@@ -21,7 +21,7 @@ const { pages } = Astro.props;
 </div>
 
 <script>
-  import { addOrUpdateUrlParam } from "../utils";
+  import { dispatch } from "../state/url";
   import {
     type SearchResult,
     extractReferenceFromId,
@@ -203,7 +203,7 @@ const { pages } = Astro.props;
         line.classList.add("highlight");
       });
 
-      addOrUpdateUrlParam("ref", value);
+      dispatch({ type: "SET_REF", payload: value });
 
       // Remove highlight from all after 2 seconds
       setTimeout(() => {

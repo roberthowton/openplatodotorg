@@ -10,14 +10,15 @@ import CommentsPanel from "@components/CommentsPanel.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
 import { loadComments } from "@utils/loadComments";
+import { parseUrlState } from "../../../state/url";
 
 const { dialogueId } = Astro.params;
 if (!dialogueId) throw new Error("dialogueId is required");
-const showParams = Astro.url.searchParams.getAll("show") as ShowState[];
 
-// If no params, default to both languages
-const defaultParams =
-  showParams.length === 0 ? [ShowState.GREEK, ShowState.ENGLISH] : showParams;
+const urlState = parseUrlState(Astro.url);
+// If no explicit show params, default to both languages (server-side default)
+const hasExplicitShowParams = Astro.url.searchParams.getAll("show").length > 0;
+const showStates = hasExplicitShowParams ? urlState.show : [ShowState.GREEK, ShowState.ENGLISH];
 
 const teiFileGr = (
   await import(`../../../content/dialogue/${dialogueId}/gr.xml?raw`)
@@ -34,9 +35,9 @@ const lineNumbersEn = getLineNumbersFromTeiDom(teiDataEn.dom);
 const lineNumbers = Array.from(new Set([...lineNumbersGr, ...lineNumbersEn]));
 
 // If firstRead is present, only show first read (it takes precedence)
-const showFirstRead = defaultParams.includes(ShowState.FIRST_READ);
-const showGreek = !showFirstRead && defaultParams.includes(ShowState.GREEK);
-const showEnglish = !showFirstRead && defaultParams.includes(ShowState.ENGLISH);
+const showFirstRead = showStates.includes(ShowState.FIRST_READ);
+const showGreek = !showFirstRead && showStates.includes(ShowState.GREEK);
+const showEnglish = !showFirstRead && showStates.includes(ShowState.ENGLISH);
 
 // Load comments for displayed languages
 const commentsEn =
