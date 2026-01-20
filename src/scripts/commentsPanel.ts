@@ -1,3 +1,5 @@
+import { escapeHtml } from "../utils/sanitize";
+
 // ============================================
 // Types
 // ============================================
@@ -17,18 +19,6 @@ export type CommentsData = {
 // ============================================
 // Pure utility functions (testable)
 // ============================================
-
-/**
- * Escape HTML to prevent XSS
- */
-export function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
 /**
  * Parse comment IDs from URL parameter value
