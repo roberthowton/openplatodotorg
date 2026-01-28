@@ -35,7 +35,10 @@
 
 <script>
   import { initCommentsPanel } from "../scripts/commentsPanel";
+
+  // Initialize on load and after view transitions
   initCommentsPanel();
+  document.addEventListener("astro:after-swap", initCommentsPanel);
 </script>
 
 <style>
