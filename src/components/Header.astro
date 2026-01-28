@@ -4,6 +4,11 @@ import { ShowState } from "../types";
 const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
 const isScholarly = !isFirstRead;
+
+// For mobile language toggle in scholarly mode
+const showGreek = urlShowParams.includes(ShowState.GREEK) || urlShowParams.length === 0;
+const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.length === 0;
+const showBoth = showGreek && showEnglish;
 ---
 
 <header class="site-header">
@@ -40,6 +45,27 @@ const isScholarly = !isFirstRead;
   </div>
 
   <div class="header-right">
+    {/* Mobile language toggle - only in scholarly mode */}
+    {isScholarly && (
+      <nav class="lang-toggle" role="tablist" aria-label="Language view">
+        <button
+          class:list={["lang-btn", { active: showBoth || showGreek }]}
+          data-lang="gr"
+          role="tab"
+          aria-selected={showGreek}
+        >
+          ΕΛ
+        </button>
+        <button
+          class:list={["lang-btn", { active: showBoth || showEnglish }]}
+          data-lang="en"
+          role="tab"
+          aria-selected={showEnglish}
+        >
+          EN
+        </button>
+      </nav>
+    )}
     <button class="search-btn" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
@@ -55,6 +81,8 @@ const isScholarly = !isFirstRead;
 <script>
   import { dispatch } from "../state/url";
 
+  import { ShowState } from "../types";
+
   function initHeader() {
     // Mode toggle
     document.querySelectorAll(".mode-btn").forEach((btn) => {
@@ -64,6 +92,18 @@ const isScholarly = !isFirstRead;
           dispatch({ type: "SET_FIRST_READ" });
         } else {
           dispatch({ type: "EXIT_FIRST_READ" });
+        }
+      });
+    });
+
+    // Mobile language toggle
+    document.querySelectorAll(".lang-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lang = (btn as HTMLElement).dataset.lang;
+        if (lang === "gr") {
+          dispatch({ type: "SET_SHOW", payload: [ShowState.GREEK] });
+        } else {
+          dispatch({ type: "SET_SHOW", payload: [ShowState.ENGLISH] });
         }
       });
     });
@@ -215,7 +255,37 @@ const isScholarly = !isFirstRead;
     border-color: var(--color-text-muted);
   }
 
-  /* Responsive */
+  /* Mobile language toggle - hidden on desktop */
+  .lang-toggle {
+    display: none;
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .lang-btn {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: var(--space-xs) var(--space-sm);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+  }
+
+  .lang-btn:hover {
+    color: var(--color-text);
+  }
+
+  .lang-btn.active {
+    background: var(--op-yellow);
+    color: var(--black-1);
+  }
+
+  /* Responsive - Mobile */
   @media (max-width: 768px) {
     .site-header {
       padding: var(--space-sm) var(--space-md);
@@ -232,6 +302,26 @@ const isScholarly = !isFirstRead;
     .mode-btn {
       padding: var(--space-xs) var(--space-sm);
       font-size: 0.65rem;
+    }
+
+    /* Show language toggle on mobile */
+    .lang-toggle {
+      display: flex;
+    }
+
+    .search-btn {
+      display: none;
+    }
+  }
+
+  /* Tablet - Portrait */
+  @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    .site-header {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
     }
   }
 </style>

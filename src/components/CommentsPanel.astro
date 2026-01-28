@@ -227,5 +227,17 @@
       writing-mode: horizontal-tb;
       transform: none;
     }
+
+    /* Hide pin button on mobile */
+    #comments-panel-pin {
+      display: none;
+    }
+  }
+
+  /* Tablet - Portrait: no pin option, overlay only */
+  @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    #comments-panel-pin {
+      display: none;
+    }
   }
 </style>
