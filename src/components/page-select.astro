@@ -255,7 +255,7 @@ const { pages } = Astro.props;
 
 <style is:global>
   .highlight {
-    background-color: yellow;
+    background-color: var(--op-yellow);
   }
 </style>
 
@@ -263,13 +263,21 @@ const { pages } = Astro.props;
   .dropdown {
     position: relative;
     width: 300px;
+    margin: var(--space-md);
   }
 
   #searchInput {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+  }
+
+  #searchInput::placeholder {
+    color: var(--color-text-muted);
   }
 
   .dropdown-list {
@@ -277,50 +285,53 @@ const { pages } = Astro.props;
     width: 100%;
     max-height: 400px;
     overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
     display: none;
     list-style: none;
     padding: 0;
     z-index: 1000;
+    box-shadow: 0 4px 12px var(--overlay-dark);
   }
 
   /* Section headers */
   .section-header {
-    padding: 8px 12px;
-    font-weight: bold;
-    font-size: 0.85em;
-    color: #666;
-    background: #f5f5f5;
-    border-bottom: 1px solid #e0e0e0;
+    padding: var(--space-sm) var(--space-md);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-border);
     cursor: default;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
     user-select: none;
   }
 
   .section-header:not(:first-child) {
     margin-top: 4px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--color-border);
   }
 
   /* Reference items */
   .reference-item {
-    padding: 8px 12px;
+    padding: var(--space-sm) var(--space-md);
     cursor: pointer;
     font-family: monospace;
+    color: var(--color-text);
   }
 
   .reference-item:hover {
-    background: #f0f0f0;
+    background: var(--panel-hover);
   }
 
   /* Text search result items */
   .text-item {
-    padding: 8px 12px;
+    padding: var(--space-sm) var(--space-md);
     cursor: pointer;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .text-item:last-child {
@@ -328,19 +339,19 @@ const { pages } = Astro.props;
   }
 
   .text-item:hover {
-    background: #f9f9f9;
+    background: var(--panel-hover);
   }
 
   .result-ref {
     font-family: monospace;
-    font-weight: bold;
-    color: #333;
+    font-weight: var(--weight-bold);
+    color: var(--color-text);
     margin-bottom: 4px;
     font-size: 0.9em;
   }
 
   .result-preview {
-    color: #666;
+    color: var(--color-text-muted);
     font-size: 0.85em;
     line-height: 1.4;
     overflow: hidden;
@@ -350,9 +361,9 @@ const { pages } = Astro.props;
 
   /* Highlight matched text in preview */
   .result-preview mark {
-    background-color: #ffeb3b;
-    color: #000;
-    font-weight: 600;
+    background-color: var(--op-yellow);
+    color: var(--black-1);
+    font-weight: var(--weight-medium);
     padding: 0 2px;
     border-radius: 2px;
   }
