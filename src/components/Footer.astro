@@ -10,10 +10,15 @@ const year = new Date().getFullYear();
 
 <style>
   .site-footer {
-    padding: var(--space-lg) var(--space-md);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-md);
     background: var(--color-bg-alt);
     border-top: 1px solid var(--color-border);
     text-align: center;
+    z-index: 40;
   }
 
   .copyright {
