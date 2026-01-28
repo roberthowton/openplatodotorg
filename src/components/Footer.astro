@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <p class="copyright">
+    © {year} Open Plato Project. All rights reserved.
+  </p>
+</footer>
+
+<style>
+  .site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-md);
+    background: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    z-index: 40;
+  }
+
+  .copyright {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+</style>

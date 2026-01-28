@@ -1,0 +1,237 @@
+---
+import { ShowState } from "../types";
+
+const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
+const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
+const isScholarly = !isFirstRead;
+---
+
+<header class="site-header">
+  <div class="header-left">
+    <nav class="mode-toggle" role="tablist" aria-label="Reading mode">
+      <button
+        class:list={["mode-btn", { active: isFirstRead }]}
+        data-mode="firstRead"
+        role="tab"
+        aria-selected={isFirstRead}
+      >
+        FIRST READ
+      </button>
+      <button
+        class:list={["mode-btn", { active: isScholarly }]}
+        data-mode="scholarly"
+        role="tab"
+        aria-selected={isScholarly}
+      >
+        SCHOLARLY
+      </button>
+    </nav>
+  </div>
+
+  <div class="header-center">
+    <a href="/" class="logo" aria-label="Open Plato home">
+      <svg class="logo-swan" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M12 36C12 36 14 32 18 30C22 28 26 28 28 26C30 24 32 20 32 16C32 12 30 8 26 6C22 4 18 6 16 10C14 14 14 18 16 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 22C16 22 12 24 10 28C8 32 8 36 12 38C16 40 22 40 28 38C34 36 38 32 40 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="24" cy="10" r="2" fill="currentColor"/>
+      </svg>
+      <span class="logo-text">Open Plato</span>
+    </a>
+  </div>
+
+  <div class="header-right">
+    <button class="search-btn" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+        <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
+      <span class="theme-label">LIGHT MODE</span>
+    </button>
+  </div>
+</header>
+
+<script>
+  import { dispatch } from "../state/url";
+
+  function initHeader() {
+    // Mode toggle
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = (btn as HTMLElement).dataset.mode;
+        if (mode === "firstRead") {
+          dispatch({ type: "SET_FIRST_READ" });
+        } else {
+          dispatch({ type: "EXIT_FIRST_READ" });
+        }
+      });
+    });
+
+    // Theme toggle with localStorage persistence
+    const themeToggle = document.querySelector("[data-theme-toggle]");
+    const html = document.documentElement;
+
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.dataset.theme = savedTheme;
+    updateThemeLabel(savedTheme);
+
+    themeToggle?.addEventListener("click", () => {
+      const isDark = html.dataset.theme === "dark";
+      const newTheme = isDark ? "light" : "dark";
+      html.dataset.theme = newTheme;
+      localStorage.setItem("theme", newTheme);
+      updateThemeLabel(newTheme);
+    });
+
+    function updateThemeLabel(theme: string) {
+      const label = document.querySelector(".theme-label");
+      if (label) {
+        label.textContent = theme === "dark" ? "DARK MODE" : "LIGHT MODE";
+      }
+    }
+  }
+
+  // Run on initial load and after view transitions
+  initHeader();
+  document.addEventListener("astro:after-swap", initHeader);
+</script>
+
+<style>
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-left,
+  .header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-right {
+    justify-content: flex-end;
+    gap: var(--space-md);
+  }
+
+  .header-center {
+    flex: 0 0 auto;
+  }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .mode-btn {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+  }
+
+  .mode-btn:hover {
+    color: var(--color-text);
+  }
+
+  .mode-btn.active {
+    background: var(--op-yellow);
+    color: var(--black-1);
+  }
+
+  /* Logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .logo-swan {
+    color: var(--color-text);
+  }
+
+  .logo-text {
+    font-family: var(--font-serif);
+    font-weight: var(--weight-light);
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* Search button */
+  .search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+  }
+
+  .search-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .site-header {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .logo-text {
+      display: none;
+    }
+
+    .theme-toggle .theme-label {
+      display: none;
+    }
+
+    .mode-btn {
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.65rem;
+    }
+  }
+</style>
