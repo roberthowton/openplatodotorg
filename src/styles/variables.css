@@ -1,0 +1,84 @@
+/**
+ * Open Plato Design System - CSS Custom Properties
+ *
+ * Color palette extracted from style guide PDF.
+ * Font mappings:
+ *   - Aktiv Grotesk Ex → Barlow Semi Condensed
+ *   - Apple Garamond Light → EB Garamond
+ *   - Source Serif Variable → Source Serif 4
+ */
+
+:root {
+  /* === Grayscale === */
+  --black-1: #000000;
+  --black-2: #1a1a1a;
+  --op-charcoal: #4a4a3a;
+  --grey-4: #2d2d2d;
+  --op-grey-3: #9a9a8a;
+  --op-grey-2: #c4c4b4;
+  --op-grey-1: #e8e8e0;
+  --white: #ffffff;
+
+  /* === Accent === */
+  --op-yellow: #e8c547;
+
+  /* === Overlays === */
+  --overlay-light: rgba(154, 154, 138, 0.5); /* grey-3 @ 50% */
+  --overlay-dark: rgba(0, 0, 0, 0.5);         /* black-1 @ 50% */
+
+  /* === Semantic tokens (light mode defaults) === */
+  --color-bg: var(--white);
+  --color-bg-alt: var(--op-grey-1);
+  --color-text: var(--black-1);
+  --color-text-muted: var(--op-grey-3);
+  --color-border: var(--op-grey-2);
+  --color-accent: var(--op-yellow);
+
+  /* === Panel colors === */
+  --panel-bg: var(--white);
+  --panel-border: var(--op-grey-2);
+  --panel-hover: var(--op-grey-1);
+
+  /* === Annotation colors === */
+  --annotation-color: var(--op-charcoal);
+  --annotation-highlight: rgba(232, 197, 71, 0.2); /* yellow @ 20% */
+
+  /* === Font families === */
+  --font-display: "Barlow Semi Condensed", sans-serif;
+  --font-serif: "EB Garamond", serif;
+  --font-body: "Source Serif 4", serif;
+  --font-greek: "Porson", "GFS Porson", serif;
+
+  /* === Font weights === */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* === Spacing scale === */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* === Transitions === */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+}
+
+/* === Dark mode overrides === */
+[data-theme="dark"] {
+  --color-bg: var(--black-2);
+  --color-bg-alt: var(--grey-4);
+  --color-text: var(--op-grey-1);
+  --color-text-muted: var(--op-grey-3);
+  --color-border: var(--op-charcoal);
+
+  --panel-bg: var(--grey-4);
+  --panel-border: var(--op-charcoal);
+  --panel-hover: var(--black-2);
+
+  --annotation-highlight: rgba(232, 197, 71, 0.3);
+}

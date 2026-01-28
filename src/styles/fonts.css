@@ -1,7 +1,40 @@
+/**
+ * Open Plato Design System - Font Definitions
+ *
+ * Google Fonts loaded via @import for:
+ *   - Barlow Semi Condensed (replaces Aktiv Grotesk Ex)
+ *   - EB Garamond (replaces Apple Garamond Light)
+ *   - Source Serif 4
+ *
+ * Local fonts:
+ *   - Porson (Greek text)
+ */
+
+/* === Google Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;700&family=EB+Garamond:wght@300;400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap');
+
+/* === Local Fonts === */
+
 @font-face {
   font-family: "Porson";
-  src: url("/fonts/GFSPorson-Regular.woff2") format("woff");
+  src: url("/fonts/GFSPorson-Regular.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fonts/EBGaramond-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/fonts/EBGaramond-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
   font-display: swap;
 }

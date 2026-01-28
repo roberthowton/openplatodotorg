@@ -1,6 +1,6 @@
 .annotated {
   text-decoration: underline;
-  text-decoration-color: var(--annotation-color, #6366f1);
+  text-decoration-color: var(--annotation-color);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -13,7 +13,7 @@
 
 .annotated:hover,
 .annotated.active {
-  background: var(--annotation-highlight, rgba(99, 102, 241, 0.15));
+  background: var(--annotation-highlight);
 }
 
 .tei-anchor {
