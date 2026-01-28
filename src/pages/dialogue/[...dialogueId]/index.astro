@@ -75,8 +75,15 @@ const commentsGr = showGreek
       }
       {
         showFirstRead && (
-          <div class="text-column">
-            <p>First read content goes here</p>
+          <div class="text-column text-column-first-read">
+            <div class="first-read-intro">
+              {/* Placeholder for future intro content */}
+            </div>
+            <Tei
+              teiData={teiDataEn}
+              language="en"
+              hideLineNumbers={false}
+            />
           </div>
         )
       }
@@ -173,6 +180,22 @@ const commentsGr = showGreek
 
   .dialogueContainer:has(> :only-child) .text-column {
     max-width: 70ch;
+  }
+
+  /* First Read mode styling */
+  .text-column-first-read {
+    max-width: 65ch;
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+
+  .first-read-intro {
+    /* Placeholder for future intro/summary content */
+    margin-bottom: var(--space-xl);
+  }
+
+  .first-read-intro:empty {
+    display: none;
   }
 
   .text-column tei-container,
