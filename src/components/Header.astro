@@ -55,29 +55,47 @@ const isScholarly = !isFirstRead;
 <script>
   import { dispatch } from "../state/url";
 
-  // Mode toggle
-  document.querySelectorAll(".mode-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const mode = (btn as HTMLElement).dataset.mode;
-      if (mode === "firstRead") {
-        dispatch({ type: "SET_FIRST_READ" });
-      } else {
-        dispatch({ type: "EXIT_FIRST_READ" });
-      }
+  function initHeader() {
+    // Mode toggle
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = (btn as HTMLElement).dataset.mode;
+        if (mode === "firstRead") {
+          dispatch({ type: "SET_FIRST_READ" });
+        } else {
+          dispatch({ type: "EXIT_FIRST_READ" });
+        }
+      });
     });
-  });
 
-  // Theme toggle (UI only for now - Phase 3 will wire this up)
-  const themeToggle = document.querySelector("[data-theme-toggle]");
-  themeToggle?.addEventListener("click", () => {
+    // Theme toggle with localStorage persistence
+    const themeToggle = document.querySelector("[data-theme-toggle]");
     const html = document.documentElement;
-    const isDark = html.dataset.theme === "dark";
-    html.dataset.theme = isDark ? "light" : "dark";
-    const label = themeToggle.querySelector(".theme-label");
-    if (label) {
-      label.textContent = isDark ? "LIGHT MODE" : "DARK MODE";
+
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.dataset.theme = savedTheme;
+    updateThemeLabel(savedTheme);
+
+    themeToggle?.addEventListener("click", () => {
+      const isDark = html.dataset.theme === "dark";
+      const newTheme = isDark ? "light" : "dark";
+      html.dataset.theme = newTheme;
+      localStorage.setItem("theme", newTheme);
+      updateThemeLabel(newTheme);
+    });
+
+    function updateThemeLabel(theme: string) {
+      const label = document.querySelector(".theme-label");
+      if (label) {
+        label.textContent = theme === "dark" ? "DARK MODE" : "LIGHT MODE";
+      }
     }
-  });
+  }
+
+  // Run on initial load and after view transitions
+  initHeader();
+  document.addEventListener("astro:after-swap", initHeader);
 </script>
 
 <style>

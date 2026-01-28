@@ -8,5 +8,12 @@ import { ClientRouter } from "astro:transitions";
   <meta name="generator" content={Astro.generator} />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <title>Open Plato</title>
+  <script is:inline>
+    // Prevent flash of wrong theme
+    (function() {
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <ClientRouter />
 </head>
