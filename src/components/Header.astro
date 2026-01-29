@@ -49,20 +49,20 @@ const showBoth = showGreek && showEnglish;
     {isScholarly && (
       <nav class="lang-toggle" role="tablist" aria-label="Language view">
         <button
-          class:list={["lang-btn", { active: showBoth || showGreek }]}
+          class:list={["lang-btn", { active: showGreek && !showEnglish }]}
           data-lang="gr"
           role="tab"
-          aria-selected={showGreek}
+          aria-selected={showGreek && !showEnglish}
         >
-          ΕΛ
+          GREEK
         </button>
         <button
-          class:list={["lang-btn", { active: showBoth || showEnglish }]}
+          class:list={["lang-btn", { active: showEnglish && !showGreek }]}
           data-lang="en"
           role="tab"
-          aria-selected={showEnglish}
+          aria-selected={showEnglish && !showGreek}
         >
-          EN
+          TRANSLATION
         </button>
       </nav>
     )}
@@ -267,13 +267,14 @@ const showBoth = showGreek && showEnglish;
   .lang-btn {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     letter-spacing: 0.05em;
     padding: var(--space-xs) var(--space-sm);
     background: transparent;
     border: none;
     color: var(--color-text-muted);
     transition: all var(--transition-fast);
+    white-space: nowrap;
   }
 
   .lang-btn:hover {
