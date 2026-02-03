@@ -217,23 +217,49 @@ const commentsGr = showGreek
     max-width: 100% !important;
   }
 
+  /* Mobile - stacked layout, single column at a time */
   @media (max-width: 768px) {
     .dialogueContainer {
-      flex-direction: column;
-      padding-right: 0;
-      padding-left: 0;
-      padding-bottom: 60px;
-      transition: padding-bottom 0.3s ease;
+      display: block;
+      padding: 0 var(--space-md);
+      padding-bottom: 80px;
     }
 
     body.comments-panel-pinned .dialogueContainer {
-      padding-right: 0;
-      padding-bottom: 45vh;
+      padding-bottom: calc(50vh + 20px);
     }
 
     .text-column {
       max-width: none;
-      padding: 0 1rem;
+      padding: 0;
+    }
+
+    .text-column-first-read {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+  }
+
+  /* Tablet - Portrait: two columns, no pin option */
+  @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    .dialogueContainer {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      padding-right: 60px;
+      padding-left: var(--space-md);
+    }
+
+    body.comments-panel-pinned .dialogueContainer {
+      /* On tablet portrait, panel overlays instead of pushing content */
+      padding-right: 60px;
+    }
+  }
+
+  /* Tablet - Landscape: match desktop */
+  @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    .dialogueContainer {
+      grid-template-columns: fit-content(45%) fit-content(55%);
+      gap: var(--space-xl);
     }
   }
 </style>
