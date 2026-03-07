@@ -1,7 +1,7 @@
 // Extracted Tei custom element logic for testing
 import { customBehaviors } from "../utils";
 import CETEI from "CETEIcean";
-import { injectAnchors, type AnchorIndex } from "../scripts/injectAnchors";
+import { injectAnchors } from "../scripts/injectAnchors";
 import { annotate } from "../scripts/annotate";
 
 export interface TeiElementConfig {
@@ -11,10 +11,7 @@ export interface TeiElementConfig {
   language?: "en" | "gr";
 }
 
-// Store anchor indices globally for access by annotation layer
-export const anchorIndices: Map<string, AnchorIndex> = new Map();
-
-export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig): void {
+export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig, signal?: AbortSignal): void {
   if (config.rootId) {
     element.id = config.rootId;
   }
@@ -37,7 +34,6 @@ export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig): 
       const lang = config.language;
       const doInject = () => {
         const anchorIndex = injectAnchors(element, lang);
-        anchorIndices.set(lang, anchorIndex);
 
         // Apply annotations (segment decomposition)
         annotate(element, lang, anchorIndex);
@@ -53,7 +49,7 @@ export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig): 
 
       // Defer until full document is parsed (comments JSON may come after tei-container)
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", doInject);
+        document.addEventListener("DOMContentLoaded", doInject, { signal, once: true });
       } else {
         doInject();
       }
@@ -74,9 +70,17 @@ export function parseDatasetConfig(dataset: DOMStringMap): TeiElementConfig {
 
 export function createTeiCustomElement(): typeof HTMLElement {
   return class TeiContainer extends HTMLElement {
+    private controller: AbortController | null = null;
+
     connectedCallback() {
+      if (this.controller) this.controller.abort();
+      this.controller = new AbortController();
       const config = parseDatasetConfig(this.dataset);
-      applyTeiConfig(this, config);
+      applyTeiConfig(this, config, this.controller.signal);
+    }
+
+    disconnectedCallback() {
+      this.controller?.abort();
     }
   };
 }
