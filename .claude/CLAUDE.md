@@ -12,6 +12,10 @@ All state relevant to the look, arrangement, and location of the texts is store 
 
 Additionally, the application aims to incorporate functionality to support comments in both Greek and English translations. The application will support an arbitrary number of comments stored and retrieved using Astro (the application's framework) content collections API. The comments are then dynamically inserted as TEI `<note>` elements in the rendered and displayed in the relevant TEI document.
 
+## Context
+
+On initialization, read the README.md and ARCHITECTURE.md to get a sense of the overall structure and design principles of the application. Design and implement plans to conform to these design principles.
+
 ## TEI Schema version
 
 <https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng>
@@ -19,3 +23,5 @@ Additionally, the application aims to incorporate functionality to support comme
 ## Github PRs and Issues
 
 All PRs and issues (including subissues) should be created in my fork of the openplatodotorg repo.
+
+After a PR is merged, check the recent commits to main and, if necessary, update the README.md and/or ARCHITECTURE.md files

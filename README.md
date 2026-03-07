@@ -7,14 +7,15 @@ A TEI (Text Encoding Initiative) compliant platform for hosting annotated digita
 1. **URL-first state**: Every view shareable as a scholarly citation
 2. **TEI compliance**: EpiDoc 9.7 schema, preserving source encoding
 3. **Extensibility**: Content collections allow arbitrary comment sets
-4. **First-read mode**: [Planned] simplified view for new readers
+4. **First-read mode**: Simplified view for new readers (`?show=firstRead`)
 5. **Minimal JS**: Server-render TEI, client enhances with behaviors
 
 ## Stack
 
-- **Astro 5.x** (SSR via Vercel)
+- **Astro 5.x** (SSR via Vercel, View Transitions via `ClientRouter`)
 - **CETEIcean 1.9.5** for TEI→HTML transformation
 - **TypeScript**, **JSDOM** for server-side DOM manipulation
+- **Vitest** for unit testing
 
 ## Directory Structure
 
@@ -25,20 +26,42 @@ src/
 │   ├── comment/      # Markdown annotations with YAML frontmatter
 │   └── config.ts     # Astro content collections schema
 ├── pages/dialogue/[...dialogueId]/  # Dynamic dialogue routes
+├── layouts/
+│   └── page-layout.astro     # Root HTML shell (imports global styles)
 ├── components/
+│   ├── head.astro            # <head> with ClientRouter + theme flash prevention
+│   ├── Header.astro          # Mode toggle, lang toggle, search, theme
 │   ├── Tei.astro             # TEI rendering wrapper
-│   ├── TeiCustomElement.ts   # Client-side behavior application
-│   ├── CommentsPanel.astro   # Side panel for annotations
-│   └── page-select.astro     # Stephanus navigation
+│   ├── TeiCustomElement.ts   # Web component: tei-container
+│   ├── CommentsPanel.astro   # Side panel / mobile bottom sheet
+│   ├── page-select.astro     # Stephanus navigation (SSR)
+│   ├── page-select-client.ts # Page-select client logic
+│   ├── show-button.astro     # Language show/hide toggle button
+│   ├── show-button-client.ts # Show-button client logic
+│   └── Footer.astro          # Site footer
+├── state/url/                # Redux-like URL state machine
+│   ├── types.ts              # UrlState, UrlAction, HARD_NAV_ACTIONS
+│   ├── selectors.ts          # parseUrlState(), getUrlState()
+│   ├── reducer.ts            # urlReducer() — pure state transitions
+│   ├── actions.ts            # buildUrl(), buildUrlFromState()
+│   └── dispatch.ts           # dispatch() — hard vs soft navigation
 ├── utils/
-│   ├── processTei.ts         # CETEIcean preprocessing
+│   ├── processTei.ts         # CETEIcean preprocessing (server)
 │   ├── loadComments.ts       # Comment collection loading
+│   ├── sanitize.ts           # XSS prevention for comment HTML
 │   └── behaviors/            # Custom TEI element handlers
 ├── scripts/
 │   ├── injectAnchors.ts      # Anchor creation for comment targets
 │   ├── annotate.ts           # Segment decomposition for highlighting
 │   └── commentsPanel.ts      # Panel interaction logic
-└── styles/                   # TEI styling, fonts (Porson for Greek)
+├── styles/
+│   ├── variables.css         # Design tokens (colors, fonts, spacing)
+│   ├── reset.css             # CSS reset
+│   ├── typography.css        # Body typography
+│   ├── fonts.css             # Font-face declarations
+│   └── annotations.css       # Annotation highlight styles
+├── consts/                   # Shared constants
+└── assets/                   # Static assets (icons, XML fragments)
 ```
 
 ## Data Flow
@@ -51,6 +74,18 @@ src/
 6. **Client**: Panel shows comments on click, URL updated
 
 ## Key Systems
+
+### State Management
+
+URL is the single source of truth for all UI state. A Redux-like state machine (`src/state/url/`) parses, reduces, and serializes state to/from URL params. See [ARCHITECTURE.md](./ARCHITECTURE.md) for full detail.
+
+### First-Read Mode
+
+`?show=firstRead` renders a single-column translation with first-read-only comments, spacious typography, and a simplified header. Toggled via the FIRST READ / SCHOLARLY buttons.
+
+### Dark Mode
+
+`data-theme="dark"` on `<html>` activates CSS token overrides defined in `variables.css`. Persisted in `localStorage`; flash prevented by an inline script in `head.astro`.
 
 ### TEI Processing
 
@@ -99,6 +134,10 @@ pnpm dev         # Start dev server
 pnpm build       # Type check + build
 pnpm test        # Run Vitest tests
 ```
+
+## Architecture
+
+For component hierarchy, state machine internals, TEI pipeline detail, annotation algorithm, responsive strategy, and design system, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## TEI Schema
 
