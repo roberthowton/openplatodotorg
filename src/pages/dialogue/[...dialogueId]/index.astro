@@ -110,40 +110,52 @@ const commentsGr = showGreek
   }
   <script>
     // Detect text wrapping and switch to inline mode dynamically
-    function checkOverflow() {
-      document.querySelectorAll(".text-column").forEach((column) => {
-        const lines = column.querySelectorAll(".stephanus-line");
-        let hasWrapping = false;
+    let overflowController: AbortController | undefined;
+    let overflowObserver: MutationObserver | undefined;
 
-        // Get computed line-height to detect wrapping
-        lines.forEach((line) => {
-          const style = window.getComputedStyle(line);
-          const lineHeight =
-            parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
-          // If element height is significantly more than one line, text has wrapped
-          if (
-            line instanceof HTMLElement &&
-            line.offsetHeight > lineHeight * 1.3
-          ) {
-            hasWrapping = true;
+    function initOverflow() {
+      overflowController?.abort();
+      overflowObserver?.disconnect();
+      overflowController = new AbortController();
+      const { signal } = overflowController;
+
+      function checkOverflow() {
+        document.querySelectorAll(".text-column").forEach((column) => {
+          const lines = column.querySelectorAll(".stephanus-line");
+          let hasWrapping = false;
+
+          lines.forEach((line) => {
+            const style = window.getComputedStyle(line);
+            const lineHeight =
+              parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
+            if (
+              line instanceof HTMLElement &&
+              line.offsetHeight > lineHeight * 1.3
+            ) {
+              hasWrapping = true;
+            }
+          });
+
+          if (hasWrapping) {
+            column.classList.add("inline-mode");
+          } else {
+            column.classList.remove("inline-mode");
           }
         });
+      }
 
-        if (hasWrapping) {
-          column.classList.add("inline-mode");
-        } else {
-          column.classList.remove("inline-mode");
-        }
-      });
+      window.addEventListener("load", checkOverflow, { signal });
+      window.addEventListener("resize", checkOverflow, { signal });
+
+      const container = document.querySelector(".dialogueContainer");
+      if (container) {
+        overflowObserver = new MutationObserver(checkOverflow);
+        overflowObserver.observe(container, { childList: true, subtree: true });
+      }
     }
 
-    // Run on load and resize
-    window.addEventListener("load", checkOverflow);
-    window.addEventListener("resize", checkOverflow);
-
-    // Also observe DOM changes (for when TEI content renders)
-    const observer = new MutationObserver(checkOverflow);
-    observer.observe(document.body, { childList: true, subtree: true });
+    initOverflow();
+    document.addEventListener("astro:after-swap", initOverflow);
   </script>
   <Footer />
 </PageLayout>

@@ -2,7 +2,7 @@
 // Side panel for displaying comments/commentary
 ---
 
-<aside id="comments-panel" class="comments-panel collapsed">
+<comments-panel id="comments-panel" class="comments-panel collapsed">
   <button id="comments-panel-toggle" class="comments-panel-toggle" aria-label="Toggle commentary panel">
     <span class="toggle-label">COMMENTARY</span>
   </button>
@@ -31,14 +31,11 @@
   <div id="comments-panel-content" class="comments-panel-content">
     <p class="comments-panel-empty">Click highlighted text to view commentary</p>
   </div>
-</aside>
+</comments-panel>
 
 <script>
-  import { initCommentsPanel } from "../scripts/commentsPanel";
-
-  // Initialize on load and after view transitions
-  initCommentsPanel();
-  document.addEventListener("astro:after-swap", initCommentsPanel);
+  import { createCommentsPanelElement } from "./CommentsPanelElement";
+  customElements.define("comments-panel", createCommentsPanelElement());
 </script>
 
 <style>
