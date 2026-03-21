@@ -10,6 +10,10 @@ Your job: compare the live site against the design specs in `design/specs/`, rep
 
 ## Workflow
 
+### 0. Read intentional deviations first
+
+Read `design/deviations.md`. This file lists deliberate decisions to diverge from the spec. **Do not flag these as discrepancies.** Reference them by ID (e.g. DEV-001) in the "Conformant areas" section with a note that they are intentional deviations.
+
 ### 1. Read design specs
 
 Read all PDFs in `design/specs/`. For each PDF, extract:
