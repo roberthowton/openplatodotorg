@@ -40,7 +40,7 @@
   --panel-hover: var(--op-grey-1);
 
   /* === Annotation colors === */
-  --annotation-color: var(--op-charcoal);
+  --annotation-color: var(--op-yellow);
   --annotation-highlight: rgba(232, 197, 71, 0.2); /* yellow @ 20% */
 
   /* === Font families === */
