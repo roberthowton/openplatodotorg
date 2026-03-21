@@ -10,6 +10,18 @@ import TeiBaseStyle from "./tei-base-style.astro";
     padding: 0.5em;
     margin: 0.5em 0;
   }
+  tei-head {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+  }
+
+  tei-titlestmt > tei-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold) !important;
+    text-transform: uppercase;
+  }
+
   .text-column-gr tei-div {
     font-family: var(--font-greek);
   }
