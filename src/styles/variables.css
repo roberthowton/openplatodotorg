@@ -46,6 +46,7 @@
   /* === Font families === */
   --font-display: "Barlow Semi Condensed", sans-serif;
   --font-serif: "EB Garamond", serif;
+  --font-body: "Source Serif 4", serif;
   --font-greek: "Porson", "GFS Porson", serif;
 
   /* === Font weights === */
