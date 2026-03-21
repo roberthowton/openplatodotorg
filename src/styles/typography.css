@@ -41,24 +41,24 @@
   text-transform: uppercase;
 }
 
-/* === Body text (Source Serif 4) === */
+/* === Body text (EB Garamond) === */
 
 .p1 {
-  font-family: var(--font-body);
+  font-family: var(--font-serif);
   font-weight: var(--weight-regular);
   font-size: 1.25rem;
   line-height: 1.6;
 }
 
 .p2 {
-  font-family: var(--font-body);
+  font-family: var(--font-serif);
   font-weight: var(--weight-regular);
   font-size: 1rem;
   line-height: 1.6;
 }
 
 .p3 {
-  font-family: var(--font-body);
+  font-family: var(--font-serif);
   font-weight: var(--weight-regular);
   font-size: 0.875rem;
   line-height: 1.5;
