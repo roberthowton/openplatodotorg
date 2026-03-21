@@ -58,6 +58,7 @@ const commentsGr = showGreek
       {
         showGreek && (
           <div class="text-column text-column-gr">
+            <header class="column-header"><span class="column-label">Greek</span></header>
             <Tei teiData={teiDataGr} language="gr" />
           </div>
         )
@@ -65,6 +66,7 @@ const commentsGr = showGreek
       {
         showEnglish && (
           <div class="text-column text-column-en">
+            <header class="column-header"><span class="column-label">Translation</span></header>
             <Tei
               teiData={teiDataEn}
               language="en"
@@ -230,8 +232,26 @@ const commentsGr = showGreek
     max-width: 100% !important;
   }
 
+  .column-header {
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .column-label {
+    font-family: var(--font-serif);
+    font-weight: var(--weight-regular);
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+
   /* Mobile - stacked layout, single column at a time */
   @media (max-width: 768px) {
+    .column-header {
+      display: none;
+    }
+
     .dialogueContainer {
       display: block;
       padding: 0 var(--space-md);
