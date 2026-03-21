@@ -52,7 +52,9 @@ const commentsGr = showGreek
 
 <PageLayout>
   <Header />
-  <PageSelect pages={lineNumbers} />
+  <div id="search-overlay" class="search-overlay" hidden>
+    <PageSelect pages={lineNumbers} />
+  </div>
   <main>
     <section class="dialogueContainer">
       {
@@ -159,10 +161,48 @@ const commentsGr = showGreek
     initOverflow();
     document.addEventListener("astro:after-swap", initOverflow);
   </script>
+  <script>
+    function initSearchOverlay() {
+      const overlay = document.getElementById("search-overlay");
+      if (!overlay) return;
+
+      document.addEventListener("search-toggle", () => {
+        const isHidden = overlay.hidden;
+        overlay.hidden = !isHidden;
+        if (!isHidden) return;
+        const input = overlay.querySelector<HTMLInputElement>("#searchInput");
+        input?.focus();
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!overlay.hidden && !overlay.contains(e.target as Node)) {
+          const searchBtn = (e.target as Element).closest("[data-search-btn]");
+          if (!searchBtn) overlay.hidden = true;
+        }
+      });
+    }
+
+    initSearchOverlay();
+    document.addEventListener("astro:after-swap", initSearchOverlay);
+  </script>
   <Footer />
 </PageLayout>
 
 <style is:global>
+  .search-overlay {
+    position: sticky;
+    top: 0;
+    z-index: 49;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-overlay[hidden] {
+    display: none;
+  }
+
   .dialogueContainer {
     display: grid;
     grid-template-columns: fit-content(45%) fit-content(55%);
