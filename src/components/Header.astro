@@ -1,5 +1,8 @@
 ---
 import { ShowState } from "../types";
+import SwanIcon from "../assets/icons/swan.svg?raw";
+import LogoSvg from "../assets/icons/logo.svg?raw";
+import SearchIcon from "../assets/icons/search.svg?raw";
 
 const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
@@ -36,12 +39,8 @@ const showBoth = showGreek && showEnglish;
 
   <div class="header-center">
     <a href="/" class="logo" aria-label="Open Plato home">
-      <svg class="logo-swan" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-        <path d="M12 36C12 36 14 32 18 30C22 28 26 28 28 26C30 24 32 20 32 16C32 12 30 8 26 6C22 4 18 6 16 10C14 14 14 18 16 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M16 22C16 22 12 24 10 28C8 32 8 36 12 38C16 40 22 40 28 38C34 36 38 32 40 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="24" cy="10" r="2" fill="currentColor"/>
-      </svg>
-      <span class="logo-text">Open Plato</span>
+      <span class="logo-swan" aria-hidden="true" set:html={SwanIcon} />
+      <span class="logo-text" aria-hidden="true" set:html={LogoSvg} />
     </a>
   </div>
 
@@ -68,10 +67,7 @@ const showBoth = showGreek && showEnglish;
       </nav>
     )}
     <button class="search-btn" aria-label="Search">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-        <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <span class="search-icon" aria-hidden="true" set:html={SearchIcon} />
     </button>
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
       <span class="theme-label">LIGHT MODE</span>
@@ -158,14 +154,39 @@ const showBoth = showGreek && showEnglish;
   }
 
   .logo-swan {
+    display: flex;
     color: var(--color-text);
   }
 
+  .logo-swan :global(svg) {
+    width: 32px;
+    height: 32px;
+  }
+
   .logo-text {
+    display: flex;
+    align-items: center;
     font-family: var(--font-serif);
     font-weight: var(--weight-light);
     font-size: 1.5rem;
     letter-spacing: 0.02em;
+  }
+
+  .logo-text :global(svg) {
+    height: 1.5rem;
+    width: auto;
+    overflow: visible;
+  }
+
+  .search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-icon :global(svg) {
+    width: 20px;
+    height: 20px;
   }
 
   /* Search button */

@@ -3,6 +3,5 @@ export const handleDiv = (element: HTMLElement) => {
     display: "flex",
     flexDirection: "column",
     width: "100%",
-    fontFamily: "Porson",
   });
 };

@@ -15,9 +15,9 @@ describe('handleDiv', () => {
     expect(div.style.width).toBe('100%');
   });
 
-  it('sets Porson font family', () => {
+  it('does not set font family inline', () => {
     const div = document.createElement('div');
     handleDiv(div);
-    expect(div.style.fontFamily).toBe('Porson');
+    expect(div.style.fontFamily).toBe('');
   });
 });
