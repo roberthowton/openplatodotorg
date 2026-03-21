@@ -34,7 +34,6 @@ export function createCommentsPanelElement(): typeof HTMLElement {
 
       const toggleBtn = this.querySelector("#comments-panel-toggle");
       const pinBtn = this.querySelector("#comments-panel-pin");
-      const closeBtn = this.querySelector("#comments-panel-close");
       if (!toggleBtn) return;
 
       const renderComments = (commentIds: string[]) => {
@@ -114,7 +113,6 @@ export function createCommentsPanelElement(): typeof HTMLElement {
 
       toggleBtn.addEventListener("click", (e) => { e.stopPropagation(); togglePanel(); }, { signal });
       pinBtn?.addEventListener("click", (e) => { e.stopPropagation(); togglePin(); }, { signal });
-      closeBtn?.addEventListener("click", (e) => { e.stopPropagation(); closePanel(); }, { signal });
 
       document.addEventListener("click", (e) => {
         const target = e.target as Element;
