@@ -1,5 +1,7 @@
 ---
 // Side panel for displaying comments/commentary
+import LockOpenIcon from "../assets/icons/lock-open.svg?raw";
+import LockClosedIcon from "../assets/icons/lock-closed.svg?raw";
 ---
 
 <comments-panel id="comments-panel" class="comments-panel collapsed">
@@ -10,16 +12,8 @@
     <h2>Commentary</h2>
     <div class="comments-panel-actions">
       <button id="comments-panel-pin" class="comments-panel-btn" aria-label="Pin panel" title="Pin panel">
-        <svg class="icon-lock-open" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.419 2 16.4367 3.71776 16.9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
-        </svg>
-        <svg class="icon-lock-closed" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <rect x="5" y="11" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
-        </svg>
+        <span class="icon-lock-open" aria-hidden="true" set:html={LockOpenIcon} />
+        <span class="icon-lock-closed" aria-hidden="true" set:html={LockClosedIcon} />
       </button>
       <button id="comments-panel-close" class="comments-panel-btn" aria-label="Close panel" title="Close panel">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -141,6 +135,17 @@
   }
 
   /* Lock icon states */
+  .icon-lock-open,
+  .icon-lock-closed {
+    display: flex;
+  }
+
+  .icon-lock-open :global(svg),
+  .icon-lock-closed :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
   .icon-lock-closed {
     display: none;
   }
