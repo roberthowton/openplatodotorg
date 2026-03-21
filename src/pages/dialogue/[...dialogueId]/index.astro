@@ -16,6 +16,14 @@ import { parseUrlState } from "../../../state/url";
 const { dialogueId } = Astro.params;
 if (!dialogueId) throw new Error("dialogueId is required");
 
+// Load optional dialogue metadata (title override, subtitle)
+let dialogueMeta: { title?: string; subtitle?: string } = {};
+try {
+  dialogueMeta = (await import(`../../../content/dialogue/${dialogueId}/meta.json`)).default;
+} catch {
+  // meta.json is optional; proceed without it
+}
+
 const urlState = parseUrlState(Astro.url);
 // If no explicit show params, default to both languages (server-side default)
 const hasExplicitShowParams = Astro.url.searchParams.getAll("show").length > 0;
@@ -34,6 +42,11 @@ const teiDataEn = processTei(teiFileEn);
 const lineNumbersGr = getLineNumbersFromTeiDom(teiDataGr.dom);
 const lineNumbersEn = getLineNumbersFromTeiDom(teiDataEn.dom);
 const lineNumbers = Array.from(new Set([...lineNumbersGr, ...lineNumbersEn]));
+
+// Extract dialogue title from TEI header (English file is canonical for display title)
+const teiTitleEl = teiDataEn.dom.querySelector("tei-titlestmt tei-title");
+const dialogueTitle = dialogueMeta.title ?? teiTitleEl?.textContent?.trim() ?? dialogueId;
+const dialogueSubtitle = dialogueMeta.subtitle ?? null;
 
 // If firstRead is present, only show first read (it takes precedence)
 const showFirstRead = showStates.includes(ShowState.FIRST_READ);
@@ -54,6 +67,10 @@ const commentsGr = showGreek
   <Header />
   <div id="search-overlay" class="search-overlay" hidden>
     <PageSelect pages={lineNumbers} />
+  </div>
+  <div class="work-header">
+    <h1 class="work-title h1">{dialogueTitle}</h1>
+    {dialogueSubtitle && <p class="work-subtitle p1">{dialogueSubtitle}</p>}
   </div>
   <main>
     <section class="dialogueContainer">
@@ -201,6 +218,26 @@ const commentsGr = showGreek
 
   .search-overlay[hidden] {
     display: none;
+  }
+
+  .work-header {
+    padding: var(--space-xl) var(--space-2xl) var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .work-title {
+    margin: 0 0 var(--space-sm);
+  }
+
+  .work-subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .work-header {
+      padding: var(--space-md);
+    }
   }
 
   .dialogueContainer {
