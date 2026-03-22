@@ -1,12 +1,10 @@
 import { parseStephanusReference } from "..";
-import {
-  ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE,
-  GRID_STYLE,
-} from "../../consts";
+import { GRID_STYLE } from "../../consts";
+import type { DialogueConfig } from "../../types";
 
 type Language = "en" | "gr";
 
-export const createHandleTeiHeader = (language: Language) => (element: Element) => {
+export const createHandleTeiHeader = (language: Language, config: DialogueConfig) => (element: Element) => {
   const doc = element.ownerDocument;
 
   // hide elements displayed by default
@@ -57,7 +55,7 @@ export const createHandleTeiHeader = (language: Language) => (element: Element) 
 
   //create and append stephanus page
   const { page } = parseStephanusReference(
-    ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE,
+    config.firstLineStephanusReference,
   );
 
   const startingPageDiv = doc.createElement("div");

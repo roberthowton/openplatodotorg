@@ -1,13 +1,10 @@
 import { getStephanusLineMarker, parseStephanusReference } from "..";
-import {
-  ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE,
-  GRID_STYLE,
-  LINE_NUMBERS_TO_DISPLAY,
-} from "../../consts";
+import { GRID_STYLE, LINE_NUMBERS_TO_DISPLAY } from "../../consts";
+import type { DialogueConfig } from "../../types";
 
 type Language = "en" | "gr";
 
-export const createHandleLineBegin = (language: Language) => (element: HTMLElement) => {
+export const createHandleLineBegin = (language: Language, config: DialogueConfig) => (element: HTMLElement) => {
   const doc = element.ownerDocument;
   const nextTextNode = getNextTextNode(element);
 
@@ -79,7 +76,7 @@ export const createHandleLineBegin = (language: Language) => (element: HTMLEleme
     const lineMarker = doc.createElement("b");
     lineMarker.className = "line-marker-block";
     lineMarker.textContent =
-      stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE
+      stephanusReference === config.firstLineStephanusReference
         ? column
         : getStephanusLineMarker(page, column, line);
 

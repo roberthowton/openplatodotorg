@@ -2,6 +2,7 @@
 import CETEI from "CETEIcean";
 import { JSDOM } from "jsdom";
 import { createBehaviors } from ".";
+import type { DialogueConfig } from "../types";
 
 export interface ProcessedTei {
   dom: Document;
@@ -9,7 +10,7 @@ export interface ProcessedTei {
   elements: string[];
 }
 
-const processTei = (data: string, language: "en" | "gr" = "gr"): ProcessedTei => {
+const processTei = (data: string, language: "en" | "gr", config: DialogueConfig): ProcessedTei => {
   // Parse the TEI XML
   const xmlJdom = new JSDOM(data, { contentType: "text/xml" });
   const xmlDoc = xmlJdom.window.document;
@@ -23,7 +24,7 @@ const processTei = (data: string, language: "en" | "gr" = "gr"): ProcessedTei =>
   const ceteicean = new CETEI({ documentObject: htmlDoc });
 
   ceteicean.addBehaviors({
-    tei: createBehaviors(language),
+    tei: createBehaviors(language, config),
   });
 
   const teiData = ceteicean.preprocess(xmlDoc);

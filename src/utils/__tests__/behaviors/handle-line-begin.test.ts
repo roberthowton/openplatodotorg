@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createHandleLineBegin } from '../../behaviors/handle-line-begin';
+import type { DialogueConfig } from '../../../types';
+
+const mockConfig: DialogueConfig = {
+  teiTitle: { gr: 'ΑΛΚΙΒΙΑΔΗΣ', en: 'Alcibiades 1' },
+  firstLineStephanusReference: '103a1',
+};
 
 describe('createHandleLineBegin', () => {
   beforeEach(() => {
@@ -25,45 +31,45 @@ describe('createHandleLineBegin', () => {
     document.body.innerHTML = '';
     document.body.appendChild(container);
 
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     expect(lb.querySelector('div')).toBeNull();
   });
 
   it('sets element id with gr language suffix', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     expect(lb.id).toBe('103a1-gr');
   });
 
   it('sets element id with en language suffix', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('en')(lb);
+    createHandleLineBegin('en', mockConfig)(lb);
     expect(lb.id).toBe('103a1-en');
   });
 
   it('creates text div with id', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = document.getElementById('103a1-gr-text');
     expect(textDiv).not.toBeNull();
   });
 
   it('applies grid styles to lb element', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     expect(lb.style.display).toBe('grid');
   });
 
   it('adds stephanus-line class to text div', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.classList.contains('stephanus-line')).toBe(true);
   });
 
   it('adds block line marker for line 1 column a (shows column)', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-block');
     // First line of document shows column (103a1 is ALCIBIADES_FIRST_LINE)
     expect(marker?.textContent).toBe('a');
@@ -71,42 +77,42 @@ describe('createHandleLineBegin', () => {
 
   it('adds inline line marker for line 1 column a (shows page+column)', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-inline');
     expect(marker?.textContent).toBe('[103a] ');
   });
 
   it('adds block line marker for line 5', () => {
     const lb = document.querySelector('tei-lb[n="103a5"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-block');
     expect(marker?.textContent).toBe('5');
   });
 
   it('adds block line marker for line 10', () => {
     const lb = document.querySelector('tei-lb[n="103a10"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-block');
     expect(marker?.textContent).toBe('10');
   });
 
   it('does not add block marker for line 2', () => {
     const lb = document.querySelector('tei-lb[n="103a2"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-block');
     expect(marker).toBeNull();
   });
 
   it('adds inline marker for line 2', () => {
     const lb = document.querySelector('tei-lb[n="103a2"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('.line-marker-inline');
     expect(marker?.textContent).toBe('[2] ');
   });
 
   it('extracts text content into div', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.textContent).toContain('First line text content');
   });
@@ -120,7 +126,7 @@ describe('createHandleLineBegin', () => {
       </div>
     `;
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.textContent).toContain('-');
   });
@@ -133,7 +139,7 @@ describe('createHandleLineBegin', () => {
       </div>
     `;
     const lb = document.querySelector('tei-lb') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.classList.contains('last')).toBe(true);
   });
@@ -147,7 +153,7 @@ describe('createHandleLineBegin', () => {
       </div>
     `;
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.innerHTML).toContain('<b>SOCRATES:</b>');
   });
@@ -162,21 +168,21 @@ describe('createHandleLineBegin', () => {
       </div>
     `;
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.querySelector('tei-milestone')).toBeNull();
   });
 
   it('sets aria-hidden on line marker', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const marker = lb.querySelector('b');
     expect(marker?.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('applies text justify style to div', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div') as HTMLElement;
     expect(textDiv.style.textAlign).toBe('justify');
   });
@@ -190,7 +196,7 @@ describe('createHandleLineBegin', () => {
       </div>
     `;
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
-    createHandleLineBegin('gr')(lb);
+    createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div');
     expect(textDiv?.textContent).toContain('Text after elements');
   });

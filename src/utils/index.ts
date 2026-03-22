@@ -7,15 +7,16 @@ import {
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
 import { STEPHANUS_COLUMN_REGEX } from "../consts";
+import type { DialogueConfig } from "../types";
 
 export * from "./behaviors";
 
-export const createBehaviors = (language: "en" | "gr") => ({
-  teiHeader: createHandleTeiHeader(language),
+export const createBehaviors = (language: "en" | "gr", config: DialogueConfig) => ({
+  teiHeader: createHandleTeiHeader(language, config),
   div: handleDiv,
-  lb: createHandleLineBegin(language),
+  lb: createHandleLineBegin(language, config),
   label: handleLabel,
-  head: createHandleHead(language),
+  head: createHandleHead(language, config),
 });
 
 export const parseStephanusReference = (reference: string) => {

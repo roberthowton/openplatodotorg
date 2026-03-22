@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { createHandleTeiHeader } from '../../behaviors/handle-tei-header';
+import type { DialogueConfig } from '../../../types';
+
+const mockConfig: DialogueConfig = {
+  teiTitle: { gr: 'ΑΛΚΙΒΙΑΔΗΣ', en: 'Alcibiades 1' },
+  firstLineStephanusReference: '103a1',
+};
 
 function makeHeader(id = 'test-header') {
   document.body.innerHTML = `
@@ -28,31 +34,31 @@ function makeHeader(id = 'test-header') {
 describe('createHandleTeiHeader("gr")', () => {
   it('hides title element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     expect(header.querySelector('tei-title')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides author element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     expect(header.querySelector('tei-author')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides editor element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     expect(header.querySelector('tei-editor')?.getAttribute('style')).toContain('display: none');
   });
 
   it('creates dramatis personae container', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     expect(document.querySelector('#dramatis-personae-container-gr')).not.toBeNull();
   });
 
   it('includes person names in dramatis personae', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-gr');
     expect(container?.textContent).toContain('SOCRATES');
     expect(container?.textContent).toContain('ALCIBIADES');
@@ -60,21 +66,21 @@ describe('createHandleTeiHeader("gr")', () => {
 
   it('applies grid styles to container', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-gr') as HTMLElement;
     expect(container.style.display).toBe('grid');
   });
 
   it('creates stephanus page reference', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-gr');
     expect(container?.textContent).toContain('103');
   });
 
   it('inserts container after tei-head within tei-container', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     const teiHead = document.querySelector('tei-head');
     const nextSibling = teiHead?.nextElementSibling;
     expect(nextSibling?.id).toBe('dramatis-personae-container-gr');
@@ -82,7 +88,7 @@ describe('createHandleTeiHeader("gr")', () => {
 
   it('does not hide metadata elements', () => {
     const header = makeHeader();
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     expect(header.querySelector('tei-sponsor')?.getAttribute('style')).toBeNull();
     expect(header.querySelector('tei-principal')?.getAttribute('style')).toBeNull();
   });
@@ -97,7 +103,7 @@ describe('createHandleTeiHeader("gr")', () => {
       </tei-container>
     `;
     const header = document.querySelector('#test-header')!;
-    createHandleTeiHeader('gr')(header);
+    createHandleTeiHeader('gr', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-gr');
     const personDiv = container?.querySelector('.person');
     expect(personDiv?.innerHTML).toBe('');
@@ -107,13 +113,13 @@ describe('createHandleTeiHeader("gr")', () => {
 describe('createHandleTeiHeader("en")', () => {
   it('creates dramatis personae container for English', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     expect(document.querySelector('#dramatis-personae-container-en')).not.toBeNull();
   });
 
   it('includes person names in English dramatis personae', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-en');
     expect(container?.textContent).toContain('SOCRATES');
     expect(container?.textContent).toContain('ALCIBIADES');
@@ -121,31 +127,31 @@ describe('createHandleTeiHeader("en")', () => {
 
   it('hides sponsor element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     expect(header.querySelector('tei-sponsor')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides principal element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     expect(header.querySelector('tei-principal')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides respstmt element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     expect(header.querySelector('tei-respstmt')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides funder element', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     expect(header.querySelector('tei-funder')?.getAttribute('style')).toContain('display: none');
   });
 
   it('inserts container after tei-head within tei-container', () => {
     const header = makeHeader();
-    createHandleTeiHeader('en')(header);
+    createHandleTeiHeader('en', mockConfig)(header);
     const teiHead = document.querySelector('tei-head');
     const nextSibling = teiHead?.nextElementSibling;
     expect(nextSibling?.id).toBe('dramatis-personae-container-en');
