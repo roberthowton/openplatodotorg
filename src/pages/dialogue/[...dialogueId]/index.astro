@@ -65,12 +65,15 @@ const commentsGr = showGreek
 
 <PageLayout>
   <Header />
-  <div id="search-overlay" class="search-overlay" hidden>
-    <PageSelect pages={lineNumbers} />
-  </div>
   <div class="work-header">
-    <h1 class="work-title h1">{dialogueTitle}</h1>
-    {dialogueSubtitle && <p class="work-subtitle p1">{dialogueSubtitle}</p>}
+    <div class="work-header-top">
+      <h1 class="work-title h1">{dialogueTitle}</h1>
+      <div class="work-search">
+        <span class="search-label">SEARCH</span>
+        <PageSelect pages={lineNumbers} />
+      </div>
+    </div>
+    {dialogueSubtitle && <p class="work-subtitle">{dialogueSubtitle}</p>}
   </div>
   <main>
     <section class="dialogueContainer">
@@ -178,65 +181,78 @@ const commentsGr = showGreek
     initOverflow();
     document.addEventListener("astro:after-swap", initOverflow);
   </script>
-  <script>
-    function initSearchOverlay() {
-      const overlay = document.getElementById("search-overlay");
-      if (!overlay) return;
-
-      document.addEventListener("search-toggle", () => {
-        const isHidden = overlay.hidden;
-        overlay.hidden = !isHidden;
-        if (!isHidden) return;
-        const input = overlay.querySelector<HTMLInputElement>("#searchInput");
-        input?.focus();
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!overlay.hidden && !overlay.contains(e.target as Node)) {
-          const searchBtn = (e.target as Element).closest("[data-search-btn]");
-          if (!searchBtn) overlay.hidden = true;
-        }
-      });
-    }
-
-    initSearchOverlay();
-    document.addEventListener("astro:after-swap", initSearchOverlay);
-  </script>
   <Footer />
 </PageLayout>
 
 <style is:global>
-  .search-overlay {
-    position: sticky;
-    top: 0;
-    z-index: 49;
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
-    display: flex;
-    justify-content: center;
-  }
-
-  .search-overlay[hidden] {
-    display: none;
-  }
-
   .work-header {
     padding: var(--space-xl) var(--space-2xl) var(--space-lg);
     border-bottom: 1px solid var(--color-border);
   }
 
+  .work-header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
   .work-title {
-    margin: 0 0 var(--space-sm);
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1;
   }
 
   .work-subtitle {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--color-text);
+    font-family: var(--font-serif);
+    font-weight: var(--weight-regular);
+    max-width: 60%;
+  }
+
+  .work-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-shrink: 0;
+  }
+
+  .search-label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  .work-search .dropdown {
+    width: 240px;
+    margin: 0;
+  }
+
+  .work-search #searchInput {
+    background: var(--white) !important;
   }
 
   @media (max-width: 768px) {
     .work-header {
       padding: var(--space-md);
+    }
+
+    .work-header-top {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .work-search {
+      width: 100%;
+    }
+
+    .work-search :global(.dropdown) {
+      flex: 1;
     }
   }
 
@@ -318,8 +334,7 @@ const commentsGr = showGreek
   .column-label {
     font-family: var(--font-serif);
     font-weight: var(--weight-regular);
-    font-size: 1.25rem;
-    font-style: italic;
+    font-size: 1.5rem;
     color: var(--color-text-muted);
   }
 

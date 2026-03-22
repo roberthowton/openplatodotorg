@@ -1,4 +1,7 @@
 ---
+import SearchIcon from "../assets/icons/search.svg?raw";
+import CloseIcon from "../assets/icons/close.svg?raw";
+
 type Props = {
   pages: (string | null)[];
 };
@@ -17,6 +20,15 @@ const { pages } = Astro.props;
     autocomplete="off"
     value={initialValue}
   />
+  <button
+    class="search-icon-trailing"
+    id="searchIconBtn"
+    aria-label="Search"
+    tabindex="-1"
+  >
+    <span class="icon-search" aria-hidden="true" set:html={SearchIcon} />
+    <span class="icon-close" aria-hidden="true" set:html={CloseIcon} />
+  </button>
   <ul id="dropdownList" class="dropdown-list"></ul>
 </div>
 
@@ -32,6 +44,22 @@ const { pages } = Astro.props;
   const dropdown = document.querySelector(".dropdown") as HTMLElement;
   const searchInput = document.getElementById("searchInput") as HTMLInputElement;
   const dropdownList = document.getElementById("dropdownList") as HTMLElement;
+  const searchIconBtn = document.getElementById("searchIconBtn") as HTMLButtonElement;
+
+  function updateIcon() {
+    const hasValue = !!searchInput.value;
+    dropdown.dataset.hasValue = hasValue ? "true" : "";
+    searchIconBtn?.setAttribute("aria-label", hasValue ? "Clear search" : "Search");
+  }
+
+  searchIconBtn?.addEventListener("click", () => {
+    if (searchInput.value) {
+      searchInput.value = "";
+      dropdownList.style.display = "none";
+      updateIcon();
+      searchInput.focus();
+    }
+  });
 
   const items: (string | null)[] = JSON.parse(dropdown.dataset?.lines || "[]");
 
@@ -223,8 +251,12 @@ const { pages } = Astro.props;
   // Listen for input changes with debouncing
   let searchTimeout: number;
 
+  // Init icon state (e.g. when ref is pre-filled)
+  updateIcon();
+
   searchInput.addEventListener('input', () => {
     clearTimeout(searchTimeout);
+    updateIcon();
 
     const searchText = searchInput.value;
 
@@ -262,18 +294,59 @@ const { pages } = Astro.props;
 <style>
   .dropdown {
     position: relative;
-    width: 300px;
     margin: var(--space-md);
   }
 
   #searchInput {
     width: 100%;
     padding: var(--space-sm);
+    padding-right: 1.75rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
+    box-sizing: border-box;
+  }
+
+  .search-icon-trailing {
+    position: absolute;
+    right: 0.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--color-text);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .search-icon-trailing :global(svg) {
+    width: 13px;
+    height: 13px;
+    display: block;
+  }
+
+  /* Show search icon by default, hide close */
+  .icon-close {
+    display: none;
+  }
+
+  /* When input has a value: swap icons, enable pointer */
+  .dropdown[data-has-value="true"] .search-icon-trailing {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .dropdown[data-has-value="true"] .icon-search {
+    display: none;
+  }
+
+  .dropdown[data-has-value="true"] .icon-close {
+    display: flex;
   }
 
   #searchInput::placeholder {

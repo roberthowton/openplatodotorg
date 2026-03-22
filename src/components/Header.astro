@@ -2,7 +2,6 @@
 import { ShowState } from "../types";
 import SwanIcon from "../assets/icons/swan.svg?raw";
 import LogoSvg from "../assets/icons/logo.svg?raw";
-import SearchIcon from "../assets/icons/search.svg?raw";
 
 const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
@@ -66,12 +65,14 @@ const showBoth = showGreek && showEnglish;
         </button>
       </nav>
     )}
-    <button class="search-btn" data-search-btn aria-label="Search">
-      <span class="search-icon" aria-hidden="true" set:html={SearchIcon} />
-    </button>
-    <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
-      <span class="theme-label">LIGHT MODE</span>
-    </button>
+    <div class="theme-toggle-group" aria-label="Color theme">
+      <button class="theme-btn" data-theme-option="light" aria-label="Light mode">
+        LIGHT MODE
+      </button>
+      <button class="theme-btn" data-theme-option="dark" aria-label="Dark mode">
+        DARK MODE
+      </button>
+    </div>
   </div>
 </header>
 </site-header>
@@ -91,7 +92,7 @@ const showBoth = showGreek && showEnglish;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-md) var(--space-lg);
-    background: var(--color-bg);
+    background: var(--color-header-bg);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -113,34 +114,41 @@ const showBoth = showGreek && showEnglish;
     flex: 0 0 auto;
   }
 
-  /* Mode toggle */
+  /* Mode toggle — radio circle style */
   .mode-toggle {
     display: flex;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    overflow: hidden;
+    gap: var(--space-sm);
   }
 
   .mode-btn {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.05em;
-    padding: var(--space-sm) var(--space-md);
+    padding: 0;
     background: transparent;
     border: none;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-  }
-
-  .mode-btn:hover {
     color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
   }
 
-  .mode-btn.active {
-    background: var(--op-yellow);
-    color: var(--black-1);
+  .mode-btn::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  .mode-btn.active::before {
+    border-color: var(--color-text);
+    background: var(--color-text);
   }
 
   /* Logo */
@@ -177,53 +185,41 @@ const showBoth = showGreek && showEnglish;
     overflow: visible;
   }
 
-  .search-icon {
+  /* Theme toggle — dual radio circle style */
+  .theme-toggle-group {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    gap: var(--space-sm);
   }
 
-  .search-icon :global(svg) {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* Search button */
-  .search-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-  }
-
-  .search-btn:hover {
-    color: var(--color-text);
-    border-color: var(--color-text-muted);
-  }
-
-  /* Theme toggle */
-  .theme-toggle {
+  .theme-btn {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.05em;
-    padding: var(--space-sm) var(--space-md);
+    padding: 0;
     background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
+    border: none;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
   }
 
-  .theme-toggle:hover {
-    color: var(--color-text);
-    border-color: var(--color-text-muted);
+  .theme-btn::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  .theme-btn.active::before {
+    border-color: var(--color-text);
+    background: var(--color-text);
   }
 
   /* Mobile language toggle - hidden on desktop */
@@ -267,7 +263,7 @@ const showBoth = showGreek && showEnglish;
       display: none;
     }
 
-    .theme-toggle .theme-label {
+    .theme-toggle-group {
       display: none;
     }
 
@@ -280,16 +276,12 @@ const showBoth = showGreek && showEnglish;
     .lang-toggle {
       display: flex;
     }
-
-    .search-btn {
-      display: none;
-    }
   }
 
   /* Tablet - Portrait */
   @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
     .site-header {
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-md) var(--space-md);
     }
 
     .logo-text {
