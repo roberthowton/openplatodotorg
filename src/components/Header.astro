@@ -2,6 +2,16 @@
 import { ShowState } from "../types";
 import SwanIcon from "../assets/icons/swan.svg?raw";
 import LogoSvg from "../assets/icons/logo.svg?raw";
+import RadioToggle from "./RadioToggle.astro";
+import { HEADER_LABELS, HEADER_ARIA } from "../consts/labels";
+
+type Props = {
+  labels?: Partial<typeof HEADER_LABELS>;
+  aria?: Partial<typeof HEADER_ARIA>;
+};
+
+const labels = { ...HEADER_LABELS, ...Astro.props.labels };
+const aria = { ...HEADER_ARIA, ...Astro.props.aria };
 
 const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
@@ -10,34 +20,24 @@ const isScholarly = !isFirstRead;
 // For mobile language toggle in scholarly mode
 const showGreek = urlShowParams.includes(ShowState.GREEK) || urlShowParams.length === 0;
 const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.length === 0;
-const showBoth = showGreek && showEnglish;
 ---
 
 <site-header>
 <header class="site-header">
   <div class="header-left">
-    <nav class="mode-toggle" role="tablist" aria-label="Reading mode">
-      <button
-        class:list={["mode-btn", { active: isFirstRead }]}
-        data-mode="firstRead"
-        role="tab"
-        aria-selected={isFirstRead}
-      >
-        FIRST READ
-      </button>
-      <button
-        class:list={["mode-btn", { active: isScholarly }]}
-        data-mode="scholarly"
-        role="tab"
-        aria-selected={isScholarly}
-      >
-        SCHOLARLY
-      </button>
-    </nav>
+    <RadioToggle
+      name="mode"
+      options={[
+        { value: "firstRead", label: labels.FIRST_READ },
+        { value: "scholarly", label: labels.SCHOLARLY },
+      ]}
+      activeValue={isFirstRead ? "firstRead" : "scholarly"}
+      ariaLabel={aria.READING_MODE}
+    />
   </div>
 
   <div class="header-center">
-    <a href="/" class="logo" aria-label="Open Plato home">
+    <a href="/" class="logo" aria-label={aria.HOME}>
       <span class="logo-swan" aria-hidden="true" set:html={SwanIcon} />
       <span class="logo-text" aria-hidden="true" set:html={LogoSvg} />
     </a>
@@ -46,33 +46,26 @@ const showBoth = showGreek && showEnglish;
   <div class="header-right">
     {/* Mobile language toggle - only in scholarly mode */}
     {isScholarly && (
-      <nav class="lang-toggle" role="tablist" aria-label="Language view">
-        <button
-          class:list={["lang-btn", { active: showGreek && !showEnglish }]}
-          data-lang="gr"
-          role="tab"
-          aria-selected={showGreek && !showEnglish}
-        >
-          GREEK
-        </button>
-        <button
-          class:list={["lang-btn", { active: showEnglish && !showGreek }]}
-          data-lang="en"
-          role="tab"
-          aria-selected={showEnglish && !showGreek}
-        >
-          TRANSLATION
-        </button>
-      </nav>
+      <RadioToggle
+        name="lang"
+        options={[
+          { value: "gr", label: labels.GREEK },
+          { value: "en", label: labels.TRANSLATION },
+        ]}
+        activeValue={showGreek && !showEnglish ? "gr" : showEnglish && !showGreek ? "en" : ""}
+        ariaLabel={aria.LANGUAGE_VIEW}
+        variant="pill"
+      />
     )}
-    <div class="theme-toggle-group" aria-label="Color theme">
-      <button class="theme-btn" data-theme-option="light" aria-label="Light mode">
-        LIGHT MODE
-      </button>
-      <button class="theme-btn" data-theme-option="dark" aria-label="Dark mode">
-        DARK MODE
-      </button>
-    </div>
+    <RadioToggle
+      name="theme"
+      options={[
+        { value: "light", label: labels.LIGHT_MODE },
+        { value: "dark", label: labels.DARK_MODE },
+      ]}
+      activeValue="light"
+      ariaLabel={aria.COLOR_THEME}
+    />
   </div>
 </header>
 </site-header>
@@ -114,43 +107,6 @@ const showBoth = showGreek && showEnglish;
     flex: 0 0 auto;
   }
 
-  /* Mode toggle — radio circle style */
-  .mode-toggle {
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .mode-btn {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
-    padding: 0;
-    background: transparent;
-    border: none;
-    color: var(--color-text);
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    cursor: pointer;
-  }
-
-  .mode-btn::before {
-    content: '';
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 1.5px solid var(--color-text-muted);
-    background: transparent;
-    flex-shrink: 0;
-  }
-
-  .mode-btn.active::before {
-    border-color: var(--color-text);
-    background: var(--color-text);
-  }
-
   /* Logo */
   .logo {
     display: flex;
@@ -185,74 +141,6 @@ const showBoth = showGreek && showEnglish;
     overflow: visible;
   }
 
-  /* Theme toggle — dual radio circle style */
-  .theme-toggle-group {
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .theme-btn {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
-    padding: 0;
-    background: transparent;
-    border: none;
-    color: var(--color-text);
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    cursor: pointer;
-  }
-
-  .theme-btn::before {
-    content: '';
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 1.5px solid var(--color-text-muted);
-    background: transparent;
-    flex-shrink: 0;
-  }
-
-  .theme-btn.active::before {
-    border-color: var(--color-text);
-    background: var(--color-text);
-  }
-
-  /* Mobile language toggle - hidden on desktop */
-  .lang-toggle {
-    display: none;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .lang-btn {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.65rem;
-    letter-spacing: 0.05em;
-    padding: var(--space-xs) var(--space-sm);
-    background: transparent;
-    border: none;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-    white-space: nowrap;
-  }
-
-  .lang-btn:hover {
-    color: var(--color-text);
-  }
-
-  .lang-btn.active {
-    background: var(--op-yellow);
-    color: var(--black-1);
-  }
-
   /* Responsive - Mobile */
   @media (max-width: 768px) {
     .site-header {
@@ -263,18 +151,15 @@ const showBoth = showGreek && showEnglish;
       display: none;
     }
 
-    .theme-toggle-group {
+    /* Hide theme toggle on mobile */
+    .header-right :global([data-toggle-name="theme"]) {
       display: none;
     }
 
-    .mode-btn {
-      padding: var(--space-xs) var(--space-sm);
+    /* Shrink mode buttons on mobile */
+    .header-left :global(.radio-toggle-btn) {
       font-size: 0.65rem;
-    }
-
-    /* Show language toggle on mobile */
-    .lang-toggle {
-      display: flex;
+      padding: var(--space-xs) var(--space-sm);
     }
   }
 
