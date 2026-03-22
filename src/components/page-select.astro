@@ -1,4 +1,6 @@
 ---
+import SearchIcon from "../assets/icons/search.svg?raw";
+
 type Props = {
   pages: (string | null)[];
 };
@@ -17,6 +19,7 @@ const { pages } = Astro.props;
     autocomplete="off"
     value={initialValue}
   />
+  <span class="search-icon-trailing" aria-hidden="true" set:html={SearchIcon} />
   <ul id="dropdownList" class="dropdown-list"></ul>
 </div>
 
@@ -269,11 +272,28 @@ const { pages } = Astro.props;
   #searchInput {
     width: 100%;
     padding: var(--space-sm);
+    padding-right: 2rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
+  }
+
+  .search-icon-trailing {
+    position: absolute;
+    right: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search-icon-trailing :global(svg) {
+    width: 14px;
+    height: 14px;
   }
 
   #searchInput::placeholder {

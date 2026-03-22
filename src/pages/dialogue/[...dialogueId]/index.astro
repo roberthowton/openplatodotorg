@@ -192,7 +192,7 @@ const commentsGr = showGreek
 
   .work-header-top {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-xl);
     margin-bottom: var(--space-sm);
@@ -200,21 +200,22 @@ const commentsGr = showGreek
 
   .work-title {
     margin: 0;
+    line-height: 1;
   }
 
   .work-subtitle {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--color-text);
     font-family: var(--font-serif);
     font-weight: var(--weight-regular);
+    max-width: 60%;
   }
 
   .work-search {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
     flex-shrink: 0;
-    padding-top: 0.2rem;
   }
 
   .search-label {
@@ -222,13 +223,17 @@ const commentsGr = showGreek
     font-weight: var(--weight-medium);
     font-size: 0.75rem;
     letter-spacing: 0.1em;
-    color: var(--color-text-muted);
+    color: var(--color-text);
     white-space: nowrap;
   }
 
   .work-search :global(.dropdown) {
     width: 240px;
     margin: 0;
+  }
+
+  .work-search :global(#searchInput) {
+    background: var(--white);
   }
 
   @media (max-width: 768px) {
