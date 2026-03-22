@@ -44,7 +44,7 @@ const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.l
   </div>
 
   <div class="header-right">
-    {/* Mobile language toggle - only in scholarly mode */}
+    {/* Language toggle - mobile only in scholarly mode */}
     {isScholarly && (
       <RadioToggle
         name="lang"
@@ -141,6 +141,11 @@ const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.l
     overflow: visible;
   }
 
+  /* Hide lang toggle on desktop */
+  .header-right :global([data-toggle-name="lang"]) {
+    display: none;
+  }
+
   /* Responsive - Mobile */
   @media (max-width: 768px) {
     .site-header {
@@ -149,6 +154,11 @@ const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.l
 
     .logo-text {
       display: none;
+    }
+
+    /* Show lang toggle on mobile */
+    .header-right :global([data-toggle-name="lang"]) {
+      display: flex;
     }
 
     /* Hide theme toggle on mobile */
