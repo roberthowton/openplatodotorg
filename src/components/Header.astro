@@ -91,7 +91,7 @@ const showBoth = showGreek && showEnglish;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
     background: var(--color-header-bg);
     position: sticky;
     top: 0;
@@ -256,7 +256,7 @@ const showBoth = showGreek && showEnglish;
   /* Responsive - Mobile */
   @media (max-width: 768px) {
     .site-header {
-      padding: 0 var(--space-md);
+      padding: var(--space-sm) var(--space-md);
     }
 
     .logo-text {
@@ -281,7 +281,7 @@ const showBoth = showGreek && showEnglish;
   /* Tablet - Portrait */
   @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
     .site-header {
-      padding: 0 var(--space-md);
+      padding: var(--space-md) var(--space-md);
     }
 
     .logo-text {
