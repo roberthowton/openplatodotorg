@@ -200,6 +200,7 @@ const commentsGr = showGreek
 
   .work-title {
     margin: 0;
+    font-size: 2rem;
     line-height: 1;
   }
 
@@ -227,13 +228,13 @@ const commentsGr = showGreek
     white-space: nowrap;
   }
 
-  .work-search :global(.dropdown) {
+  .work-search .dropdown {
     width: 240px;
     margin: 0;
   }
 
-  .work-search :global(#searchInput) {
-    background: var(--white);
+  .work-search #searchInput {
+    background: var(--white) !important;
   }
 
   @media (max-width: 768px) {

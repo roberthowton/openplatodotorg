@@ -91,7 +91,7 @@ const showBoth = showGreek && showEnglish;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-lg) var(--space-lg);
+    padding: var(--space-xl) var(--space-lg);
     background: var(--color-header-bg);
     position: sticky;
     top: 0;
@@ -117,7 +117,7 @@ const showBoth = showGreek && showEnglish;
   /* Mode toggle — radio circle style */
   .mode-toggle {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
   .mode-btn {
@@ -131,20 +131,24 @@ const showBoth = showGreek && showEnglish;
     color: var(--color-text);
     display: flex;
     align-items: center;
-    gap: 0.4em;
+    gap: 0.5em;
     cursor: pointer;
   }
 
   .mode-btn::before {
-    content: '○';
-    font-size: 0.7em;
-    line-height: 1;
-    color: var(--color-text-muted);
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    background: transparent;
+    flex-shrink: 0;
   }
 
   .mode-btn.active::before {
-    content: '●';
-    color: var(--color-text);
+    border-color: var(--color-text);
+    background: var(--color-text);
   }
 
   /* Logo */
@@ -184,7 +188,7 @@ const showBoth = showGreek && showEnglish;
   /* Theme toggle — dual radio circle style */
   .theme-toggle-group {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
   .theme-btn {
@@ -198,20 +202,24 @@ const showBoth = showGreek && showEnglish;
     color: var(--color-text);
     display: flex;
     align-items: center;
-    gap: 0.4em;
+    gap: 0.5em;
     cursor: pointer;
   }
 
   .theme-btn::before {
-    content: '○';
-    font-size: 0.7em;
-    line-height: 1;
-    color: var(--color-text-muted);
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    background: transparent;
+    flex-shrink: 0;
   }
 
   .theme-btn.active::before {
-    content: '●';
-    color: var(--color-text);
+    border-color: var(--color-text);
+    background: var(--color-text);
   }
 
   /* Mobile language toggle - hidden on desktop */
@@ -273,7 +281,7 @@ const showBoth = showGreek && showEnglish;
   /* Tablet - Portrait */
   @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
     .site-header {
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-xl) var(--space-md);
     }
 
     .logo-text {

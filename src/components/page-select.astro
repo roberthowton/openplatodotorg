@@ -265,35 +265,36 @@ const { pages } = Astro.props;
 <style>
   .dropdown {
     position: relative;
-    width: 300px;
     margin: var(--space-md);
   }
 
   #searchInput {
     width: 100%;
     padding: var(--space-sm);
-    padding-right: 2rem;
+    padding-right: 1.75rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
+    box-sizing: border-box;
   }
 
   .search-icon-trailing {
     position: absolute;
-    right: var(--space-sm);
+    right: 0.4rem;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
-    color: var(--color-text-muted);
+    color: var(--color-text);
     pointer-events: none;
   }
 
   .search-icon-trailing :global(svg) {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
+    display: block;
   }
 
   #searchInput::placeholder {
