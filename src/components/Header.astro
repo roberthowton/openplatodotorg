@@ -2,7 +2,6 @@
 import { ShowState } from "../types";
 import SwanIcon from "../assets/icons/swan.svg?raw";
 import LogoSvg from "../assets/icons/logo.svg?raw";
-import SearchIcon from "../assets/icons/search.svg?raw";
 
 const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
 const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
@@ -66,9 +65,9 @@ const showBoth = showGreek && showEnglish;
         </button>
       </nav>
     )}
-    <button class="search-btn" data-search-btn aria-label="Search">
-      <span class="search-icon" aria-hidden="true" set:html={SearchIcon} />
-    </button>
+    <div class="search-wrapper">
+      <slot name="search" />
+    </div>
     <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
       <span class="theme-label">LIGHT MODE</span>
     </button>
@@ -177,34 +176,25 @@ const showBoth = showGreek && showEnglish;
     overflow: visible;
   }
 
-  .search-icon {
+  /* Search wrapper — inline in header-right */
+  .search-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
   }
 
-  .search-icon :global(svg) {
-    width: 20px;
-    height: 20px;
+  .search-wrapper :global(.dropdown) {
+    width: 200px;
+    margin: 0;
+    height: 32px;
   }
 
-  /* Search button */
-  .search-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-  }
-
-  .search-btn:hover {
-    color: var(--color-text);
-    border-color: var(--color-text-muted);
+  .search-wrapper :global(#searchInput) {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    height: 32px;
+    padding: var(--space-xs) var(--space-sm);
   }
 
   /* Theme toggle */
@@ -281,7 +271,7 @@ const showBoth = showGreek && showEnglish;
       display: flex;
     }
 
-    .search-btn {
+    .search-wrapper {
       display: none;
     }
   }

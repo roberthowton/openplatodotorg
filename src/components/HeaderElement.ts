@@ -48,12 +48,6 @@ export function createHeaderElement(): typeof HTMLElement {
       // Sync label with current theme on connect
       updateThemeLabel(html.dataset.theme || "light");
 
-      // Search toggle
-      const searchBtn = this.querySelector("[data-search-btn]");
-      searchBtn?.addEventListener("click", () => {
-        document.dispatchEvent(new CustomEvent("search-toggle"));
-      }, { signal });
-
       themeToggle?.addEventListener("click", () => {
         const newTheme = html.dataset.theme === "dark" ? "light" : "dark";
         html.dataset.theme = newTheme;
