@@ -7,15 +7,22 @@ Deep reference for the Open Plato platform. See [README.md](./README.md) for ove
 ## Component Hierarchy
 
 ```
-layouts/page-layout.astro         # Root HTML shell, imports global CSS
-  components/head.astro           # <head>: ClientRouter, theme flash prevention
-  components/Header.astro         # Mode toggle, lang toggle, search, theme button
-  components/page-select.astro    # Stephanus page navigation
+layouts/page-layout.astro               # Root HTML shell, imports global CSS
+  components/head.astro                 # <head>: ClientRouter, theme flash prevention
+  components/Header/Header.astro        # Mode toggle, lang toggle, theme button
+    Header/HeaderElement.ts             # Web component: site-header
+  components/RadioToggle.astro          # Reusable radio/pill toggle (no TS dep)
   main > .dialogueContainer
-    components/Tei.astro          # (×1–2) Greek and/or English TEI columns
-      TeiCustomElement.ts         # Web component: tei-container (applies behaviors)
-    .text-column-first-read       # First-read column (shares Tei.astro, en.xml)
-  components/CommentsPanel.astro  # Fixed sidebar (desktop) / bottom sheet (mobile)
+    components/Tei/Tei.astro            # (×1–2) Greek and/or English TEI columns
+      Tei/TeiCustomElement.ts           # Web component: tei-container
+      Tei/tei-style.astro               # TEI stylesheet component
+      Tei/tei-base-style.astro          # TEI base stylesheet component
+    .text-column-first-read             # First-read column (shares Tei.astro, en.xml)
+  components/PageSelect/PageSelect.astro  # Stephanus page navigation + text search
+    PageSelect/page-select-client.ts    # Extracted search helpers (testable)
+    PageSelect/highlight.css            # .highlight style (component-scoped global)
+  components/CommentsPanel/CommentsPanel.astro  # Fixed sidebar / bottom sheet
+    CommentsPanel/CommentsPanelElement.ts        # Web component: comments-panel
   components/Footer.astro
 ```
 
@@ -241,6 +248,12 @@ No CSS framework. All tokens are CSS custom properties.
 | `--color-accent`   | `#e8c547` (yellow)   | (unchanged)      |
 
 Component styles are scoped via Astro `<style>` blocks (converted to CSS modules at build time).
+
+### Style file organization
+
+- `src/styles/` — **global styles only**: design tokens, resets, fonts, typography, annotations
+- Component-scoped CSS (e.g. `.highlight`) lives alongside its component in the component's subdirectory
+- Page-scoped CSS lives alongside its page in `src/pages/` (prefixed `_` to suppress Astro's route warning, e.g. `_dialogue-page.css`)
 
 ---
 

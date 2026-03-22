@@ -1,8 +1,8 @@
 // Extracted Tei custom element logic for testing
-import { customBehaviors } from "../utils";
+import { customBehaviors } from "../../utils";
 import CETEI from "CETEIcean";
-import { injectAnchors } from "../scripts/injectAnchors";
-import { annotate } from "../scripts/annotate";
+import { injectAnchors } from "../../scripts/injectAnchors";
+import { annotate } from "../../scripts/annotate";
 
 export interface TeiElementConfig {
   rootId?: string;

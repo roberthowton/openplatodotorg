@@ -1,5 +1,5 @@
-import { dispatch } from "../state/url";
-import { ShowState } from "../types";
+import { dispatch } from "../../state/url";
+import { ShowState } from "../../types";
 
 export function createHeaderElement(): typeof HTMLElement {
   return class SiteHeaderElement extends HTMLElement {

@@ -2,13 +2,13 @@
 import PageLayout from "@layouts/page-layout.astro";
 import "@styles/fonts.css";
 import "@styles/annotations.css";
-import "@styles/dialogue-page.css";
-import Header from "@components/Header.astro";
+import "../_dialogue-page.css";
+import Header from "@components/Header/Header.astro";
 import Footer from "@components/Footer.astro";
 import { getLineNumbersFromTeiDom } from "@utils";
-import Tei from "@components/Tei.astro";
-import PageSelect from "@components/page-select.astro";
-import CommentsPanel from "@components/CommentsPanel.astro";
+import Tei from "@components/Tei/Tei.astro";
+import PageSelect from "@components/PageSelect/PageSelect.astro";
+import CommentsPanel from "@components/CommentsPanel/CommentsPanel.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
 import { loadComments } from "@utils/loadComments";

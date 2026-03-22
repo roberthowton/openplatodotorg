@@ -1,8 +1,8 @@
 ---
-import SearchIcon from "../assets/icons/search.svg?raw";
-import CloseIcon from "../assets/icons/close.svg?raw";
-import { SEARCH_LABELS } from "../consts/labels";
-import "../styles/highlight.css";
+import SearchIcon from "../../assets/icons/search.svg?raw";
+import CloseIcon from "../../assets/icons/close.svg?raw";
+import { SEARCH_LABELS } from "../../consts/labels";
+import "./highlight.css";
 
 type Props = {
   pages: (string | null)[];
@@ -44,7 +44,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 </div>
 
 <script>
-  import { dispatch } from "../state/url";
+  import { dispatch } from "../../state/url";
   import {
     type SearchResult,
     extractReferenceFromId,

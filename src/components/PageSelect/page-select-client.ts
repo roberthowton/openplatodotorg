@@ -1,6 +1,6 @@
 // Extracted helper functions from page-select.astro for testing
 
-import { escapeHtml } from "../utils/sanitize";
+import { escapeHtml } from "../../utils/sanitize";
 
 export interface SearchResult {
   type: 'reference' | 'text';

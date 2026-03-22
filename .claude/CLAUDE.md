@@ -16,6 +16,19 @@ Additionally, the application aims to incorporate functionality to support comme
 
 On initialization, read the README.md and ARCHITECTURE.md to get a sense of the overall structure and design principles of the application. Design and implement plans to conform to these design principles.
 
+## Project organization principles
+
+### Components
+
+`src/components/` is **not flat**. Components with local dependencies (TypeScript logic files, component-scoped CSS) live in their own subdirectory named after the component, e.g. `src/components/Header/`. Simple components with no local dependencies (e.g. `RadioToggle.astro`, `Footer.astro`, `head.astro`) may remain flat.
+
+### Styles
+
+`src/styles/` contains **global styles only**: design tokens (`variables.css`), resets, fonts, typography, annotations. Do not add component-scoped or page-scoped CSS here.
+
+- Component-scoped CSS lives in the component's subdirectory alongside the component files
+- Page-scoped CSS lives alongside the page in `src/pages/`, prefixed with `_` to suppress Astro's route warning (e.g. `src/pages/dialogue/_dialogue-page.css`)
+
 ## TEI Schema version
 
 <https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng>
