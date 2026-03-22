@@ -1,7 +1,7 @@
 ---
 // Source: https://github.com/raffazizzi/astro-tei/blob/bfb46d2dce80abf31cab174aae78b0cc401701b9/packages/core/src/Tei.astro
-import TeiStyle from "../styles/tei-style.astro";
-import { type ProcessedTei } from "../utils/processTei.ts";
+import TeiStyle from "./tei-style.astro";
+import { type ProcessedTei } from "../../utils/processTei.ts";
 export interface Props {
   useBehaviors?: boolean;
   teiData: ProcessedTei;

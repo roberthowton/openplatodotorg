@@ -1,3 +1,5 @@
+export * from "./labels";
+
 export const LINE_MARKER_STYLE: Partial<CSSStyleDeclaration> = {
   display: "inline",
   float: "right",

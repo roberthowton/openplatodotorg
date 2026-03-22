@@ -1,0 +1,99 @@
+---
+type Props = {
+  name: string;
+  options: { value: string; label: string }[];
+  activeValue: string;
+  ariaLabel: string;
+  variant?: "radio" | "pill";
+};
+
+const { name, options, activeValue, ariaLabel, variant = "radio" } = Astro.props;
+---
+
+<div
+  class:list={["radio-toggle", `radio-toggle--${variant}`]}
+  data-toggle-name={name}
+  role="tablist"
+  aria-label={ariaLabel}
+>
+  {options.map((opt) => (
+    <button
+      class:list={["radio-toggle-btn", { active: opt.value === activeValue }]}
+      data-value={opt.value}
+      role="tab"
+      aria-selected={opt.value === activeValue}
+    >
+      {opt.label}
+    </button>
+  ))}
+</div>
+
+<style>
+  .radio-toggle {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  /* === Radio variant === */
+  .radio-toggle--radio .radio-toggle-btn {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+  }
+
+  .radio-toggle--radio .radio-toggle-btn::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-text-muted);
+    background: transparent;
+    flex-shrink: 0;
+  }
+
+  .radio-toggle--radio .radio-toggle-btn.active::before {
+    border-color: var(--color-text);
+    background: var(--color-text);
+  }
+
+  /* === Pill variant === */
+  .radio-toggle--pill {
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .radio-toggle--pill .radio-toggle-btn {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    padding: var(--space-xs) var(--space-sm);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .radio-toggle--pill .radio-toggle-btn:hover {
+    color: var(--color-text);
+  }
+
+  .radio-toggle--pill .radio-toggle-btn.active {
+    background: var(--op-yellow);
+    color: var(--black-1);
+  }
+</style>

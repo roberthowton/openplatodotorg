@@ -1,29 +1,35 @@
 ---
 // Side panel for displaying comments/commentary
-import LockOpenIcon from "../assets/icons/lock-open.svg?raw";
-import LockClosedIcon from "../assets/icons/lock-closed.svg?raw";
+import LockOpenIcon from "../../assets/icons/lock-open.svg?raw";
+import LockClosedIcon from "../../assets/icons/lock-closed.svg?raw";
+import CloseIcon from "../../assets/icons/close.svg?raw";
+import { COMMENTS_LABELS } from "../../consts/labels";
+
+type Props = {
+  labels?: Partial<typeof COMMENTS_LABELS>;
+};
+
+const labels = { ...COMMENTS_LABELS, ...Astro.props.labels };
 ---
 
 <comments-panel id="comments-panel" class="comments-panel collapsed">
-  <button id="comments-panel-toggle" class="comments-panel-toggle" aria-label="Toggle commentary panel">
-    <span class="toggle-label">COMMENTARY</span>
+  <button id="comments-panel-toggle" class="comments-panel-toggle" aria-label={labels.ARIA_TOGGLE}>
+    <span class="toggle-label">{labels.TOGGLE_LABEL}</span>
   </button>
   <header class="comments-panel-header">
-    <h2>Commentary</h2>
+    <h2>{labels.HEADER}</h2>
     <div class="comments-panel-actions">
-      <button id="comments-panel-pin" class="comments-panel-btn" aria-label="Pin panel" title="Pin panel">
+      <button id="comments-panel-pin" class="comments-panel-btn" aria-label={labels.ARIA_PIN} title={labels.TITLE_PIN}>
         <span class="icon-lock-open" aria-hidden="true" set:html={LockOpenIcon} />
         <span class="icon-lock-closed" aria-hidden="true" set:html={LockClosedIcon} />
       </button>
-      <button id="comments-panel-close" class="comments-panel-btn" aria-label="Close panel" title="Close panel">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <button id="comments-panel-close" class="comments-panel-btn" aria-label={labels.ARIA_CLOSE} title={labels.TITLE_CLOSE}>
+        <span aria-hidden="true" set:html={CloseIcon} />
       </button>
     </div>
   </header>
   <div id="comments-panel-content" class="comments-panel-content">
-    <p class="comments-panel-empty">Click highlighted text to view commentary</p>
+    <p class="comments-panel-empty">{labels.EMPTY_STATE}</p>
   </div>
 </comments-panel>
 
@@ -134,16 +140,16 @@ import LockClosedIcon from "../assets/icons/lock-closed.svg?raw";
     opacity: 1;
   }
 
+  /* Icon sizes */
+  .comments-panel-btn :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
   /* Lock icon states */
   .icon-lock-open,
   .icon-lock-closed {
     display: flex;
-  }
-
-  .icon-lock-open :global(svg),
-  .icon-lock-closed :global(svg) {
-    width: 20px;
-    height: 20px;
   }
 
   .icon-lock-closed {

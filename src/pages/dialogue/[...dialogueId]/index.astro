@@ -2,16 +2,18 @@
 import PageLayout from "@layouts/page-layout.astro";
 import "@styles/fonts.css";
 import "@styles/annotations.css";
-import Header from "@components/Header.astro";
+import "../_dialogue-page.css";
+import Header from "@components/Header/Header.astro";
 import Footer from "@components/Footer.astro";
 import { getLineNumbersFromTeiDom } from "@utils";
-import Tei from "@components/Tei.astro";
-import PageSelect from "@components/page-select.astro";
-import CommentsPanel from "@components/CommentsPanel.astro";
+import Tei from "@components/Tei/Tei.astro";
+import PageSelect from "@components/PageSelect/PageSelect.astro";
+import CommentsPanel from "@components/CommentsPanel/CommentsPanel.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
 import { loadComments } from "@utils/loadComments";
 import { parseUrlState } from "../../../state/url";
+import { COLUMN_LABELS, SEARCH_LABELS } from "../../../consts/labels";
 
 const { dialogueId } = Astro.params;
 if (!dialogueId) throw new Error("dialogueId is required");
@@ -69,7 +71,7 @@ const commentsGr = showGreek
     <div class="work-header-top">
       <h1 class="work-title h1">{dialogueTitle}</h1>
       <div class="work-search">
-        <span class="search-label">SEARCH</span>
+        <span class="search-label">{SEARCH_LABELS.LABEL}</span>
         <PageSelect pages={lineNumbers} />
       </div>
     </div>
@@ -80,7 +82,7 @@ const commentsGr = showGreek
       {
         showGreek && (
           <div class="text-column text-column-gr">
-            <header class="column-header"><span class="column-label">Greek</span></header>
+            <header class="column-header"><span class="column-label">{COLUMN_LABELS.GREEK}</span></header>
             <Tei teiData={teiDataGr} language="gr" />
           </div>
         )
@@ -88,7 +90,7 @@ const commentsGr = showGreek
       {
         showEnglish && (
           <div class="text-column text-column-en">
-            <header class="column-header"><span class="column-label">Translation</span></header>
+            <header class="column-header"><span class="column-label">{COLUMN_LABELS.TRANSLATION}</span></header>
             <Tei
               teiData={teiDataEn}
               language="en"
@@ -184,192 +186,3 @@ const commentsGr = showGreek
   <Footer />
 </PageLayout>
 
-<style is:global>
-  .work-header {
-    padding: var(--space-xl) var(--space-2xl) var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .work-header-top {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-xl);
-    margin-bottom: var(--space-sm);
-  }
-
-  .work-title {
-    margin: 0;
-    font-size: 2rem;
-    line-height: 1;
-  }
-
-  .work-subtitle {
-    margin: 0;
-    color: var(--color-text);
-    font-family: var(--font-serif);
-    font-weight: var(--weight-regular);
-    max-width: 60%;
-  }
-
-  .work-search {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    flex-shrink: 0;
-  }
-
-  .search-label {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    color: var(--color-text);
-    white-space: nowrap;
-  }
-
-  .work-search .dropdown {
-    width: 240px;
-    margin: 0;
-  }
-
-  .work-search #searchInput {
-    background: var(--white) !important;
-  }
-
-  @media (max-width: 768px) {
-    .work-header {
-      padding: var(--space-md);
-    }
-
-    .work-header-top {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .work-search {
-      width: 100%;
-    }
-
-    .work-search :global(.dropdown) {
-      flex: 1;
-    }
-  }
-
-  .dialogueContainer {
-    display: grid;
-    grid-template-columns: fit-content(45%) fit-content(55%);
-    gap: 2rem;
-    align-items: start;
-    justify-content: center;
-    padding-top: var(--space-xl);
-    padding-right: var(--space-2xl);
-    padding-left: var(--space-md);
-    transition: padding-right 0.3s ease;
-  }
-
-  body.comments-panel-pinned .dialogueContainer {
-    padding-right: 340px;
-    justify-content: start;
-  }
-
-  /* When only one column, center it */
-  .dialogueContainer:has(> :only-child) {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-
-  .text-column {
-    min-width: 0;
-    overflow: hidden;
-    position: relative;
-    contain: paint;
-  }
-
-  .dialogueContainer:has(> :only-child) .text-column {
-    max-width: 70ch;
-  }
-
-  /* First Read mode styling */
-  .text-column-first-read {
-    max-width: 65ch;
-    font-size: 1.125rem;
-    line-height: 1.8;
-  }
-
-  .first-read-intro {
-    /* Placeholder for future intro/summary content */
-    margin-bottom: var(--space-xl);
-  }
-
-  .first-read-intro:empty {
-    display: none;
-  }
-
-  .text-column tei-container,
-  .text-column tei-tei,
-  .text-column tei-text,
-  .text-column tei-body {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  .text-column tei-lb {
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .text-column tei-l {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  .column-header {
-    padding-bottom: var(--space-sm);
-    margin-bottom: var(--space-md);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .column-label {
-    font-family: var(--font-serif);
-    font-weight: var(--weight-regular);
-    font-size: 1.5rem;
-    color: var(--color-text-muted);
-  }
-
-  /* Mobile - stacked layout, single column at a time */
-  @media (max-width: 768px) {
-    .column-header {
-      display: none;
-    }
-
-    .dialogueContainer {
-      display: block;
-      padding: 0 var(--space-md);
-      padding-bottom: 80px;
-    }
-
-    body.comments-panel-pinned .dialogueContainer {
-      padding-bottom: calc(50vh + 20px);
-    }
-
-    .text-column {
-      max-width: none;
-      padding: 0;
-    }
-
-    .text-column-first-read {
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-  }
-
-  /* Tablet */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .dialogueContainer {
-      grid-template-columns: fit-content(45%) fit-content(55%);
-      gap: var(--space-xl);
-    }
-  }
-</style>

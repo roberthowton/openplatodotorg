@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import Tei from '../Tei.astro';
+import Tei from '../Tei/Tei.astro';
 import processTei from '../../utils/processTei';
 
 const sampleTeiXml = `<?xml version="1.0" encoding="UTF-8"?>

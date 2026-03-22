@@ -1,5 +1,5 @@
-import { buildCommentsHtml, type Comment, type CommentsData } from "../scripts/commentsPanel";
-import { dispatch, getUrlState } from "../state/url";
+import { buildCommentsHtml, type Comment, type CommentsData } from "../../scripts/commentsPanel";
+import { dispatch, getUrlState } from "../../state/url";
 
 function getAllComments(): Map<string, Comment> {
   const commentsMap = new Map<string, Comment>();

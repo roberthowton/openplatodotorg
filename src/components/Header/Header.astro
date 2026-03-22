@@ -1,0 +1,186 @@
+---
+import { ShowState } from "../../types";
+import SwanIcon from "../../assets/icons/swan.svg?raw";
+import LogoSvg from "../../assets/icons/logo.svg?raw";
+import RadioToggle from "../RadioToggle.astro";
+import { HEADER_LABELS, HEADER_ARIA } from "../../consts/labels";
+
+type Props = {
+  labels?: Partial<typeof HEADER_LABELS>;
+  aria?: Partial<typeof HEADER_ARIA>;
+};
+
+const labels = { ...HEADER_LABELS, ...Astro.props.labels };
+const aria = { ...HEADER_ARIA, ...Astro.props.aria };
+
+const urlShowParams = Astro.url.searchParams.getAll("show") as ShowState[];
+const isFirstRead = urlShowParams.includes(ShowState.FIRST_READ);
+const isScholarly = !isFirstRead;
+
+// For mobile language toggle in scholarly mode
+const showGreek = urlShowParams.includes(ShowState.GREEK) || urlShowParams.length === 0;
+const showEnglish = urlShowParams.includes(ShowState.ENGLISH) || urlShowParams.length === 0;
+---
+
+<site-header>
+<header class="site-header">
+  <div class="header-left">
+    <RadioToggle
+      name="mode"
+      options={[
+        { value: "firstRead", label: labels.FIRST_READ },
+        { value: "scholarly", label: labels.SCHOLARLY },
+      ]}
+      activeValue={isFirstRead ? "firstRead" : "scholarly"}
+      ariaLabel={aria.READING_MODE}
+    />
+  </div>
+
+  <div class="header-center">
+    <a href="/" class="logo" aria-label={aria.HOME}>
+      <span class="logo-swan" aria-hidden="true" set:html={SwanIcon} />
+      <span class="logo-text" aria-hidden="true" set:html={LogoSvg} />
+    </a>
+  </div>
+
+  <div class="header-right">
+    {/* Language toggle - mobile only in scholarly mode */}
+    {isScholarly && (
+      <RadioToggle
+        name="lang"
+        options={[
+          { value: "gr", label: labels.GREEK },
+          { value: "en", label: labels.TRANSLATION },
+        ]}
+        activeValue={showGreek && !showEnglish ? "gr" : showEnglish && !showGreek ? "en" : ""}
+        ariaLabel={aria.LANGUAGE_VIEW}
+        variant="pill"
+      />
+    )}
+    <RadioToggle
+      name="theme"
+      options={[
+        { value: "light", label: labels.LIGHT_MODE },
+        { value: "dark", label: labels.DARK_MODE },
+      ]}
+      activeValue="light"
+      ariaLabel={aria.COLOR_THEME}
+    />
+  </div>
+</header>
+</site-header>
+
+<script>
+  import { createHeaderElement } from "./HeaderElement";
+  customElements.define("site-header", createHeaderElement());
+</script>
+
+<style>
+  site-header {
+    display: block;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-header-bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-left,
+  .header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-right {
+    justify-content: flex-end;
+    gap: var(--space-md);
+  }
+
+  .header-center {
+    flex: 0 0 auto;
+  }
+
+  /* Logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .logo-swan {
+    display: flex;
+    color: var(--color-text);
+  }
+
+  .logo-swan :global(svg) {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logo-text {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-serif);
+    font-weight: var(--weight-light);
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .logo-text :global(svg) {
+    height: 1.5rem;
+    width: auto;
+    overflow: visible;
+  }
+
+  /* Hide lang toggle on desktop */
+  .header-right :global([data-toggle-name="lang"]) {
+    display: none;
+  }
+
+  /* Responsive - Mobile */
+  @media (max-width: 768px) {
+    .site-header {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .logo-text {
+      display: none;
+    }
+
+    /* Show lang toggle on mobile */
+    .header-right :global([data-toggle-name="lang"]) {
+      display: flex;
+    }
+
+    /* Hide theme toggle on mobile */
+    .header-right :global([data-toggle-name="theme"]) {
+      display: none;
+    }
+
+    /* Shrink mode buttons on mobile */
+    .header-left :global(.radio-toggle-btn) {
+      font-size: 0.65rem;
+      padding: var(--space-xs) var(--space-sm);
+    }
+  }
+
+  /* Tablet - Portrait */
+  @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    .site-header {
+      padding: var(--space-md) var(--space-md);
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+    }
+  }
+</style>

@@ -5,7 +5,7 @@ import {
   escapeRegex,
   highlightMatch,
   filterReferences,
-} from '../page-select-client';
+} from '../PageSelect/page-select-client';
 
 describe('extractReferenceFromId', () => {
   it('extracts reference from Greek text div ID', () => {

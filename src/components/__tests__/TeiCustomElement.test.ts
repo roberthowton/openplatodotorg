@@ -19,7 +19,7 @@ import {
   parseDatasetConfig,
   applyTeiConfig,
   createTeiCustomElement,
-} from "../TeiCustomElement";
+} from "../Tei/TeiCustomElement";
 
 describe("parseDatasetConfig", () => {
   it("parses rootId from dataset", () => {

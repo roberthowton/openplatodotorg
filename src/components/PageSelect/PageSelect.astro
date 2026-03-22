@@ -1,29 +1,40 @@
 ---
-import SearchIcon from "../assets/icons/search.svg?raw";
-import CloseIcon from "../assets/icons/close.svg?raw";
+import SearchIcon from "../../assets/icons/search.svg?raw";
+import CloseIcon from "../../assets/icons/close.svg?raw";
+import { SEARCH_LABELS } from "../../consts/labels";
+import "./highlight.css";
 
 type Props = {
   pages: (string | null)[];
+  labels?: Partial<typeof SEARCH_LABELS>;
 };
 
 const ref = Astro.url.searchParams.get("ref");
 const initialValue = ref ?? "";
 
 const { pages } = Astro.props;
+const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 ---
 
-<div class="dropdown" data-lines={JSON.stringify(pages)}>
+<div
+  class="dropdown"
+  data-lines={JSON.stringify(pages)}
+  data-label-search={labels.ARIA_SEARCH}
+  data-label-clear={labels.ARIA_CLEAR}
+  data-label-references={labels.SECTION_REFERENCES}
+  data-label-results={labels.SECTION_RESULTS}
+>
   <input
     type="text"
     id="searchInput"
-    placeholder="Search references or text..."
+    placeholder={labels.PLACEHOLDER}
     autocomplete="off"
     value={initialValue}
   />
   <button
     class="search-icon-trailing"
     id="searchIconBtn"
-    aria-label="Search"
+    aria-label={labels.ARIA_SEARCH}
     tabindex="-1"
   >
     <span class="icon-search" aria-hidden="true" set:html={SearchIcon} />
@@ -33,7 +44,7 @@ const { pages } = Astro.props;
 </div>
 
 <script>
-  import { dispatch } from "../state/url";
+  import { dispatch } from "../../state/url";
   import {
     type SearchResult,
     extractReferenceFromId,
@@ -46,10 +57,15 @@ const { pages } = Astro.props;
   const dropdownList = document.getElementById("dropdownList") as HTMLElement;
   const searchIconBtn = document.getElementById("searchIconBtn") as HTMLButtonElement;
 
+  const labelSearch = dropdown.dataset.labelSearch || "Search";
+  const labelClear = dropdown.dataset.labelClear || "Clear search";
+  const labelReferences = dropdown.dataset.labelReferences || "References";
+  const labelResults = dropdown.dataset.labelResults || "Search Results";
+
   function updateIcon() {
     const hasValue = !!searchInput.value;
     dropdown.dataset.hasValue = hasValue ? "true" : "";
-    searchIconBtn?.setAttribute("aria-label", hasValue ? "Clear search" : "Search");
+    searchIconBtn?.setAttribute("aria-label", hasValue ? labelClear : labelSearch);
   }
 
   searchIconBtn?.addEventListener("click", () => {
@@ -166,7 +182,7 @@ const { pages } = Astro.props;
     if (referenceResults.length > 0) {
       const refHeader = document.createElement('li');
       refHeader.className = 'section-header';
-      refHeader.textContent = 'References';
+      refHeader.textContent = labelReferences;
       dropdownList.appendChild(refHeader);
 
       referenceResults.forEach(result => {
@@ -183,7 +199,7 @@ const { pages } = Astro.props;
     if (textResults.length > 0) {
       const textHeader = document.createElement('li');
       textHeader.className = 'section-header';
-      textHeader.textContent = 'Search Results';
+      textHeader.textContent = labelResults;
       dropdownList.appendChild(textHeader);
 
       textResults.forEach(result => {
@@ -284,12 +300,6 @@ const { pages } = Astro.props;
     e.stopPropagation();
   });
 </script>
-
-<style is:global>
-  .highlight {
-    background-color: var(--op-yellow);
-  }
-</style>
 
 <style>
   .dropdown {
