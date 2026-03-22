@@ -51,6 +51,11 @@ import TeiBaseStyle from "./tei-base-style.astro";
   .inline-mode .line-marker-block {
     display: none !important;
   }
+
+  /* Hide block markers when line numbers are disabled */
+  tei-container[data-hide-line-numbers="true"] .line-marker-block {
+    display: none;
+  }
   .inline-mode tei-lb {
     display: inline !important;
   }

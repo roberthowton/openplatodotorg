@@ -5,7 +5,10 @@ import {
   LINE_NUMBERS_TO_DISPLAY,
 } from "../../consts";
 
-export const handleLineBegin = (element: HTMLElement) => {
+type Language = "en" | "gr";
+
+export const createHandleLineBegin = (language: Language) => (element: HTMLElement) => {
+  const doc = element.ownerDocument;
   const nextTextNode = getNextTextNode(element);
 
   if (!nextTextNode) {
@@ -14,14 +17,14 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const shouldBreak = element.getAttribute("break") === "no";
   if (shouldBreak) {
-    if (nextTextNode?.nodeType === Node.TEXT_NODE) {
+    if (nextTextNode?.nodeType === 3 /* Node.TEXT_NODE */) {
       nextTextNode.textContent = nextTextNode.textContent?.concat("-") ?? "";
     }
   }
 
-  const rangeToNextLineBegin = getRangeToNextLineBegin(element);
+  const rangeToNextLineBegin = getRangeToNextLineBegin(element, doc);
 
-  const textDiv = renderRangeInDiv(rangeToNextLineBegin);
+  const textDiv = renderRangeInDiv(rangeToNextLineBegin, doc);
 
   // add class to handle justify text
   const isLastLine = !element.nextSibling;
@@ -40,14 +43,6 @@ export const handleLineBegin = (element: HTMLElement) => {
 
   const stephanusReference = element.getAttribute("n") ?? "";
 
-  // Get language and hideLineNumbers from parent tei-container
-  let parent = element.parentElement;
-  while (parent && parent.tagName !== 'TEI-CONTAINER') {
-    parent = parent.parentElement;
-  }
-  const language = (parent as HTMLElement)?.dataset?.language || 'gr';
-  const hideLineNumbers = (parent as HTMLElement)?.dataset?.hideLineNumbers === 'true';
-
   // Create unique IDs with language suffix
   element.id = `${stephanusReference}-${language}`;
   textDiv.id = `${stephanusReference}-${language}-text`;
@@ -57,7 +52,7 @@ export const handleLineBegin = (element: HTMLElement) => {
   // Smart inline marker for narrow viewports: [103a] at page start, [b] at column change, [5] for line only
   // Always create inline markers (CSS controls visibility)
   {
-    const inlineMarker = document.createElement("b");
+    const inlineMarker = doc.createElement("b");
     inlineMarker.className = "line-marker-inline";
 
     let markerText: string;
@@ -68,21 +63,22 @@ export const handleLineBegin = (element: HTMLElement) => {
     } else {
       markerText = line;
     }
-    inlineMarker.innerText = `[${markerText}] `;
+    inlineMarker.textContent = `[${markerText}] `;
 
     Object.assign(inlineMarker.style, {
       fontWeight: "800",
       fontStyle: "italic",
     });
-    inlineMarker.ariaHidden = "true";
+    inlineMarker.setAttribute("aria-hidden", "true");
     textDiv.prepend(inlineMarker);
   }
 
-  // Block marker for wide viewports (only on lines 1, 5, 10, 15)
-  if (LINE_NUMBERS_TO_DISPLAY.includes(line) && !hideLineNumbers) {
-    const lineMarker = document.createElement("b");
+  // Block marker for wide viewports (on lines 1, 5, 10, 15)
+  // Always rendered; CSS can hide via tei-container[data-hide-line-numbers="true"]
+  if (LINE_NUMBERS_TO_DISPLAY.includes(line)) {
+    const lineMarker = doc.createElement("b");
     lineMarker.className = "line-marker-block";
-    lineMarker.innerText =
+    lineMarker.textContent =
       stephanusReference === ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE
         ? column
         : getStephanusLineMarker(page, column, line);
@@ -94,7 +90,7 @@ export const handleLineBegin = (element: HTMLElement) => {
       fontStyle: "italic",
     });
 
-    lineMarker.ariaHidden = "true";
+    lineMarker.setAttribute("aria-hidden", "true");
 
     element.appendChild(lineMarker);
   }
@@ -102,14 +98,14 @@ export const handleLineBegin = (element: HTMLElement) => {
 
 const getNextTextNode = (element: HTMLElement) => {
   let nextNode = element.nextSibling;
-  while (nextNode && nextNode.nodeType !== Node.TEXT_NODE) {
+  while (nextNode && nextNode.nodeType !== 3 /* Node.TEXT_NODE */) {
     nextNode = nextNode.nextSibling;
   }
   return nextNode;
 };
 
-const getRangeToNextLineBegin = (element: HTMLElement) => {
-  const range = document.createRange();
+const getRangeToNextLineBegin = (element: HTMLElement, doc: Document) => {
+  const range = doc.createRange();
   let shouldSetRangeEndAfter = false;
 
   range.setStartAfter(element);
@@ -135,8 +131,8 @@ const getRangeToNextLineBegin = (element: HTMLElement) => {
   return range;
 };
 
-const renderRangeInDiv = (range: Range) => {
-  const container = document.createElement("div");
+const renderRangeInDiv = (range: Range, doc: Document) => {
+  const container = doc.createElement("div");
   let labelText = "";
 
   const dom = range.extractContents();

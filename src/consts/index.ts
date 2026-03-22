@@ -21,4 +21,5 @@ export const ALCIBIADES_FIRST_LINE_STEPHANUS_REFERENCE = "103a1";
 
 export const ALCIBIADES_TITLE = {
   GR: "ΑΛΚΙΒΙΑΔΗΣ",
+  EN: "Alcibiades 1",
 };

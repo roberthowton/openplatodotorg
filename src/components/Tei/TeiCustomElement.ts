@@ -1,6 +1,4 @@
 // Extracted Tei custom element logic for testing
-import { customBehaviors } from "../../utils";
-import CETEI from "CETEIcean";
 import { injectAnchors } from "../../scripts/injectAnchors";
 import { annotate } from "../../scripts/annotate";
 
@@ -16,43 +14,29 @@ export function applyTeiConfig(element: HTMLElement, config: TeiElementConfig, s
     element.id = config.rootId;
   }
 
-  const teiDom = element.firstChild as HTMLElement;
+  // Inject anchors and annotations client-side (behaviors are applied server-side)
+  if (config.language) {
+    const lang = config.language;
+    const doInject = () => {
+      const anchorIndex = injectAnchors(element, lang);
 
-  if (config.useBehaviors && teiDom) {
-    const ceteicean = new CETEI();
-    ceteicean.addBehaviors({
-      tei: {
-        ...customBehaviors,
-      },
-    });
-    ceteicean.els = config.elements;
-    ceteicean.utilities.dom = teiDom;
-    ceteicean.applyBehaviors();
+      // Apply annotations (segment decomposition)
+      annotate(element, lang, anchorIndex);
 
-    // Inject anchors after behaviors are applied (defer until DOM ready)
-    if (config.language) {
-      const lang = config.language;
-      const doInject = () => {
-        const anchorIndex = injectAnchors(element, lang);
+      // Dispatch event for UI layer
+      element.dispatchEvent(
+        new CustomEvent("tei-annotations-ready", {
+          detail: { language: lang, anchorIndex },
+          bubbles: true,
+        })
+      );
+    };
 
-        // Apply annotations (segment decomposition)
-        annotate(element, lang, anchorIndex);
-
-        // Dispatch event for UI layer
-        element.dispatchEvent(
-          new CustomEvent("tei-annotations-ready", {
-            detail: { language: lang, anchorIndex },
-            bubbles: true,
-          })
-        );
-      };
-
-      // Defer until full document is parsed (comments JSON may come after tei-container)
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", doInject, { signal, once: true });
-      } else {
-        doInject();
-      }
+    // Defer until full document is parsed (comments JSON may come after tei-container)
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", doInject, { signal, once: true });
+    } else {
+      doInject();
     }
   }
 
