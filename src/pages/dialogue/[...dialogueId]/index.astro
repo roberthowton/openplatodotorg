@@ -11,6 +11,7 @@ import PageSelect from "@components/PageSelect/PageSelect.astro";
 import CommentsPanel from "@components/CommentsPanel/CommentsPanel.astro";
 import processTei from "@utils/processTei";
 import { ShowState } from "@types";
+import type { DialogueConfig } from "@types";
 import { loadComments } from "@utils/loadComments";
 import { parseUrlState } from "../../../state/url";
 import { COLUMN_LABELS, SEARCH_LABELS } from "../../../consts/labels";
@@ -18,12 +19,18 @@ import { COLUMN_LABELS, SEARCH_LABELS } from "../../../consts/labels";
 const { dialogueId } = Astro.params;
 if (!dialogueId) throw new Error("dialogueId is required");
 
-// Load optional dialogue metadata (title override, subtitle)
+// Load optional dialogue metadata (title override, subtitle) and required dialogue config
 let dialogueMeta: { title?: string; subtitle?: string } = {};
+let dialogueConfig: DialogueConfig;
 try {
-  dialogueMeta = (await import(`../../../content/dialogue/${dialogueId}/meta.json`)).default;
-} catch {
-  // meta.json is optional; proceed without it
+  const meta = (await import(`../../../content/dialogue/${dialogueId}/meta.json`)).default;
+  dialogueMeta = meta;
+  if (!meta.teiTitle || !meta.firstLineStephanusReference) {
+    throw new Error(`meta.json for '${dialogueId}' is missing required fields: teiTitle, firstLineStephanusReference`);
+  }
+  dialogueConfig = { teiTitle: meta.teiTitle, firstLineStephanusReference: meta.firstLineStephanusReference };
+} catch (e) {
+  throw e;
 }
 
 const urlState = parseUrlState(Astro.url);
@@ -35,12 +42,12 @@ const teiFileGr = (
   await import(`../../../content/dialogue/${dialogueId}/gr.xml?raw`)
 ).default;
 
-const teiDataGr = processTei(teiFileGr);
+const teiDataGr = processTei(teiFileGr, "gr", dialogueConfig);
 
 const teiFileEn = (
   await import(`../../../content/dialogue/${dialogueId}/en.xml?raw`)
 ).default;
-const teiDataEn = processTei(teiFileEn);
+const teiDataEn = processTei(teiFileEn, "en", dialogueConfig);
 const lineNumbersGr = getLineNumbersFromTeiDom(teiDataGr.dom);
 const lineNumbersEn = getLineNumbersFromTeiDom(teiDataEn.dom);
 const lineNumbers = Array.from(new Set([...lineNumbersGr, ...lineNumbersEn]));

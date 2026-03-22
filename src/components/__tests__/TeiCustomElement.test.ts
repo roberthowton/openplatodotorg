@@ -1,25 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock CETEIcean before importing the module
-const mockAddBehaviors = vi.fn();
-const mockApplyBehaviors = vi.fn();
-
-vi.mock("CETEIcean", () => {
-  return {
-    default: class MockCETEI {
-      addBehaviors = mockAddBehaviors;
-      applyBehaviors = mockApplyBehaviors;
-      els: string[] = [];
-      utilities = { dom: null as HTMLElement | null };
-    },
-  };
-});
-
 import {
   parseDatasetConfig,
   applyTeiConfig,
   createTeiCustomElement,
 } from "../Tei/TeiCustomElement";
+
+// Stub annotation scripts — they depend on document state not relevant here
+vi.mock("../../scripts/injectAnchors", () => ({ injectAnchors: vi.fn(() => new Map()) }));
+vi.mock("../../scripts/annotate", () => ({ annotate: vi.fn() }));
 
 describe("parseDatasetConfig", () => {
   it("parses rootId from dataset", () => {
@@ -85,32 +74,6 @@ describe("applyTeiConfig", () => {
     });
     expect(element.style.display).toBe("block");
   });
-
-  it("applies behaviors when useBehaviors is true", () => {
-    mockAddBehaviors.mockClear();
-    mockApplyBehaviors.mockClear();
-
-    applyTeiConfig(element, {
-      useBehaviors: true,
-      elements: ["tei-p", "tei-div"],
-    });
-
-    expect(mockAddBehaviors).toHaveBeenCalled();
-    expect(mockApplyBehaviors).toHaveBeenCalled();
-  });
-
-  it("does not apply behaviors when useBehaviors is false", () => {
-    mockAddBehaviors.mockClear();
-    mockApplyBehaviors.mockClear();
-
-    applyTeiConfig(element, {
-      useBehaviors: false,
-      elements: [],
-    });
-
-    expect(mockAddBehaviors).not.toHaveBeenCalled();
-    expect(mockApplyBehaviors).not.toHaveBeenCalled();
-  });
 });
 
 describe("createTeiCustomElement", () => {
@@ -126,10 +89,7 @@ describe("createTeiCustomElement", () => {
     );
   });
 
-  it("connectedCallback calls parseDatasetConfig and applyTeiConfig", () => {
-    mockAddBehaviors.mockClear();
-    mockApplyBehaviors.mockClear();
-
+  it("connectedCallback sets id and display", () => {
     const TeiClass = createTeiCustomElement();
     const element = document.createElement("div") as unknown as HTMLElement & {
       connectedCallback: () => void;
@@ -141,12 +101,10 @@ describe("createTeiCustomElement", () => {
       elements: "tei-p,tei-div",
     });
 
-    // Add connectedCallback from prototype
     Object.setPrototypeOf(element, TeiClass.prototype);
     element.connectedCallback();
 
     expect(element.id).toBe("test-id");
     expect(element.style.display).toBe("block");
-    expect(mockAddBehaviors).toHaveBeenCalled();
   });
 });

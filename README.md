@@ -22,7 +22,7 @@ A TEI (Text Encoding Initiative) compliant platform for hosting annotated digita
 ```text
 src/
 ├── content/
-│   ├── dialogue/     # TEI XML files (gr.xml, en.xml per dialogue)
+│   ├── dialogue/     # TEI XML files (gr.xml, en.xml, meta.json per dialogue)
 │   ├── comment/      # Markdown annotations with YAML frontmatter
 │   └── config.ts     # Astro content collections schema
 ├── pages/dialogue/[...dialogueId]/  # Dynamic dialogue routes
@@ -66,9 +66,9 @@ src/
 
 ## Data Flow
 
-1. **Server**: Load TEI XML → `processTei()` (CETEIcean) → HTML string
+1. **Server**: Load `meta.json` (`DialogueConfig`) + TEI XML → `processTei(xml, language, config)` → behaviors applied → HTML string
 2. **Server**: Load comments via content collections → JSON in script tags
-3. **Client**: `<tei-container>` custom element applies behaviors
+3. **Client**: `<tei-container>` custom element runs annotation pipeline
 4. **Client**: `injectAnchors()` creates anchor spans after line breaks
 5. **Client**: `annotate()` wraps targeted text with `.annotated` spans
 6. **Client**: Panel shows comments on click, URL updated
@@ -89,11 +89,12 @@ URL is the single source of truth for all UI state. A Redux-like state machine (
 
 ### TEI Processing
 
-CETEIcean converts TEI XML to `tei-*` custom elements in a preprocessing approach adapted from [astro-tei](https://github.com/raffazizzi/astro-tei). Behaviors in `utils/behaviors/` handle:
+CETEIcean converts TEI XML to `tei-*` custom elements in a preprocessing approach adapted from [astro-tei](https://github.com/raffazizzi/astro-tei). Behaviors are applied **server-side** via language- and dialogue-aware factories (`createBehaviors(language, config)`). Each dialogue provides a `meta.json` with `teiTitle` and `firstLineStephanusReference`. Behaviors handle:
 
 - `tei-lb`: Grid layout for text + Stephanus line numbers
 - `tei-milestone`: Stephanus page markers
 - `tei-div`, `tei-head`, `tei-label`: Typography
+- `tei-teiheader`: Metadata hiding, dramatis personae rendering
 
 ### Annotation Pipeline
 

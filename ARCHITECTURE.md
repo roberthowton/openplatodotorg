@@ -84,33 +84,54 @@ Hard nav is required when the set of displayed columns changes (server must rend
 
 ### Server (Astro SSR)
 
-1. Import raw XML: `await import('../content/dialogue/alcibiades/gr.xml?raw')`
-2. `processTei(xml)` (adapted from [astro-tei](https://github.com/raffazizzi/astro-tei)):
-   - Parse with JSDOM (`contentType: "text/xml"`)
-   - `ceteicean.preprocess()` converts `<tei-*>` elements
-   - Serialize back to HTML string
-3. Pass `{ dom, serialized, elements }` to `Tei.astro` as props
-4. `Tei.astro` renders the serialized HTML via `set:html`
+1. Load `meta.json` per dialogue — provides `DialogueConfig` (`teiTitle`, `firstLineStephanusReference`)
+2. Import raw XML: `await import('../content/dialogue/alcibiades/gr.xml?raw')`
+3. `processTei(xml, language, config)` (adapted from [astro-tei](https://github.com/raffazizzi/astro-tei)):
+   - Parse XML with JSDOM (`contentType: "text/xml"`)
+   - Create a separate HTML JSDOM as CETEIcean's `documentObject` so elements have `.style`
+   - `ceteicean.preprocess()` converts `<TEI>` elements to `<tei-*>` custom elements
+   - `createBehaviors(language, config)` produces language- and dialogue-aware handlers
+   - `ceteicean.fallback()` applies behaviors server-side (bypasses `customElements.define()`)
+   - Serialize to HTML string
+4. Pass `{ dom, serialized, elements }` to `Tei.astro` as props
+5. `Tei.astro` renders the serialized HTML via `set:html` — behaviors already applied
 
 ### Client (web component)
 
-`TeiCustomElement.ts` registers `<tei-container>` as a custom element. On connect:
+`TeiCustomElement.ts` registers `<tei-container>` as a custom element. Behaviors are **not** re-applied client-side. On connect:
 
-1. `applyBehaviors()` — installs custom element behaviors from `utils/behaviors/`
-2. `injectAnchors()` — creates `<span data-ref="103a1">` anchor elements after line breaks
-3. `annotate()` — wraps targeted text in `.annotated` spans
-4. Re-runs on `astro:after-swap` (view transitions)
+1. `injectAnchors()` — creates `<span data-ref="103a1">` anchor elements after line breaks
+2. `annotate()` — wraps targeted text in `.annotated` spans
+3. Re-runs on `astro:after-swap` (view transitions)
+
+Annotations remain client-side because they read from `<script type="application/json">` tags in the page and are intended to become dynamic (rebuilt on comment changes without a server round-trip).
 
 ### Custom behaviors (`src/utils/behaviors/`)
 
-| Behavior              | Element        | Role |
-|-----------------------|----------------|------|
-| `handle-line-begin`   | `tei-lb`       | Grid layout (line text + Stephanus marker); adaptive inline/block mode |
-| `handle-milestone`    | `tei-milestone`| Stephanus page markers |
-| `handle-div`          | `tei-div`      | Section structure |
-| `handle-head`         | `tei-head`     | Heading typography |
-| `handle-label`        | `tei-label`    | Speaker labels |
-| `handle-tei-header`   | `tei-teiheader`| Hides TEI metadata header from display |
+All behaviors are **factories**: `create*(language, config: DialogueConfig) => (element) => void`. They are applied server-side during `processTei()`.
+
+| Behavior              | Element          | Role |
+|-----------------------|------------------|------|
+| `handle-line-begin`   | `tei-lb`         | Grid layout (line text + Stephanus marker); adaptive inline/block mode |
+| `handle-milestone`    | `tei-milestone`  | Stephanus page markers |
+| `handle-div`          | `tei-div`        | Section structure |
+| `handle-head`         | `tei-head`       | Heading typography; language-specific title from `config.teiTitle` |
+| `handle-label`        | `tei-label`      | Speaker labels |
+| `handle-tei-header`   | `tei-teiheader`  | Hides TEI metadata; renders dramatis personae; hides EN-only metadata |
+
+### Dialogue config (`src/content/dialogue/<id>/meta.json`)
+
+Each dialogue provides a `meta.json` with required fields consumed by `processTei`:
+
+```json
+{
+  "subtitle": "...",
+  "teiTitle": { "gr": "ΑΛΚΙΒΙΑΔΗΣ", "en": "Alcibiades 1" },
+  "firstLineStephanusReference": "103a1"
+}
+```
+
+The `DialogueConfig` type is defined in `src/types.ts`.
 
 ---
 

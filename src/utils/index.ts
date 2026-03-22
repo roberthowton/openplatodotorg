@@ -1,22 +1,23 @@
 import {
-  handleLineBegin,
+  createHandleLineBegin,
   handleLabel,
-  handleTeiHeader,
+  createHandleTeiHeader,
   handleDiv,
-  handleHead,
+  createHandleHead,
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
 import { STEPHANUS_COLUMN_REGEX } from "../consts";
+import type { DialogueConfig } from "../types";
 
 export * from "./behaviors";
 
-export const customBehaviors = {
-  teiHeader: handleTeiHeader,
+export const createBehaviors = (language: "en" | "gr", config: DialogueConfig) => ({
+  teiHeader: createHandleTeiHeader(language, config),
   div: handleDiv,
-  lb: handleLineBegin,
+  lb: createHandleLineBegin(language, config),
   label: handleLabel,
-  head: handleHead,
-};
+  head: createHandleHead(language, config),
+});
 
 export const parseStephanusReference = (reference: string) => {
   const [page, column, line] = reference.split(STEPHANUS_COLUMN_REGEX);
