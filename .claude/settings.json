@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -q 'git push'; then npm run test:run; fi",
+            "statusMessage": "Running tests before push...",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
