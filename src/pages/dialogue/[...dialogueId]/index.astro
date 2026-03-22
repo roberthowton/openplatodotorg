@@ -66,14 +66,14 @@ const commentsGr = showGreek
 <PageLayout>
   <Header />
   <div class="work-header">
-    <div class="work-title-area">
+    <div class="work-header-top">
       <h1 class="work-title h1">{dialogueTitle}</h1>
-      {dialogueSubtitle && <p class="work-subtitle">{dialogueSubtitle}</p>}
+      <div class="work-search">
+        <span class="search-label">SEARCH</span>
+        <PageSelect pages={lineNumbers} />
+      </div>
     </div>
-    <div class="work-search">
-      <span class="search-label">SEARCH</span>
-      <PageSelect pages={lineNumbers} />
-    </div>
+    {dialogueSubtitle && <p class="work-subtitle">{dialogueSubtitle}</p>}
   </div>
   <main>
     <section class="dialogueContainer">
@@ -186,21 +186,20 @@ const commentsGr = showGreek
 
 <style is:global>
   .work-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-xl);
     padding: var(--space-xl) var(--space-2xl) var(--space-lg);
     border-bottom: 1px solid var(--color-border);
   }
 
-  .work-title-area {
-    flex: 1;
-    min-width: 0;
+  .work-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-sm);
   }
 
   .work-title {
-    margin: 0 0 var(--space-sm);
+    margin: 0;
   }
 
   .work-subtitle {
@@ -235,7 +234,11 @@ const commentsGr = showGreek
   @media (max-width: 768px) {
     .work-header {
       padding: var(--space-md);
+    }
+
+    .work-header-top {
       flex-direction: column;
+      align-items: flex-start;
     }
 
     .work-search {
