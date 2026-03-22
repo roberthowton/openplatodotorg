@@ -65,12 +65,14 @@ const showBoth = showGreek && showEnglish;
         </button>
       </nav>
     )}
-    <div class="search-wrapper">
-      <slot name="search" />
+    <div class="theme-toggle-group" aria-label="Color theme">
+      <button class="theme-btn" data-theme-option="light" aria-label="Light mode">
+        LIGHT MODE
+      </button>
+      <button class="theme-btn" data-theme-option="dark" aria-label="Dark mode">
+        DARK MODE
+      </button>
     </div>
-    <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">
-      <span class="theme-label">LIGHT MODE</span>
-    </button>
   </div>
 </header>
 </site-header>
@@ -90,7 +92,7 @@ const showBoth = showGreek && showEnglish;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-md) var(--space-lg);
-    background: var(--color-bg);
+    background: var(--color-header-bg);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -112,13 +114,10 @@ const showBoth = showGreek && showEnglish;
     flex: 0 0 auto;
   }
 
-  /* Mode toggle */
+  /* Mode toggle — radio circle style */
   .mode-toggle {
     display: flex;
-    gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    overflow: hidden;
+    gap: var(--space-lg);
   }
 
   .mode-btn {
@@ -126,20 +125,33 @@ const showBoth = showGreek && showEnglish;
     font-weight: var(--weight-medium);
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    padding: var(--space-sm) var(--space-md);
+    padding: 0;
     background: transparent;
     border: none;
     color: var(--color-text-muted);
-    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+
+  .mode-btn::before {
+    content: '○';
+    font-size: 0.7em;
+    line-height: 1;
+  }
+
+  .mode-btn.active {
+    color: var(--color-text);
+  }
+
+  .mode-btn.active::before {
+    content: '●';
   }
 
   .mode-btn:hover {
     color: var(--color-text);
-  }
-
-  .mode-btn.active {
-    background: var(--op-yellow);
-    color: var(--black-1);
   }
 
   /* Logo */
@@ -176,44 +188,44 @@ const showBoth = showGreek && showEnglish;
     overflow: visible;
   }
 
-  /* Search wrapper — inline in header-right */
-  .search-wrapper {
+  /* Theme toggle — dual radio circle style */
+  .theme-toggle-group {
+    display: flex;
+    gap: var(--space-lg);
+  }
+
+  .theme-btn {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
     display: flex;
     align-items: center;
+    gap: 0.4em;
+    cursor: pointer;
+    transition: color var(--transition-fast);
   }
 
-  .search-wrapper :global(.dropdown) {
-    width: 200px;
-    margin: 0;
-    height: 32px;
+  .theme-btn::before {
+    content: '○';
+    font-size: 0.7em;
+    line-height: 1;
   }
 
-  .search-wrapper :global(#searchInput) {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    height: 32px;
-    padding: var(--space-xs) var(--space-sm);
-  }
-
-  /* Theme toggle */
-  .theme-toggle {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    padding: var(--space-sm) var(--space-md);
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text-muted);
-    transition: all var(--transition-fast);
-  }
-
-  .theme-toggle:hover {
+  .theme-btn.active {
     color: var(--color-text);
-    border-color: var(--color-text-muted);
+  }
+
+  .theme-btn.active::before {
+    content: '●';
+  }
+
+  .theme-btn:hover {
+    color: var(--color-text);
   }
 
   /* Mobile language toggle - hidden on desktop */
@@ -257,7 +269,7 @@ const showBoth = showGreek && showEnglish;
       display: none;
     }
 
-    .theme-toggle .theme-label {
+    .theme-toggle-group {
       display: none;
     }
 
@@ -269,10 +281,6 @@ const showBoth = showGreek && showEnglish;
     /* Show language toggle on mobile */
     .lang-toggle {
       display: flex;
-    }
-
-    .search-wrapper {
-      display: none;
     }
   }
 

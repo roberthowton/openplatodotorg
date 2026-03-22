@@ -29,6 +29,7 @@
   /* === Semantic tokens (light mode defaults) === */
   --color-bg: var(--white);
   --color-bg-alt: var(--op-grey-1);
+  --color-header-bg: var(--op-grey-2);
   --color-text: var(--black-1);
   --color-text-muted: var(--op-grey-3);
   --color-border: var(--op-grey-2);
@@ -72,6 +73,7 @@
 [data-theme="dark"] {
   --color-bg: var(--black-2);
   --color-bg-alt: var(--grey-4);
+  --color-header-bg: var(--grey-4);
   --color-text: var(--op-grey-1);
   --color-text-muted: var(--op-grey-3);
   --color-border: var(--op-charcoal);

@@ -34,26 +34,28 @@ export function createHeaderElement(): typeof HTMLElement {
         }, { signal });
       });
 
-      // Theme toggle — init (FOUC prevention) is in head.astro; only click handler here
-      const themeToggle = this.querySelector("[data-theme-toggle]");
+      // Theme toggle — dual radio buttons
       const html = document.documentElement;
+      const themeBtns = this.querySelectorAll(".theme-btn");
 
-      const updateThemeLabel = (theme: string) => {
-        const label = this.querySelector(".theme-label");
-        if (label) {
-          label.textContent = theme === "dark" ? "DARK MODE" : "LIGHT MODE";
-        }
+      const updateThemeButtons = (theme: string) => {
+        themeBtns.forEach((btn) => {
+          const option = (btn as HTMLElement).dataset.themeOption;
+          btn.classList.toggle("active", option === theme);
+        });
       };
 
-      // Sync label with current theme on connect
-      updateThemeLabel(html.dataset.theme || "light");
+      // Sync with current theme on connect
+      updateThemeButtons(html.dataset.theme || "light");
 
-      themeToggle?.addEventListener("click", () => {
-        const newTheme = html.dataset.theme === "dark" ? "light" : "dark";
-        html.dataset.theme = newTheme;
-        localStorage.setItem("theme", newTheme);
-        updateThemeLabel(newTheme);
-      }, { signal });
+      themeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const newTheme = (btn as HTMLElement).dataset.themeOption || "light";
+          html.dataset.theme = newTheme;
+          localStorage.setItem("theme", newTheme);
+          updateThemeButtons(newTheme);
+        }, { signal });
+      });
     }
 
     disconnectedCallback() {

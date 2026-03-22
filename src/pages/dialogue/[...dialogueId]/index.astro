@@ -64,12 +64,16 @@ const commentsGr = showGreek
 ---
 
 <PageLayout>
-  <Header>
-    <PageSelect slot="search" pages={lineNumbers} />
-  </Header>
+  <Header />
   <div class="work-header">
-    <h1 class="work-title h1">{dialogueTitle}</h1>
-    {dialogueSubtitle && <p class="work-subtitle">{dialogueSubtitle}</p>}
+    <div class="work-title-area">
+      <h1 class="work-title h1">{dialogueTitle}</h1>
+      {dialogueSubtitle && <p class="work-subtitle">{dialogueSubtitle}</p>}
+    </div>
+    <div class="work-search">
+      <span class="search-label">SEARCH</span>
+      <PageSelect pages={lineNumbers} />
+    </div>
   </div>
   <main>
     <section class="dialogueContainer">
@@ -182,8 +186,17 @@ const commentsGr = showGreek
 
 <style is:global>
   .work-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-xl);
     padding: var(--space-xl) var(--space-2xl) var(--space-lg);
     border-bottom: 1px solid var(--color-border);
+  }
+
+  .work-title-area {
+    flex: 1;
+    min-width: 0;
   }
 
   .work-title {
@@ -197,9 +210,40 @@ const commentsGr = showGreek
     font-weight: var(--weight-regular);
   }
 
+  .work-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+    padding-top: 0.2rem;
+  }
+
+  .search-label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .work-search :global(.dropdown) {
+    width: 240px;
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
     .work-header {
       padding: var(--space-md);
+      flex-direction: column;
+    }
+
+    .work-search {
+      width: 100%;
+    }
+
+    .work-search :global(.dropdown) {
+      flex: 1;
     }
   }
 
