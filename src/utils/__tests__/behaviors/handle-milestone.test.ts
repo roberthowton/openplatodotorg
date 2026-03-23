@@ -36,14 +36,12 @@ describe('handleStephanusMilestone', () => {
     expect(el.innerHTML).toBe('b');
   });
 
-  it('applies line marker styles', () => {
+  it('applies stephanus-milestone class', () => {
     const el = document.createElement('div');
     el.setAttribute('resp', 'Stephanus');
     el.setAttribute('unit', 'section');
     el.setAttribute('n', '103a');
     handleStephanusMilestone(el);
-    expect(el.style.display).toBe('inline');
-    expect(el.style.float).toBe('right');
-    expect(el.style.marginRight).toBe('1rem');
+    expect(el.classList.contains('stephanus-milestone')).toBe(true);
   });
 });

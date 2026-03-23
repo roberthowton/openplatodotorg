@@ -1,8 +1,6 @@
 import {
   createHandleLineBegin,
-  handleLabel,
   createHandleTeiHeader,
-  handleDiv,
   createHandleHead,
 } from "./behaviors";
 import type { ProcessedTei } from "./processTei";
@@ -13,9 +11,7 @@ export * from "./behaviors";
 
 export const createBehaviors = (language: "en" | "gr", config: DialogueConfig) => ({
   teiHeader: createHandleTeiHeader(language, config),
-  div: handleDiv,
   lb: createHandleLineBegin(language, config),
-  label: handleLabel,
   head: createHandleHead(language, config),
 });
 

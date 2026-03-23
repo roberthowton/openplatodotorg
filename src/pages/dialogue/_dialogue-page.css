@@ -41,13 +41,9 @@
   white-space: nowrap;
 }
 
-.work-search .dropdown {
-  width: 240px;
-  margin: 0;
-}
-
-.work-search #searchInput {
-  background: var(--white) !important;
+.work-search {
+  --page-select-width: 240px;
+  --page-select-margin: 0;
 }
 
 @media (max-width: 768px) {
@@ -123,19 +119,19 @@ body.comments-panel-pinned .dialogueContainer {
 .text-column tei-tei,
 .text-column tei-text,
 .text-column tei-body {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
 }
 
 .text-column tei-lb {
-  max-width: 100% !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .text-column tei-l {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
 }
 
 .column-header {
