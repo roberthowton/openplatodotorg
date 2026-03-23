@@ -1,0 +1,13 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "overrides": [
+    {
+      "files": ["**/*.astro"],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "rules": {
+    "declaration-no-important": true,
+    "no-duplicate-selectors": true
+  }
+}

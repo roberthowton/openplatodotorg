@@ -71,7 +71,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   searchIconBtn?.addEventListener("click", () => {
     if (searchInput.value) {
       searchInput.value = "";
-      dropdownList.style.display = "none";
+      dropdownList.classList.remove("open");
       updateIcon();
       searchInput.focus();
     }
@@ -172,11 +172,11 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
     const hasResults = referenceResults.length > 0 || textResults.length > 0;
 
     if (!hasResults) {
-      dropdownList.style.display = 'none';
+      dropdownList.classList.remove('open');
       return;
     }
 
-    dropdownList.style.display = 'block';
+    dropdownList.classList.add('open');
 
     // Render References Section
     if (referenceResults.length > 0) {
@@ -229,7 +229,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
   function selectReference(value: string | null) {
     searchInput.value = value || "";
-    dropdownList.style.display = "none";
+    dropdownList.classList.remove("open");
 
     if (!value) return;
 
@@ -277,7 +277,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
     const searchText = searchInput.value;
 
     if (!searchText) {
-      dropdownList.style.display = 'none';
+      dropdownList.classList.remove('open');
       return;
     }
 
@@ -291,7 +291,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   // Close dropdown when clicking outside
   document.addEventListener('click', (e) => {
     if (!dropdown.contains(e.target as Node)) {
-      dropdownList.style.display = 'none';
+      dropdownList.classList.remove('open');
     }
   });
 
@@ -304,7 +304,8 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 <style>
   .dropdown {
     position: relative;
-    margin: var(--space-md);
+    margin: var(--page-select-margin, var(--space-md));
+    width: var(--page-select-width, auto);
   }
 
   #searchInput {
@@ -376,6 +377,10 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
     padding: 0;
     z-index: 1000;
     box-shadow: 0 4px 12px var(--overlay-dark);
+  }
+
+  .dropdown-list.open {
+    display: block;
   }
 
   /* Section headers */

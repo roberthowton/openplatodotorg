@@ -1,5 +1,5 @@
 import { getStephanusLineMarker, parseStephanusReference } from "..";
-import { GRID_STYLE, LINE_NUMBERS_TO_DISPLAY } from "../../consts";
+import { LINE_NUMBERS_TO_DISPLAY } from "../../consts";
 import type { DialogueConfig } from "../../types";
 
 type Language = "en" | "gr";
@@ -34,9 +34,7 @@ export const createHandleLineBegin = (language: Language, config: DialogueConfig
 
   element.appendChild(textDiv);
 
-  Object.assign(element.style, {
-    ...GRID_STYLE,
-  });
+  element.classList.add("tei-grid");
 
   const stephanusReference = element.getAttribute("n") ?? "";
 
@@ -62,10 +60,6 @@ export const createHandleLineBegin = (language: Language, config: DialogueConfig
     }
     inlineMarker.textContent = `[${markerText}] `;
 
-    Object.assign(inlineMarker.style, {
-      fontWeight: "800",
-      fontStyle: "italic",
-    });
     inlineMarker.setAttribute("aria-hidden", "true");
     textDiv.prepend(inlineMarker);
   }
@@ -79,13 +73,6 @@ export const createHandleLineBegin = (language: Language, config: DialogueConfig
       stephanusReference === config.firstLineStephanusReference
         ? column
         : getStephanusLineMarker(page, column, line);
-
-    Object.assign(lineMarker.style, {
-      gridColumn: "lineRef",
-      userSelect: "none",
-      fontWeight: "800",
-      fontStyle: "italic",
-    });
 
     lineMarker.setAttribute("aria-hidden", "true");
 
@@ -146,11 +133,8 @@ const renderRangeInDiv = (range: Range, doc: Document) => {
   const text = dom.textContent ?? "";
 
   container.innerHTML = `${labelText ? `<b>${labelText}</b>` : ""} ${text.trim()}`;
-  Object.assign(container.style, {
-    display: "block",
-    gridColumn: "text",
-    textAlign: "justify",
-    ...(labelText && { marginLeft: "2rem" }),
-  });
+  if (labelText) {
+    container.classList.add("has-label");
+  }
   return container;
 };

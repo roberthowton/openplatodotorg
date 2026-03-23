@@ -1,18 +1,5 @@
 export * from "./labels";
 
-export const LINE_MARKER_STYLE: Partial<CSSStyleDeclaration> = {
-  display: "inline",
-  float: "right",
-  marginRight: "1rem",
-};
-
-export const GRID_STYLE = {
-  display: "grid",
-  gridTemplateColumns: "[text] 14fr [lineRef] 1fr",
-  gridColumnGap: "1rem",
-  justifyItems: "stretch",
-};
-
 export const STEPHANUS_COLUMN_REGEX = new RegExp(/(a|b|c|d|e)/);
 
 export const LINE_NUMBERS_TO_DISPLAY = ["1", "5", "10", "15"];
