@@ -6,9 +6,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -q 'git push'; then npm run test:run; fi",
-            "statusMessage": "Running tests before push...",
-            "timeout": 120
+            "command": "bash .claude/hooks/pre-push-coverage.sh",
+            "statusMessage": "Running coverage check before push...",
+            "timeout": 180
           }
         ]
       }
