@@ -1,0 +1,14 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "overrides": [
+    {
+      "files": ["**/*.astro"],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "ignoreFiles": ["src/components/Tei/tei-base-style.astro"],
+  "rules": {
+    "declaration-no-important": true,
+    "no-duplicate-selectors": true
+  }
+}

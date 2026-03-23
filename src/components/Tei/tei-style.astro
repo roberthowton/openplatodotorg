@@ -3,65 +3,159 @@ import TeiBaseStyle from "./tei-base-style.astro";
 ---
 
 <TeiBaseStyle />
-<style is:inline>
-  tei-note cetei-content {
-    background-color: var(--color-bg-alt);
-    border-radius: 4px;
-    padding: 0.5em;
-    margin: 0.5em 0;
-  }
-  tei-head {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
+<style is:global>
+  @layer behaviors {
+    tei-note cetei-content {
+      background-color: var(--color-bg-alt);
+      border-radius: 4px;
+      padding: 0.5em;
+      margin: 0.5em 0;
+    }
+    tei-head {
+      font-family: var(--font-display);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+    }
+
+    tei-titlestmt > tei-title {
+      font-family: var(--font-display);
+      font-weight: var(--weight-bold);
+      text-transform: uppercase;
+    }
+
+    .text-column-gr tei-div {
+      font-family: var(--font-greek);
+    }
+
+    tei-p {
+      margin: 0;
+    }
+    tei-said {
+      margin: 0;
+    }
+
+    /* Grid layout (replaces GRID_STYLE JS constant) */
+    .tei-grid {
+      display: grid;
+      grid-template-columns: [text] 14fr [lineRef] 1fr;
+      column-gap: 1rem;
+      justify-items: stretch;
+    }
+
+    /* tei-div layout (replaces handle-div behavior) */
+    tei-div {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    /* tei-label indent (replaces handle-label behavior) */
+    tei-label {
+      margin-left: 4rem;
+    }
+
+    /* Hidden TEI metadata (replaces setAttribute("style","display:none")) */
+    .tei-hidden {
+      display: none;
+    }
+
+    /* Title h1 inside tei-head */
+    .tei-head-title {
+      font-weight: normal;
+      text-align: center;
+      line-height: 1.5;
+      grid-column: text;
+    }
+
+    tei-container[data-language="gr"] .tei-head-title {
+      font-family: Porson;
+    }
+
+    tei-container[data-language="en"] .tei-head-title {
+      font-family: var(--font-body);
+      text-transform: none;
+    }
+
+    /* Dramatis personae */
+    .dramatis-personae-container {
+      margin: 1em 0;
+    }
+
+    .dramatis-personae {
+      display: flex;
+      justify-content: center;
+      grid-column: text;
+    }
+
+    .dramatis-personae .person {
+      margin: 0 2rem;
+    }
+
+    /* Stephanus page ref in dramatis personae container */
+    .stephanus-page-ref {
+      font-style: italic;
+      font-weight: 800;
+      grid-column: lineRef;
+    }
+
+    /* Stephanus line text div */
+    .stephanus-line {
+      display: block;
+      grid-column: text;
+      text-align: justify;
+      min-height: 1.5em;
+      line-height: 1.5;
+      text-align-last: justify;
+    }
+
+    .stephanus-line.has-label {
+      margin-left: 2rem;
+    }
+
+    /* Inline marker: hidden by default, shown in .inline-mode */
+    .line-marker-inline {
+      display: none;
+      font-weight: 800;
+      font-style: italic;
+    }
+
+    /* Stephanus milestone marker */
+    .stephanus-milestone {
+      display: inline;
+      float: right;
+      margin-right: 1rem;
+    }
+
+    /* Block marker: shown by default */
+    .line-marker-block {
+      grid-column: lineRef;
+      user-select: none;
+      font-weight: 800;
+      font-style: italic;
+    }
   }
 
-  tei-titlestmt > tei-title {
-    font-family: var(--font-display);
-    font-weight: var(--weight-bold) !important;
-    text-transform: uppercase;
-  }
+  @layer components {
+    /* When overflow detected (.inline-mode), show inline markers, continuous flow */
+    .inline-mode .line-marker-inline {
+      display: inline;
+    }
+    .inline-mode .line-marker-block {
+      display: none;
+    }
 
-  .text-column-gr tei-div {
-    font-family: var(--font-greek);
-  }
+    /* Hide block markers when line numbers are disabled */
+    tei-container[data-hide-line-numbers="true"] .line-marker-block {
+      display: none;
+    }
 
-  tei-p {
-    margin: 0;
-  }
-  tei-said {
-    margin: 0;
-  }
-
-  .stephanus-line {
-    min-height: 1.5em;
-    line-height: 1.5;
-    text-align-last: justify;
-  }
-
-  /* Hide inline markers by default, show block markers */
-  .line-marker-inline {
-    display: none;
-  }
-
-  /* When overflow detected (.inline-mode), show inline markers, continuous flow */
-  .inline-mode .line-marker-inline {
-    display: inline !important;
-  }
-  .inline-mode .line-marker-block {
-    display: none !important;
-  }
-
-  /* Hide block markers when line numbers are disabled */
-  tei-container[data-hide-line-numbers="true"] .line-marker-block {
-    display: none;
-  }
-  .inline-mode tei-lb {
-    display: inline !important;
-  }
-  .inline-mode .stephanus-line {
-    display: inline !important;
-    min-height: unset;
-    text-align-last: auto;
+    .inline-mode tei-lb {
+      display: inline;
+    }
+    .inline-mode .stephanus-line {
+      display: inline;
+      min-height: unset;
+      text-align-last: auto;
+    }
   }
 </style>
