@@ -29,14 +29,6 @@ On initialization, read the README.md and ARCHITECTURE.md to get a sense of the 
 - Component-scoped CSS lives in the component's subdirectory alongside the component files
 - Page-scoped CSS lives alongside the page in `src/pages/`, prefixed with `_` to suppress Astro's route warning (e.g. `src/pages/dialogue/_dialogue-page.css`)
 
-### CSS conventions
-
-- Never use inline JS styles (`Object.assign(element.style, ...)`, `element.style.x = ...`). Use CSS classes.
-- TEI behavior handlers set classes via `classList.add()`; corresponding CSS lives in `tei-style.astro` under `@layer behaviors`.
-- Parent components must not reach into child component internals; use CSS custom properties for customization (e.g. `--page-select-width`).
-- No `!important` — cascade layers (`@layer`) handle precedence. Layer order: `base` (CETEIcean defaults) < `behaviors` < `components` < `page`.
-- `tei-base-style.astro` is upstream boilerplate; do not lint or modify it.
-
 ## TEI Schema version
 
 <https://epidoc.stoa.org/schema/9.7/tei-epidoc.rng>

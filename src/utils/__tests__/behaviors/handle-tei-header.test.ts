@@ -35,19 +35,19 @@ describe('createHandleTeiHeader("gr")', () => {
   it('hides title element', () => {
     const header = makeHeader();
     createHandleTeiHeader('gr', mockConfig)(header);
-    expect(header.querySelector('tei-title')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-title')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides author element', () => {
     const header = makeHeader();
     createHandleTeiHeader('gr', mockConfig)(header);
-    expect(header.querySelector('tei-author')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-author')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides editor element', () => {
     const header = makeHeader();
     createHandleTeiHeader('gr', mockConfig)(header);
-    expect(header.querySelector('tei-editor')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-editor')?.getAttribute('style')).toContain('display: none');
   });
 
   it('creates dramatis personae container', () => {
@@ -64,11 +64,11 @@ describe('createHandleTeiHeader("gr")', () => {
     expect(container?.textContent).toContain('ALCIBIADES');
   });
 
-  it('applies tei-grid class to container', () => {
+  it('applies grid styles to container', () => {
     const header = makeHeader();
     createHandleTeiHeader('gr', mockConfig)(header);
     const container = document.querySelector('#dramatis-personae-container-gr') as HTMLElement;
-    expect(container.classList.contains('tei-grid')).toBe(true);
+    expect(container.style.display).toBe('grid');
   });
 
   it('creates stephanus page reference', () => {
@@ -89,8 +89,8 @@ describe('createHandleTeiHeader("gr")', () => {
   it('does not hide metadata elements', () => {
     const header = makeHeader();
     createHandleTeiHeader('gr', mockConfig)(header);
-    expect(header.querySelector('tei-sponsor')?.classList.contains('tei-hidden')).toBe(false);
-    expect(header.querySelector('tei-principal')?.classList.contains('tei-hidden')).toBe(false);
+    expect(header.querySelector('tei-sponsor')?.getAttribute('style')).toBeNull();
+    expect(header.querySelector('tei-principal')?.getAttribute('style')).toBeNull();
   });
 
   it('handles person without persName', () => {
@@ -128,25 +128,25 @@ describe('createHandleTeiHeader("en")', () => {
   it('hides sponsor element', () => {
     const header = makeHeader();
     createHandleTeiHeader('en', mockConfig)(header);
-    expect(header.querySelector('tei-sponsor')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-sponsor')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides principal element', () => {
     const header = makeHeader();
     createHandleTeiHeader('en', mockConfig)(header);
-    expect(header.querySelector('tei-principal')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-principal')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides respstmt element', () => {
     const header = makeHeader();
     createHandleTeiHeader('en', mockConfig)(header);
-    expect(header.querySelector('tei-respstmt')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-respstmt')?.getAttribute('style')).toContain('display: none');
   });
 
   it('hides funder element', () => {
     const header = makeHeader();
     createHandleTeiHeader('en', mockConfig)(header);
-    expect(header.querySelector('tei-funder')?.classList.contains('tei-hidden')).toBe(true);
+    expect(header.querySelector('tei-funder')?.getAttribute('style')).toContain('display: none');
   });
 
   it('inserts container after tei-head within tei-container', () => {

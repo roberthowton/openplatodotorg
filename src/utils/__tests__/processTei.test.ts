@@ -78,19 +78,19 @@ describe('processTei', () => {
   it('en language: sponsor element is hidden', () => {
     const result = processTei(sampleTeiXml, 'en', mockConfig);
     const sponsor = result.dom.querySelector('tei-sponsor');
-    expect(sponsor?.classList.contains('tei-hidden')).toBe(true);
+    expect(sponsor?.getAttribute('style')).toContain('display: none');
   });
 
   it('en language: principal element is hidden', () => {
     const result = processTei(sampleTeiXml, 'en', mockConfig);
     const principal = result.dom.querySelector('tei-principal');
-    expect(principal?.classList.contains('tei-hidden')).toBe(true);
+    expect(principal?.getAttribute('style')).toContain('display: none');
   });
 
   it('gr language: sponsor not hidden', () => {
     const result = processTei(sampleTeiXml, 'gr', mockConfig);
     const sponsor = result.dom.querySelector('tei-sponsor');
-    expect(sponsor?.classList.contains('tei-hidden')).toBe(false);
+    expect(sponsor?.getAttribute('style') ?? '').not.toContain('display: none');
   });
 
   it('en language: tei-head contains English title h1', () => {

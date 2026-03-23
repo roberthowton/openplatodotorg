@@ -49,17 +49,13 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
     type SearchResult,
     extractReferenceFromId,
     createPreview,
-    highlightMatch,
+    highlightMatch
   } from "./page-select-client";
 
   const dropdown = document.querySelector(".dropdown") as HTMLElement;
-  const searchInput = document.getElementById(
-    "searchInput",
-  ) as HTMLInputElement;
+  const searchInput = document.getElementById("searchInput") as HTMLInputElement;
   const dropdownList = document.getElementById("dropdownList") as HTMLElement;
-  const searchIconBtn = document.getElementById(
-    "searchIconBtn",
-  ) as HTMLButtonElement;
+  const searchIconBtn = document.getElementById("searchIconBtn") as HTMLButtonElement;
 
   const labelSearch = dropdown.dataset.labelSearch || "Search";
   const labelClear = dropdown.dataset.labelClear || "Clear search";
@@ -69,16 +65,13 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   function updateIcon() {
     const hasValue = !!searchInput.value;
     dropdown.dataset.hasValue = hasValue ? "true" : "";
-    searchIconBtn?.setAttribute(
-      "aria-label",
-      hasValue ? labelClear : labelSearch,
-    );
+    searchIconBtn?.setAttribute("aria-label", hasValue ? labelClear : labelSearch);
   }
 
   searchIconBtn?.addEventListener("click", () => {
     if (searchInput.value) {
       searchInput.value = "";
-      dropdownList.classList.remove("open");
+      dropdownList.style.display = "none";
       updateIcon();
       searchInput.focus();
     }
@@ -88,7 +81,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
   // Helper function to detect which text languages are currently visible
   function getVisibleLanguages(): string[] {
-    const containers = document.querySelectorAll("tei-container");
+    const containers = document.querySelectorAll('tei-container');
     const languages: string[] = [];
 
     containers.forEach((container) => {
@@ -110,33 +103,27 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
     const visibleLanguages = getVisibleLanguages();
 
-    visibleLanguages.forEach((language) => {
+    visibleLanguages.forEach(language => {
       if (textResults.length >= MAX_TEXT_RESULTS) return;
 
-      const textDivs = document.querySelectorAll(
-        `div[id$="-${language}-text"]`,
-      );
+      const textDivs = document.querySelectorAll(`div[id$="-${language}-text"]`);
 
       textDivs.forEach((div) => {
         if (textResults.length >= MAX_TEXT_RESULTS) return;
 
-        const textContent = div.textContent || "";
+        const textContent = div.textContent || '';
         const lowerText = textContent.toLowerCase();
 
         if (lowerText.includes(searchLower)) {
           const matchIndex = lowerText.indexOf(searchLower);
           const reference = extractReferenceFromId(div.id, language);
-          const preview = createPreview(
-            textContent,
-            matchIndex,
-            searchText.length,
-          );
+          const preview = createPreview(textContent, matchIndex, searchText.length);
 
           textResults.push({
-            type: "text",
+            type: 'text',
             reference,
             textPreview: preview,
-            matchIndex,
+            matchIndex
           });
         }
       });
@@ -161,15 +148,13 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
     // 1. Search references
     const matchingRefs = items.filter((item) =>
-      item?.toLowerCase().includes(searchLower),
+      item?.toLowerCase().includes(searchLower)
     );
 
-    referenceResults.push(
-      ...matchingRefs.map((ref) => ({
-        type: "reference" as const,
-        reference: ref || "",
-      })),
-    );
+    referenceResults.push(...matchingRefs.map(ref => ({
+      type: 'reference' as const,
+      reference: ref || ''
+    })));
 
     // 2. Search text content
     textResults.push(...searchTextContent(searchText));
@@ -180,29 +165,29 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   // Render organized dropdown with References and Search Results sections
   function renderDropdown(
     referenceResults: SearchResult[],
-    textResults: SearchResult[],
+    textResults: SearchResult[]
   ): void {
-    dropdownList.innerHTML = "";
+    dropdownList.innerHTML = '';
 
     const hasResults = referenceResults.length > 0 || textResults.length > 0;
 
     if (!hasResults) {
-      dropdownList.classList.remove("open");
+      dropdownList.style.display = 'none';
       return;
     }
 
-    dropdownList.classList.add("open");
+    dropdownList.style.display = 'block';
 
     // Render References Section
     if (referenceResults.length > 0) {
-      const refHeader = document.createElement("li");
-      refHeader.className = "section-header";
+      const refHeader = document.createElement('li');
+      refHeader.className = 'section-header';
       refHeader.textContent = labelReferences;
       dropdownList.appendChild(refHeader);
 
-      referenceResults.forEach((result) => {
-        const li = document.createElement("li");
-        li.className = "reference-item";
+      referenceResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'reference-item';
         li.textContent = result.reference;
         li.dataset.ref = result.reference;
         li.onclick = () => selectReference(result.reference);
@@ -212,25 +197,25 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
     // Render Text Results Section
     if (textResults.length > 0) {
-      const textHeader = document.createElement("li");
-      textHeader.className = "section-header";
+      const textHeader = document.createElement('li');
+      textHeader.className = 'section-header';
       textHeader.textContent = labelResults;
       dropdownList.appendChild(textHeader);
 
-      textResults.forEach((result) => {
-        const li = document.createElement("li");
-        li.className = "text-item";
+      textResults.forEach(result => {
+        const li = document.createElement('li');
+        li.className = 'text-item';
         li.dataset.ref = result.reference;
 
-        const refDiv = document.createElement("div");
-        refDiv.className = "result-ref";
+        const refDiv = document.createElement('div');
+        refDiv.className = 'result-ref';
         refDiv.textContent = result.reference;
 
-        const previewDiv = document.createElement("div");
-        previewDiv.className = "result-preview";
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'result-preview';
         previewDiv.innerHTML = highlightMatch(
-          result.textPreview || "",
-          searchInput.value,
+          result.textPreview || '',
+          searchInput.value
         );
 
         li.appendChild(refDiv);
@@ -244,13 +229,13 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 
   function selectReference(value: string | null) {
     searchInput.value = value || "";
-    dropdownList.classList.remove("open");
+    dropdownList.style.display = "none";
 
     if (!value) return;
 
     // Find all matching text divs (Greek, English, or both)
     const selectedLines = document.querySelectorAll(
-      `div[id='${value}-gr-text'], div[id='${value}-en-text']`,
+      `div[id='${value}-gr-text'], div[id='${value}-en-text']`
     );
 
     if (selectedLines.length > 0) {
@@ -285,14 +270,14 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   // Init icon state (e.g. when ref is pre-filled)
   updateIcon();
 
-  searchInput.addEventListener("input", () => {
+  searchInput.addEventListener('input', () => {
     clearTimeout(searchTimeout);
     updateIcon();
 
     const searchText = searchInput.value;
 
     if (!searchText) {
-      dropdownList.classList.remove("open");
+      dropdownList.style.display = 'none';
       return;
     }
 
@@ -304,14 +289,14 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
   });
 
   // Close dropdown when clicking outside
-  document.addEventListener("click", (e) => {
+  document.addEventListener('click', (e) => {
     if (!dropdown.contains(e.target as Node)) {
-      dropdownList.classList.remove("open");
+      dropdownList.style.display = 'none';
     }
   });
 
   // Prevent dropdown from closing when clicking inside
-  dropdown.addEventListener("click", (e) => {
+  dropdown.addEventListener('click', (e) => {
     e.stopPropagation();
   });
 </script>
@@ -319,8 +304,7 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
 <style>
   .dropdown {
     position: relative;
-    margin: var(--page-select-margin, var(--space-sm));
-    width: var(--page-select-width, auto);
+    margin: var(--space-md);
   }
 
   #searchInput {
@@ -392,10 +376,6 @@ const labels = { ...SEARCH_LABELS, ...Astro.props.labels };
     padding: 0;
     z-index: 1000;
     box-shadow: 0 4px 12px var(--overlay-dark);
-  }
-
-  .dropdown-list.open {
-    display: block;
   }
 
   /* Section headers */

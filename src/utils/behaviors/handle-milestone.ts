@@ -1,10 +1,14 @@
+import { LINE_MARKER_STYLE } from "../../consts";
+
 export const handleStephanusMilestone = (element: HTMLElement) => {
   if (!isStephanusSection(element)) {
     return;
   }
   const nAttr = element.getAttribute("n") || "";
   element.innerHTML = getStephanusSectionLabel(nAttr);
-  element.classList.add("stephanus-milestone");
+  Object.assign(element.style, {
+    ...LINE_MARKER_STYLE,
+  });
 };
 
 const isStephanusSection = (element: HTMLElement) => {

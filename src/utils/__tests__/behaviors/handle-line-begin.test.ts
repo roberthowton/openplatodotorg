@@ -54,10 +54,10 @@ describe('createHandleLineBegin', () => {
     expect(textDiv).not.toBeNull();
   });
 
-  it('applies tei-grid class to lb element', () => {
+  it('applies grid styles to lb element', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
     createHandleLineBegin('gr', mockConfig)(lb);
-    expect(lb.classList.contains('tei-grid')).toBe(true);
+    expect(lb.style.display).toBe('grid');
   });
 
   it('adds stephanus-line class to text div', () => {
@@ -180,11 +180,11 @@ describe('createHandleLineBegin', () => {
     expect(marker?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('adds stephanus-line class to text div (includes justify)', () => {
+  it('applies text justify style to div', () => {
     const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
     createHandleLineBegin('gr', mockConfig)(lb);
     const textDiv = lb.querySelector('div') as HTMLElement;
-    expect(textDiv.classList.contains('stephanus-line')).toBe(true);
+    expect(textDiv.style.textAlign).toBe('justify');
   });
 
   it('finds text node through multiple non-text siblings', () => {

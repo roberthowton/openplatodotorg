@@ -23,17 +23,19 @@ describe('createHandleHead("gr")', () => {
     expect(h1?.innerText).toBe('ΑΛΚΙΒΙΑΔΗΣ');
   });
 
-  it('applies tei-grid class to element', () => {
+  it('applies grid styles to element', () => {
     const head = document.createElement('div');
     createHandleHead('gr', mockConfig)(head);
-    expect(head.classList.contains('tei-grid')).toBe(true);
+    expect(head.style.display).toBe('grid');
   });
 
-  it('applies tei-head-title class to h1', () => {
+  it('applies Porson font and text styling to h1', () => {
     const head = document.createElement('div');
     createHandleHead('gr', mockConfig)(head);
     const h1 = head.querySelector('h1') as HTMLElement;
-    expect(h1.classList.contains('tei-head-title')).toBe(true);
+    expect(h1.style.fontFamily).toBe('Porson');
+    expect(h1.style.textAlign).toBe('center');
+    expect(h1.style.gridColumn).toBe('text');
   });
 });
 
@@ -53,16 +55,24 @@ describe('createHandleHead("en")', () => {
     expect(h1?.innerText).toBe('Alcibiades 1');
   });
 
-  it('applies tei-grid class to element', () => {
+  it('applies grid styles to element', () => {
     const head = document.createElement('div');
     createHandleHead('en', mockConfig)(head);
-    expect(head.classList.contains('tei-grid')).toBe(true);
+    expect(head.style.display).toBe('grid');
   });
 
-  it('applies tei-head-title class to h1', () => {
+  it('does not apply Porson font to h1', () => {
     const head = document.createElement('div');
     createHandleHead('en', mockConfig)(head);
     const h1 = head.querySelector('h1') as HTMLElement;
-    expect(h1.classList.contains('tei-head-title')).toBe(true);
+    expect(h1.style.fontFamily).not.toBe('Porson');
+  });
+
+  it('applies text alignment and grid column to h1', () => {
+    const head = document.createElement('div');
+    createHandleHead('en', mockConfig)(head);
+    const h1 = head.querySelector('h1') as HTMLElement;
+    expect(h1.style.textAlign).toBe('center');
+    expect(h1.style.gridColumn).toBe('text');
   });
 });

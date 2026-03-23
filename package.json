@@ -26,8 +26,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "lint:css": "stylelint 'src/**/*.{css,astro}'"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -49,9 +48,6 @@
     "prettier": "^3.6.2",
     "prettier-config-standard": "^7.0.0",
     "prettier-plugin-astro": "^0.14.1",
-    "vitest": "^4.0.16",
-    "stylelint": "^16.0.0",
-    "stylelint-config-standard": "^36.0.0",
-    "postcss-html": "^1.7.0"
+    "vitest": "^4.0.16"
   }
 }

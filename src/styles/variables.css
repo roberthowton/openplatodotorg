@@ -8,8 +8,6 @@
  *   - Source Serif Variable → Source Serif 4
  */
 
-@layer base, behaviors, components, page;
-
 :root {
   /* === Grayscale === */
   --black-1: #000000;
