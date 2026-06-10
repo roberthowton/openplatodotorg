@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import processTei from '../processTei';
 import type { DialogueConfig } from '../../types';
 
-const mockConfig: DialogueConfig = {
+const mockConfig: Omit<DialogueConfig, 'referenceScheme'> = {
   teiTitle: { gr: 'ΑΛΚΙΒΙΑΔΗΣ', en: 'Alcibiades 1' },
-  firstLineStephanusReference: '103a1',
+  firstLineReference: '103a1',
 };
 
 const sampleTeiXml = `<?xml version="1.0" encoding="UTF-8"?>

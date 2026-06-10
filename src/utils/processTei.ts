@@ -2,7 +2,15 @@
 import CETEI from "CETEIcean";
 import { JSDOM } from "jsdom";
 import { createBehaviors } from ".";
+import { resolveScheme } from "./referenceSchemes";
 import type { DialogueConfig } from "../types";
+
+type PartialConfig = Omit<DialogueConfig, "referenceScheme"> & Partial<Pick<DialogueConfig, "referenceScheme">>;
+
+const DEFAULT_CONFIG: PartialConfig = {
+  teiTitle: { gr: "", en: "" },
+  firstLineReference: "",
+};
 
 export interface ProcessedTei {
   dom: Document;
@@ -10,10 +18,14 @@ export interface ProcessedTei {
   elements: string[];
 }
 
-const processTei = (data: string, language: "en" | "gr", config: DialogueConfig): ProcessedTei => {
+const processTei = (data: string, language: "en" | "gr" = "gr", config: PartialConfig = DEFAULT_CONFIG): ProcessedTei => {
   // Parse the TEI XML
   const xmlJdom = new JSDOM(data, { contentType: "text/xml" });
   const xmlDoc = xmlJdom.window.document;
+
+  // Resolve the reference scheme from the document unless caller supplied one
+  const referenceScheme = config.referenceScheme ?? resolveScheme(xmlDoc);
+  const resolvedConfig: DialogueConfig = { ...config, referenceScheme };
 
   // Use an HTML JSDOM as the element factory so that preprocess() creates
   // HTMLElement nodes (which have .style). An XML document produces plain
@@ -24,7 +36,7 @@ const processTei = (data: string, language: "en" | "gr", config: DialogueConfig)
   const ceteicean = new CETEI({ documentObject: htmlDoc });
 
   ceteicean.addBehaviors({
-    tei: createBehaviors(language, config),
+    tei: createBehaviors(language, resolvedConfig),
   });
 
   const teiData = ceteicean.preprocess(xmlDoc);

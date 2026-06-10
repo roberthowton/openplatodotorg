@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { createHandleTeiHeader } from '../../behaviors/handle-tei-header';
+import { stephanusScheme } from '../../referenceSchemes';
 import type { DialogueConfig } from '../../../types';
 
 const mockConfig: DialogueConfig = {
   teiTitle: { gr: 'ΑΛΚΙΒΙΑΔΗΣ', en: 'Alcibiades 1' },
-  firstLineStephanusReference: '103a1',
+  firstLineReference: '103a1',
+  referenceScheme: stephanusScheme,
 };
 
 function makeHeader(id = 'test-header') {

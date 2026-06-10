@@ -1,5 +1,3 @@
-import { getStephanusLineMarker, parseStephanusReference } from "..";
-import { LINE_NUMBERS_TO_DISPLAY } from "../../consts";
 import type { DialogueConfig } from "../../types";
 
 type Language = "en" | "gr";
@@ -36,46 +34,32 @@ export const createHandleLineBegin = (language: Language, config: DialogueConfig
 
   element.classList.add("tei-grid");
 
-  const stephanusReference = element.getAttribute("n") ?? "";
+  const ref = element.getAttribute("n") ?? "";
+  const scheme = config.referenceScheme;
+  const parsed = scheme.parse(ref) ?? { ref };
+  const isFirstLine = ref === config.firstLineReference;
 
   // Create unique IDs with language suffix
-  element.id = `${stephanusReference}-${language}`;
-  textDiv.id = `${stephanusReference}-${language}-text`;
+  element.id = `${ref}-${language}`;
+  textDiv.id = `${ref}-${language}-text`;
 
-  const { page, column, line } = parseStephanusReference(stephanusReference);
-
-  // Smart inline marker for narrow viewports: [103a] at page start, [b] at column change, [5] for line only
-  // Always create inline markers (CSS controls visibility)
+  // Inline marker for narrow viewports — always rendered, CSS controls visibility
   {
     const inlineMarker = doc.createElement("b");
     inlineMarker.className = "line-marker-inline";
-
-    let markerText: string;
-    if (line === "1" && column === "a") {
-      markerText = `${page}${column}`;
-    } else if (line === "1") {
-      markerText = column;
-    } else {
-      markerText = line;
-    }
-    inlineMarker.textContent = `[${markerText}] `;
-
+    const markerText = scheme.inlineMarker(parsed, { ref, isFirstLine });
+    inlineMarker.textContent = markerText ? `[${markerText}] ` : "";
     inlineMarker.setAttribute("aria-hidden", "true");
     textDiv.prepend(inlineMarker);
   }
 
-  // Block marker for wide viewports (on lines 1, 5, 10, 15)
+  // Block marker for wide viewports — scheme decides cadence
   // Always rendered; CSS can hide via tei-container[data-hide-line-numbers="true"]
-  if (LINE_NUMBERS_TO_DISPLAY.includes(line)) {
+  if (scheme.showsBlockMarker(parsed)) {
     const lineMarker = doc.createElement("b");
     lineMarker.className = "line-marker-block";
-    lineMarker.textContent =
-      stephanusReference === config.firstLineStephanusReference
-        ? column
-        : getStephanusLineMarker(page, column, line);
-
+    lineMarker.textContent = scheme.blockMarker(parsed, { ref, isFirstLine });
     lineMarker.setAttribute("aria-hidden", "true");
-
     element.appendChild(lineMarker);
   }
 };
