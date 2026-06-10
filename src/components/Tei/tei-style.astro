@@ -26,6 +26,10 @@ import TeiBaseStyle from "./tei-base-style.astro";
     font-family: var(--font-greek);
   }
 
+  .text-column-gr .tei-grid {
+    grid-template-columns: [text] max-content [lineRef] auto;
+  }
+
   tei-p {
     margin: 0;
   }
