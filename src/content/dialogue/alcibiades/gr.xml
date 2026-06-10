@@ -78,10 +78,10 @@ schematypens="http://relaxng.org/ns/structure/1.0"?>
         <!-- <language ident="eng">English</language> -->
       </langUsage>
       <particDesc>
-        <person>
+        <person xml:id="Σωκράτης">
           <persName>Σωκράτης</persName>
         </person>
-        <person>
+        <person xml:id="Ἀλκιβιάδης">
           <persName>Ἀλκιβιάδης</persName>
         </person>
       </particDesc>

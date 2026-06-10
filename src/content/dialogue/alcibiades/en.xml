@@ -82,10 +82,10 @@
                 <language ident="grc">Greek</language>
             </langUsage>
             <particDesc>
-                <person>
+                <person xml:id="Socrates">
                     <persName>Socrates</persName>
                 </person>
-                <person>
+                <person xml:id="Alcibiades">
                     <persName>Alcibiades</persName>
                 </person>
             </particDesc>

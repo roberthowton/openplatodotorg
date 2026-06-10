@@ -21,10 +21,10 @@ function makeHeader(id = 'test-header') {
         <tei-principal>Gregory Crane</tei-principal>
         <tei-respstmt><resp>Prepared under supervision of</resp></tei-respstmt>
         <tei-funder>Annenberg</tei-funder>
-        <tei-person>
+        <tei-person xml:id="Socrates">
           <tei-persName>SOCRATES</tei-persName>
         </tei-person>
-        <tei-person>
+        <tei-person xml:id="Alcibiades">
           <tei-persName>ALCIBIADES</tei-persName>
         </tei-person>
       </div>
@@ -64,6 +64,29 @@ describe('createHandleTeiHeader("gr")', () => {
     const container = document.querySelector('#dramatis-personae-container-gr');
     expect(container?.textContent).toContain('SOCRATES');
     expect(container?.textContent).toContain('ALCIBIADES');
+  });
+
+  it('sets data-speaker-id on person divs from xml:id', () => {
+    const header = makeHeader();
+    createHandleTeiHeader('gr', mockConfig)(header);
+    const persons = document.querySelectorAll('.person');
+    expect((persons[0] as HTMLElement).dataset.speakerId).toBe('Socrates');
+    expect((persons[1] as HTMLElement).dataset.speakerId).toBe('Alcibiades');
+  });
+
+  it('omits data-speaker-id when person has no xml:id', () => {
+    document.body.innerHTML = `
+      <tei-container>
+        <tei-head></tei-head>
+        <div id="test-header">
+          <tei-person><tei-persName>Anonymous</tei-persName></tei-person>
+        </div>
+      </tei-container>
+    `;
+    const header = document.querySelector('#test-header')!;
+    createHandleTeiHeader('gr', mockConfig)(header);
+    const person = document.querySelector('.person') as HTMLElement;
+    expect(person.dataset.speakerId).toBeUndefined();
   });
 
   it('applies tei-grid class to container', () => {
