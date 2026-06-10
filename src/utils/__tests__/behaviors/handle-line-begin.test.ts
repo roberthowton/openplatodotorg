@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createHandleLineBegin } from '../../behaviors/handle-line-begin';
+import { stephanusScheme } from '../../referenceSchemes';
 import type { DialogueConfig } from '../../../types';
 
 const mockConfig: DialogueConfig = {
   teiTitle: { gr: 'ΑΛΚΙΒΙΑΔΗΣ', en: 'Alcibiades 1' },
-  firstLineStephanusReference: '103a1',
+  firstLineReference: '103a1',
+  referenceScheme: stephanusScheme,
 };
 
 describe('createHandleLineBegin', () => {

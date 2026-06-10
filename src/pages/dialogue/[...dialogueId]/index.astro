@@ -25,10 +25,12 @@ let dialogueConfig: DialogueConfig;
 try {
   const meta = (await import(`../../../content/dialogue/${dialogueId}/meta.json`)).default;
   dialogueMeta = meta;
-  if (!meta.teiTitle || !meta.firstLineStephanusReference) {
-    throw new Error(`meta.json for '${dialogueId}' is missing required fields: teiTitle, firstLineStephanusReference`);
+  const firstLineReference = meta.firstLineReference ?? meta.firstLineStephanusReference;
+  if (!meta.teiTitle || !firstLineReference) {
+    throw new Error(`meta.json for '${dialogueId}' is missing required fields: teiTitle, firstLineReference`);
   }
-  dialogueConfig = { teiTitle: meta.teiTitle, firstLineStephanusReference: meta.firstLineStephanusReference };
+  // referenceScheme is resolved by processTei from the XML; pass remaining fields
+  dialogueConfig = { teiTitle: meta.teiTitle, firstLineReference } as DialogueConfig;
 } catch (e) {
   throw e;
 }

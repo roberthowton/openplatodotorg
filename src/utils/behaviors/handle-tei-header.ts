@@ -1,4 +1,3 @@
-import { parseStephanusReference } from "..";
 import type { DialogueConfig } from "../../types";
 
 type Language = "en" | "gr";
@@ -43,14 +42,16 @@ export const createHandleTeiHeader = (language: Language, config: DialogueConfig
   //append dramatis personae div to container
   dramatisPersonaeContainer.appendChild(dramatisPersonae);
 
-  //create and append stephanus page
-  const { page } = parseStephanusReference(
-    config.firstLineStephanusReference,
-  );
+  //create and append starting page reference
+  const scheme = config.referenceScheme;
+  const firstRef = config.firstLineReference;
+  const pageLabel = scheme.startingPageLabel
+    ? scheme.startingPageLabel(firstRef)
+    : firstRef;
 
   const startingPageDiv = doc.createElement("div");
   startingPageDiv.classList.add("stephanus-page-ref");
-  startingPageDiv.textContent = page;
+  startingPageDiv.textContent = pageLabel;
   startingPageDiv.setAttribute("aria-hidden", "true");
 
   dramatisPersonaeContainer.appendChild(startingPageDiv);
