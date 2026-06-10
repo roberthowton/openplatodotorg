@@ -36,7 +36,7 @@ All UI state lives in the URL. The state machine follows a Redux-like pattern.
 
 ```ts
 interface UrlState {
-  ref:     string | null;       // Stephanus scroll target (e.g. "103a1")
+  ref:     string | null;       // Line reference scroll target (e.g. "103a1"); opaque string matching lb@n
   show:    ShowState[];         // Active columns: "gr" | "en" | "firstRead"
   comment: string[];            // Active comment IDs (comma-separated in URL)
   panel:   "pinned" | null;     // Panel pin state
@@ -84,10 +84,11 @@ Hard nav is required when the set of displayed columns changes (server must rend
 
 ### Server (Astro SSR)
 
-1. Load `meta.json` per dialogue — provides `DialogueConfig` (`teiTitle`, `firstLineStephanusReference`)
+1. Load `meta.json` per dialogue — provides `DialogueConfig` (`teiTitle`, `firstLineReference`)
 2. Import raw XML: `await import('../content/dialogue/alcibiades/gr.xml?raw')`
 3. `processTei(xml, language, config)` (adapted from [astro-tei](https://github.com/raffazizzi/astro-tei)):
    - Parse XML with JSDOM (`contentType: "text/xml"`)
+   - `resolveScheme(xmlDoc, meta)` infers the reference scheme from the document (see Reference Schemes below)
    - Create a separate HTML JSDOM as CETEIcean's `documentObject` so elements have `.style`
    - `ceteicean.preprocess()` converts `<TEI>` elements to `<tei-*>` custom elements
    - `createBehaviors(language, config)` produces language- and dialogue-aware handlers
@@ -108,16 +109,31 @@ Annotations remain client-side because they read from `<script type="application
 
 ### Custom behaviors (`src/utils/behaviors/`)
 
-All behaviors are **factories**: `create*(language, config: DialogueConfig) => (element) => void`. They are applied server-side during `processTei()`.
+All behaviors are applied server-side during `processTei()`. Factories take `(language, config)` and return an element handler; simple handlers are plain functions.
 
-| Behavior              | Element          | Role |
-|-----------------------|------------------|------|
-| `handle-line-begin`   | `tei-lb`         | Grid layout (line text + Stephanus marker); adaptive inline/block mode |
-| `handle-milestone`    | `tei-milestone`  | Stephanus page markers |
-| `handle-div`          | `tei-div`        | Section structure |
-| `handle-head`         | `tei-head`       | Heading typography; language-specific title from `config.teiTitle` |
-| `handle-label`        | `tei-label`      | Speaker labels |
-| `handle-tei-header`   | `tei-teiheader`  | Hides TEI metadata; renders dramatis personae; hides EN-only metadata |
+| Behavior                | Element              | Role |
+|-------------------------|----------------------|------|
+| `handle-line-begin`     | `tei-lb`             | Grid layout (line text + scheme-driven markers); `data-speaker` from enclosing `tei-said[@who]`; adaptive inline/block mode |
+| `handle-head`           | `tei-head`           | Heading typography; language-specific title from `config.teiTitle` |
+| `handle-tei-header`     | `tei-teiheader`      | Hides TEI metadata; renders dramatis personae with `data-speaker-id` from `person[@xml:id]`; hides EN-only metadata |
+| `handle-named-entity`   | `tei-persname`, `tei-placename` | Replaces with `<a>` (when `@key`/`@ref` resolves to an authority URL) or `<span>`; supported vocabs: `tgn`, `pleiades`, `wikidata` |
+
+### Reference schemes (`src/utils/referenceSchemes/`)
+
+The citation scheme used by a document is **pluggable**. `resolveScheme(xmlDoc, meta)` selects it:
+
+1. Infer from XML: `milestone[@resp="Stephanus"]` present → `stephanus`
+2. Explicit `meta.json` `referenceScheme` field
+3. `opaque` fallback (refs treated as opaque anchor keys; no margin markers; never crashes)
+
+The `ReferenceScheme` interface exposes `parse`, `inlineMarker`, `blockMarker`, `showsBlockMarker`, and `startingPageLabel`. Adding a new scheme means implementing the interface and adding it to the registry in `referenceSchemes/index.ts` — no changes to the handlers.
+
+### Speaker identity
+
+`person[@xml:id]` in `<particDesc>` is the authority for speaker identity:
+- `handle-tei-header` sets `data-speaker-id` on each dramatis-personae person div
+- `handle-line-begin` reads `who` from the nearest `tei-said` ancestor and sets `data-speaker` on each `tei-lb` line element (leading `#` stripped)
+- Both attributes are available for CSS targeting and future client-side speaker highlighting
 
 ### Dialogue config (`src/content/dialogue/<id>/meta.json`)
 
@@ -127,11 +143,11 @@ Each dialogue provides a `meta.json` with required fields consumed by `processTe
 {
   "subtitle": "...",
   "teiTitle": { "gr": "ΑΛΚΙΒΙΑΔΗΣ", "en": "Alcibiades 1" },
-  "firstLineStephanusReference": "103a1"
+  "firstLineReference": "103a1"
 }
 ```
 
-The `DialogueConfig` type is defined in `src/types.ts`.
+`firstLineStephanusReference` is accepted as a deprecated alias for `firstLineReference`. The `DialogueConfig` type (including the resolved `referenceScheme`) is defined in `src/types.ts`.
 
 ---
 

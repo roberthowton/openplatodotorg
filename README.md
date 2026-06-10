@@ -49,7 +49,8 @@ src/
 │   ├── processTei.ts         # CETEIcean preprocessing (server)
 │   ├── loadComments.ts       # Comment collection loading
 │   ├── sanitize.ts           # XSS prevention for comment HTML
-│   └── behaviors/            # Custom TEI element handlers
+│   ├── behaviors/            # Custom TEI element handlers
+│   └── referenceSchemes/     # Pluggable citation scheme strategies
 ├── scripts/
 │   ├── injectAnchors.ts      # Anchor creation for comment targets
 │   ├── annotate.ts           # Segment decomposition for highlighting
@@ -89,12 +90,12 @@ URL is the single source of truth for all UI state. A Redux-like state machine (
 
 ### TEI Processing
 
-CETEIcean converts TEI XML to `tei-*` custom elements in a preprocessing approach adapted from [astro-tei](https://github.com/raffazizzi/astro-tei). Behaviors are applied **server-side** via language- and dialogue-aware factories (`createBehaviors(language, config)`). Each dialogue provides a `meta.json` with `teiTitle` and `firstLineStephanusReference`. Behaviors handle:
+CETEIcean converts TEI XML to `tei-*` custom elements in a preprocessing approach adapted from [astro-tei](https://github.com/raffazizzi/astro-tei). Behaviors are applied **server-side** via language- and dialogue-aware factories (`createBehaviors(language, config)`). The reference scheme (Stephanus or opaque fallback) is inferred from the document itself and drives all line-marker display logic. Behaviors handle:
 
-- `tei-lb`: Grid layout for text + Stephanus line numbers
-- `tei-milestone`: Stephanus page markers
-- `tei-div`, `tei-head`, `tei-label`: Typography
-- `tei-teiheader`: Metadata hiding, dramatis personae rendering
+- `tei-lb`: Grid layout for text + line markers (scheme-driven)
+- `tei-head`, `tei-label`: Typography
+- `tei-teiheader`: Metadata hiding, dramatis personae with `data-speaker-id`
+- `tei-persname`, `tei-placename`: Named-entity spans/links with authority URLs (`@key`/`@ref`)
 
 ### Annotation Pipeline
 
@@ -119,9 +120,9 @@ Segment decomposition handles overlapping annotations by collecting boundary poi
 - `ref`: Stephanus scroll target
 - `comment`: Active annotation IDs
 
-### Stephanus Navigation
+### Reference Scheme
 
-Format: `103a1` = page 103, column a, line 1. Page-select supports:
+Line references (e.g. `103a1` = page 103, column a, line 1) drive navigation, annotation anchoring, and margin markers. The scheme is **pluggable** — `processTei` infers it from the document (Stephanus detected via `milestone[@resp="Stephanus"]`) and falls back to an opaque scheme for arbitrary EpiDoc. The opaque scheme renders text without margin markers but never crashes. Page-select supports:
 
 - Dropdown of all references
 - Text search with debounced matching
