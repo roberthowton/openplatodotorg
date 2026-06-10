@@ -157,4 +157,25 @@ import TeiBaseStyle from "./tei-base-style.astro";
     min-height: unset;
     text-align-last: auto;
   }
+
+  /* Named entities (persName / placeName) */
+  .named-entity {
+    font-style: italic;
+  }
+
+  .named-entity.place {
+    border-bottom: 1px dotted currentColor;
+    text-decoration: none;
+    color: inherit;
+    cursor: help;
+  }
+
+  a.named-entity.place:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .named-entity.person {
+    font-weight: var(--weight-semibold, 600);
+  }
 </style>

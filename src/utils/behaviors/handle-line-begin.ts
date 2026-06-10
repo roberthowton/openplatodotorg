@@ -108,24 +108,26 @@ const getRangeToNextLineBegin = (element: HTMLElement, doc: Document) => {
 
 const renderRangeInDiv = (range: Range, doc: Document) => {
   const container = doc.createElement("div");
-  let labelText = "";
 
   const dom = range.extractContents();
-  dom
-    .querySelectorAll("tei-milestone")
-    .forEach((milestone) => milestone.remove());
+  dom.querySelectorAll("tei-milestone").forEach((m) => m.remove());
 
   const label = dom.querySelector("tei-label");
   if (label) {
-    labelText = label.innerHTML;
+    const b = doc.createElement("b");
+    b.innerHTML = label.innerHTML;
     label.remove();
-  }
-
-  const text = dom.textContent ?? "";
-
-  container.innerHTML = `${labelText ? `<b>${labelText}</b>` : ""} ${text.trim()}`;
-  if (labelText) {
+    container.appendChild(b);
+    container.appendChild(doc.createTextNode(" "));
     container.classList.add("has-label");
   }
+
+  // Preserve inline elements (tei-persname, tei-placename, etc.) rather than
+  // flattening to textContent — their behavior handlers run after lb and will
+  // transform them in place inside this container.
+  while (dom.firstChild) {
+    container.appendChild(dom.firstChild);
+  }
+
   return container;
 };
