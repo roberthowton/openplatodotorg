@@ -189,6 +189,42 @@ describe('createHandleLineBegin', () => {
     expect(textDiv.classList.contains('stephanus-line')).toBe(true);
   });
 
+  it('sets data-speaker from enclosing tei-said who attribute', () => {
+    document.body.innerHTML = `
+      <tei-said who="#Socrates">
+        <p>
+          <tei-lb n="103a1"></tei-lb>
+          Some text
+          <tei-lb n="103a2"></tei-lb>
+        </p>
+      </tei-said>
+    `;
+    const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
+    createHandleLineBegin('gr', mockConfig)(lb);
+    expect(lb.dataset.speaker).toBe('Socrates');
+  });
+
+  it('strips leading # from who attribute', () => {
+    document.body.innerHTML = `
+      <tei-said who="#Alcibiades">
+        <p>
+          <tei-lb n="103a1"></tei-lb>
+          Some text
+          <tei-lb n="103a2"></tei-lb>
+        </p>
+      </tei-said>
+    `;
+    const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
+    createHandleLineBegin('gr', mockConfig)(lb);
+    expect(lb.dataset.speaker).toBe('Alcibiades');
+  });
+
+  it('omits data-speaker when no enclosing tei-said', () => {
+    const lb = document.querySelector('tei-lb[n="103a1"]') as HTMLElement;
+    createHandleLineBegin('gr', mockConfig)(lb);
+    expect(lb.dataset.speaker).toBeUndefined();
+  });
+
   it('finds text node through multiple non-text siblings', () => {
     document.body.innerHTML = `
       <div>

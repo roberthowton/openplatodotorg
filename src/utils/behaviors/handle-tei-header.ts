@@ -34,8 +34,10 @@ export const createHandleTeiHeader = (language: Language, config: DialogueConfig
   element.querySelectorAll("tei-person").forEach((personElement) => {
     const person = doc.createElement("div");
     person.setAttribute("class", "person");
+    const speakerId = personElement.getAttribute("xml:id") ?? personElement.getAttribute("id");
     const personName = personElement.querySelector("tei-persName")?.innerHTML;
     person.innerHTML = personName || "";
+    if (speakerId) person.dataset.speakerId = speakerId;
     dramatisPersonae.appendChild(person);
   });
 

@@ -43,6 +43,13 @@ export const createHandleLineBegin = (language: Language, config: DialogueConfig
   element.id = `${ref}-${language}`;
   textDiv.id = `${ref}-${language}-text`;
 
+  // Thread speaker identity from enclosing tei-said[@who]
+  const who = element.closest("tei-said")?.getAttribute("who");
+  if (who) {
+    // Strip leading '#' from the IDREF pointer (e.g. "#Socrates" → "Socrates")
+    element.dataset.speaker = who.replace(/^#/, "");
+  }
+
   // Inline marker for narrow viewports — always rendered, CSS controls visibility
   {
     const inlineMarker = doc.createElement("b");
