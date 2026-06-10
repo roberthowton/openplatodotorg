@@ -67,7 +67,7 @@
 
 .dialogueContainer {
   display: grid;
-  grid-template-columns: fit-content(45%) fit-content(55%);
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   align-items: start;
   justify-content: center;
@@ -177,7 +177,7 @@ body.comments-panel-pinned .dialogueContainer {
 /* Tablet */
 @media (min-width: 769px) and (max-width: 1024px) {
   .dialogueContainer {
-    grid-template-columns: fit-content(45%) fit-content(55%);
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-xl);
   }
 }
